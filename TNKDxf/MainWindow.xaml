@@ -1,0 +1,13 @@
+﻿<Window x:Class="TNKDxf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TNKDxf"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Label x:Name="lblcara" Content="" HorizontalAlignment="Left" Margin="112,174,0,0" VerticalAlignment="Top" Width="590"/>
+        <Label x:Name="lblplot" Content="" HorizontalAlignment="Left" Margin="112,143,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
