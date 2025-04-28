@@ -37,11 +37,33 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net47\CommonServiceLocator.dll</HintPath>
+    </Reference>
     <Reference Include="Dynamic.Tekla.Structures.API">
       <HintPath>..\..\..\..\Users\ricardopinto\source\repos\Dynamic-Tekla-Structures-API\Dynamic.Tekla.Structures.API\Dynamic.Tekla.Structures\bin\Debug\Dynamic.Tekla.Structures.API.dll</HintPath>
     </Reference>
+    <Reference Include="GalaSoft.MvvmLight, Version=5.4.1.0, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras, Version=5.4.1.0, Culture=neutral, PublicKeyToken=669f0b5e8f868abf, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.4.1.0, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="netDxf, Version=2023.11.10.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
+      <HintPath>..\packages\netDxf.2023.11.10\lib\net48\netDxf.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmLightLibs.5.4.1.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -60,6 +82,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\CampoErroWpf.cs" />
+    <Compile Include="ViewModel\ColetorDeDadosDxf.cs" />
+    <Compile Include="Dominio\Abstracoes\IColetorDeDadosDxf.cs" />
+    <Compile Include="Dominio\Abstracoes\IConversorDxf.cs" />
+    <Compile Include="Dominio\Dxfs\ArquivoDxf.cs" />
+    <Compile Include="TestesViabilidade\TesteA.cs" />
+    <Compile Include="ViewModel\ListViewDxfs.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -68,6 +98,78 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Blocos\Ajustes\AjusteCabecalho.cs" />
+    <Compile Include="Blocos\Atributacao\Atributos.cs" />
+    <Compile Include="Blocos\Atributacao\AtributosCampos.cs" />
+    <Compile Include="Blocos\Atributacao\AtributosLinhaItem.cs" />
+    <Compile Include="Blocos\Atributacao\AtributosLinhaMarca.cs" />
+    <Compile Include="Blocos\Atributacao\AtributosRevisoes.cs" />
+    <Compile Include="Blocos\Atributacao\IAtributos.cs" />
+    <Compile Include="Blocos\Insercoes\IInsercao.cs" />
+    <Compile Include="Blocos\Insercoes\Insercao.cs" />
+    <Compile Include="Blocos\Insercoes\InsercaoCabecalho.cs" />
+    <Compile Include="Blocos\Insercoes\InsercaoConjuntos.cs" />
+    <Compile Include="Blocos\Insercoes\InsercaoFormato.cs" />
+    <Compile Include="Blocos\Insercoes\InsercaoItem.cs" />
+    <Compile Include="Dominio\Colecoes\ColecaoConjuntos.cs" />
+    <Compile Include="Dominio\Coletores\AbsColeta.cs" />
+    <Compile Include="Dominio\Coletores\CamposFormato.cs" />
+    <Compile Include="Dominio\Coletores\ColetaLista.cs" />
+    <Compile Include="Dominio\Coletores\ColetaLmTNK.cs" />
+    <Compile Include="Dominio\Coletores\ColetaRevisoes.cs" />
+    <Compile Include="Dominio\Coletores\ColetorErros.cs" />
+    <Compile Include="Dominio\Coletores\IColeta.cs" />
+    <Compile Include="Dominio\Coletores\IColetaCampos.cs" />
+    <Compile Include="Dominio\Coletores\IColetaErros.cs" />
+    <Compile Include="Dominio\Coletores\IColetaLista.cs" />
+    <Compile Include="Dominio\Coletores\IColetaRevisoes.cs" />
+    <Compile Include="Dominio\Entidades\Encaminhamento.cs" />
+    <Compile Include="Dominio\Listas\CampoExtraido.cs" />
+    <Compile Include="Dominio\Listas\ICamposExtraidos.cs" />
+    <Compile Include="Dominio\Listas\IDataExtraido.cs" />
+    <Compile Include="Dominio\Construtores\FormatoDATABuilder.cs" />
+    <Compile Include="Dominio\Entidades\ConjuntoLM.cs" />
+    <Compile Include="Dominio\Entidades\DxfSingleton.cs" />
+    <Compile Include="Dominio\Entidades\Entidade.cs" />
+    <Compile Include="Dominio\Entidades\Formatacao.cs" />
+    <Compile Include="Dominio\Entidades\Formato.cs" />
+    <Compile Include="Dominio\Entidades\TopicoLM.cs" />
+    <Compile Include="Dominio\Enumeracoes\Enumeration.cs" />
+    <Compile Include="Dominio\Enumeracoes\FormatoType.cs" />
+    <Compile Include="Dominio\Extensoes\ExtensionsDouble.cs" />
+    <Compile Include="Dominio\Extensoes\Extensoes.cs" />
+    <Compile Include="Dominio\Extensoes\ExtensoesDxf.cs" />
+    <Compile Include="Dominio\Extensoes\ExtensoesEntidadesCAD.cs" />
+    <Compile Include="Dominio\Listas\IListaExtraida.cs" />
+    <Compile Include="Dominio\Listas\ILmExtraida.cs" />
+    <Compile Include="Dominio\Listas\IRevisoesExtraidas.cs" />
+    <Compile Include="Dominio\Listas\ListaDeCampos.cs" />
+    <Compile Include="Dominio\Listas\LmExtraida.cs" />
+    <Compile Include="Dominio\Listas\LmExtraidaTKL.cs" />
+    <Compile Include="Dominio\Listas\RevisaoExtraida.cs" />
+    <Compile Include="Dominio\ObjetosValor\CampoTexto.cs" />
+    <Compile Include="Dominio\ObjetosValor\Codigo.cs" />
+    <Compile Include="Dominio\ObjetosValor\Descricao.cs" />
+    <Compile Include="Dominio\ObjetosValor\Erro.cs" />
+    <Compile Include="Dominio\ObjetosValor\ErroColetado.cs" />
+    <Compile Include="Dominio\ObjetosValor\Item.cs" />
+    <Compile Include="Dominio\ObjetosValor\Janela.cs" />
+    <Compile Include="Dominio\ObjetosValor\LimitesGeometricosRetangulo.cs" />
+    <Compile Include="Dominio\ObjetosValor\Linha.cs" />
+    <Compile Include="Dominio\ObjetosValor\Material.cs" />
+    <Compile Include="Dominio\ObjetosValor\Observacao.cs" />
+    <Compile Include="Dominio\ObjetosValor\Peso.cs" />
+    <Compile Include="Dominio\ObjetosValor\Ponto2d.cs" />
+    <Compile Include="Dominio\ObjetosValor\Quantidade.cs" />
+    <Compile Include="Dominio\ObjetosValor\Texto.cs" />
+    <Compile Include="Dominio\Dxfs\ColecaoDxfs.cs" />
+    <Compile Include="Infra\CfgEngAPI.cs" />
+    <Compile Include="Infra\Dtos\CampoFormatoDOC.cs" />
+    <Compile Include="Infra\Dtos\FormatacaoDTO.cs" />
+    <Compile Include="Infra\Dtos\JanelaDOC.cs" />
+    <Compile Include="Infra\Dtos\Ponto2dDOC.cs" />
+    <Compile Include="Infra\Dtos\TextoDOC.cs" />
+    <Compile Include="Infra\ServicoFormatacao.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -91,6 +193,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -99,5 +202,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
