@@ -1,9 +1,14 @@
 ﻿using Microsoft.SqlServer.Server;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using TNKDxf.Dominio.Coletores;
+using TNKDxf.Dominio.Construtores;
+using TNKDxf.Dominio.Dxfs;
 using TNKDxf.Dominio.Enumeracoes;
+using TNKDxf.Dominio.Extensoes;
 using TNKDxf.Dominio.ObjetosValor;
+using TNKDxf.Infra;
 
 namespace TNKDxf.Dominio.Entidades
 {
@@ -15,6 +20,20 @@ namespace TNKDxf.Dominio.Entidades
         protected FormatoType _tipo;
         protected Formatacao _formatacao;
         protected Ponto2d _deslocamento;
+
+        public static Formato Criar(ArquivoDxf arquivoDxf)
+        {
+            var servico = new ServicoFormatacao();
+            var formatacaoDTO = servico.ObterFormatacao(arquivoDxf.ObterProjeto());
+            var formatacao = formatacaoDTO.Converter();
+
+            DxfSingleton.Load(arquivoDxf.ObterNomeCompleto());
+
+            Ponto2d extMax = DxfSingleton.DxfDocument.Extmax();
+
+            var formatoDATABuilder = new FormatoDATABuilder(extMax.X, Ponto2d.CriarSemEscala(0.0, 0.0), formatacao);
+            return formatoDATABuilder.Build();
+        }
 
         public Formato(double fatorEscala, FormatoType tipo, Formatacao formatacaoContexto, Ponto2d deslocamento)
         {
@@ -51,14 +70,7 @@ namespace TNKDxf.Dominio.Entidades
             }
         }
 
-        //public Ponto2d PontoInsercaoLm
-        //{
-        //    get
-        //    {
-        //        return Ponto2d.CriarComEscala(CantoSuperiorDireitoPrimeiraLinhaLM.X,
-        //            CantoSuperiorDireitoPrimeiraLinhaLM.Y, FatorEscala);
-        //    }
-        //}
+        
 
         public Ponto2d PontoInsercaoLm
         {

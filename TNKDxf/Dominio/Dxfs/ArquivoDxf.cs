@@ -17,7 +17,7 @@ using System.IO;
 
 namespace TNKDxf.Dominio.Dxfs
 {
-    public class ArquivoDxf : IConversorDxf
+    public class ArquivoDxf 
     {
         protected const string ARQUIVO_ORIGEM = @"C:\BlocosTecnoedCSN\BLOCOS.dxf";
         protected const string BLOCO_CABECALHO = @"CABECALHO_LISTA";
@@ -27,7 +27,8 @@ namespace TNKDxf.Dominio.Dxfs
         private string _projeto;
         private string _nomeCompleto;
         private string _nome;
-        
+        private Formato _formato;
+
         IColetorDeDadosDxf _coletorDeDadosDxf = new ColetorDeDadosDxf();
         private List<CampoErroWpf> _erros = new List<CampoErroWpf>();
 
@@ -37,6 +38,7 @@ namespace TNKDxf.Dominio.Dxfs
             _nomeCompleto = nomeCompleto;
             _nome = nomeCompleto.Split('\\').Last();
             _projeto = projeto;
+            _formato = Formato.Criar(this);
         }
 
         public string Nome { get => _nome; private set => _nome = value; }
@@ -46,6 +48,10 @@ namespace TNKDxf.Dominio.Dxfs
             return _erros.Count > 0;
         }
 
+        public Formato ObterFormato()
+        {
+            return _formato;
+        }
 
         public void Validar()
         {
@@ -144,45 +150,45 @@ namespace TNKDxf.Dominio.Dxfs
             _coletorDeDadosDxf.ApagarSelecao();
         }
 
-        public void Converter(ArquivoDxf arquivoDxf, string usuario)
+        public void Converter(string usuario)
         {
-            var servico = new ServicoFormatacao();
-            var formatacaoDTO = servico.ObterFormatacao(arquivoDxf.ObterProjeto());
-            var formatacao = formatacaoDTO.Converter();
+            //var servico = new ServicoFormatacao();
+            //var formatacaoDTO = servico.ObterFormatacao(this.ObterProjeto());
+            //var formatacao = formatacaoDTO.Converter();
 
-            DxfSingleton.Load(arquivoDxf.ObterNomeCompleto());
+            //DxfSingleton.Load(this.ObterNomeCompleto());
 
-            Ponto2d extMax = DxfSingleton.DxfDocument.Extmax();
+            //Ponto2d extMax = DxfSingleton.DxfDocument.Extmax();
 
 
-            var formatoDATABuilder = new FormatoDATABuilder(extMax.X, Ponto2d.CriarSemEscala(0.0, 0.0), formatacao);
-            var formato = formatoDATABuilder.Build();
+            //var formatoDATABuilder = new FormatoDATABuilder(extMax.X, Ponto2d.CriarSemEscala(0.0, 0.0), formatacao);
+            //var formato = formatoDATABuilder.Build();
 
             //_coletaLista.ApagarSelecao();
             var insercaoCabecalho =
-                new InsercaoCabecalho(ARQUIVO_ORIGEM, BLOCO_CABECALHO, formato, arquivoDxf);//_coletorDeErros, _colecaoConjuntos);
+                new InsercaoCabecalho(ARQUIVO_ORIGEM, BLOCO_CABECALHO, _formato, this);//_coletorDeErros, _colecaoConjuntos);
             insercaoCabecalho.Inserir();
 
-            var insercaoFormato = new InsercaoFormato(ARQUIVO_ORIGEM, BLOCO_FORMATO_VALE, formato, arquivoDxf);//_coletorDeErros);
+            var insercaoFormato = new InsercaoFormato(ARQUIVO_ORIGEM, BLOCO_FORMATO_VALE, _formato, this);//_coletorDeErros);
             var insertFormato = insercaoFormato.Inserir();
 
 
 
-            var atributosCampos = new AtributosCampos(arquivoDxf); //_camposFormato);
+            var atributosCampos = new AtributosCampos(this); //_camposFormato);
             atributosCampos.Atributar(insertFormato);
 
 
 
-            var atributosRevisoes = new AtributosRevisoes(arquivoDxf); //_coletaRevisoes);
+            var atributosRevisoes = new AtributosRevisoes(this); //_coletaRevisoes);
             atributosRevisoes.Atributar(insertFormato);
 
             //_coletaRevisoes.ApagarSelecao();
 
             //_camposFormato.ApagarSelecao();
 
-            arquivoDxf.ApagarSelecao();
+            this.ApagarSelecao();
 
-            Encaminhamento encaminhamento = new Encaminhamento(arquivoDxf, usuario);
+            Encaminhamento encaminhamento = new Encaminhamento(this, usuario);
 
             var caminhoSalvamento = encaminhamento.Encaminhar(@"C:\GitCAD");
 

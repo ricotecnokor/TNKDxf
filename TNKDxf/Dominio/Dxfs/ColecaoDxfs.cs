@@ -1,8 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TNKDxf.Dominio.Construtores;
 using TNKDxf.Dominio.Dxfs;
+using TNKDxf.Dominio.Entidades;
+using TNKDxf.Dominio.Extensoes;
+using TNKDxf.Dominio.ObjetosValor;
+using TNKDxf.Infra;
 
 namespace TNKDxf.Dxfs
 {
@@ -16,9 +22,11 @@ namespace TNKDxf.Dxfs
 
             FileInfo[] arquivos = di.GetFiles("*.dxf");
 
+
             foreach (FileInfo fi in arquivos)
             {
                 ArquivoDxf arquivoDxf = new ArquivoDxf(fi.FullName, projeto);
+
                 arquivoDxf.Validar();
                 _dxfs.Add(arquivoDxf);
             }
@@ -51,6 +59,9 @@ namespace TNKDxf.Dxfs
             return GetEnumerator();
         }
 
-        
+        public ArquivoDxf ObterArquivoDxf(string nome)
+        {
+            return _dxfs.Find(x => x.Nome == nome);
+        }
     }
 }

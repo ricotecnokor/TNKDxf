@@ -1,0 +1,83 @@
+﻿using Dynamic.Tekla.Structures;
+using System.Diagnostics;
+using System.IO;
+using TSM = Dynamic.Tekla.Structures.Model;
+using TSO = Dynamic.Tekla.Structures.Model.Operations;
+
+namespace TNKDxf
+{
+    public static class ExportadoraDxf
+    {
+        public static void Run(string DWGFolder)
+        {
+
+            //string DWGFolder = @"C:\TeklaStructuresModels\PONTE-CSN3_ricardo\PlotFiles";
+
+            //string nomePastaDesenho = DWGFolder + "\\" + nomeDesenho;   
+            //if (!Directory.Exists(nomePastaDesenho))
+            //{
+            //    Directory.CreateDirectory(nomePastaDesenho);
+            //}
+
+            TSM.Operations.Operation.DisplayPrompt("Exporting DWG Files.");
+
+            string TSBinaryDir = "";
+
+            TSM.Model CurrentModel = new TSM.Model();
+
+            TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
+
+
+            string ApplicationName = "Dwg.exe";
+
+            string ApplicationPath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
+
+            //string dwgxportParams = @"export settingsFile=""C:\\TeklaStructuresModels\\PONTE-CSN3_ricardo\\PlotFiles\\mysettings.xml""";
+
+            string dwgxportParams = "export outputDirectory=\""  + DWGFolder + "\"";
+
+
+            Process NewProcess = new Process();
+
+
+            if (File.Exists(ApplicationPath))
+            {
+
+                NewProcess.StartInfo.FileName = ApplicationPath;
+
+
+                try
+
+                {
+
+                    NewProcess.StartInfo.Arguments = dwgxportParams;
+
+                    NewProcess.Start();
+
+                    NewProcess.WaitForExit();
+
+                }
+
+                catch
+
+                {
+
+                    TSO.Operation.DisplayPrompt(ApplicationName + " failed to start.");
+
+                }
+
+            }
+
+            else
+
+            {
+
+                TSO.Operation.DisplayPrompt(ApplicationName + " not found.");
+
+            }
+
+            TSM.Operations.Operation.DisplayPrompt("DWG Files Exported.");
+
+        }
+    }
+}

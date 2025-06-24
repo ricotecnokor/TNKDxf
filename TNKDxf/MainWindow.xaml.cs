@@ -1,13 +1,9 @@
-﻿using Dynamic.Tekla.Structures;
-using System.Collections.Generic;
+﻿using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using TNKDxf.Coletas;
-using TNKDxf.Dominio.Abstracoes;
-using TNKDxf.Dominio.Coletores;
 using TNKDxf.Dominio.Dxfs;
 using TNKDxf.Dominio.Entidades;
 using TNKDxf.Dxfs;
+using TNKDxf.Infra;
 using TNKDxf.TestesViabilidade;
 using TNKDxf.ViewModel;
 using TSD = Dynamic.Tekla.Structures.Drawing;
@@ -43,31 +39,37 @@ namespace TNKDxf
         TSD.Drawing _drawing;
         private ColecaoDxfs _colecaoDxfs;
         private ListViewDxfs _listViewDxfs;
+        
         //private IColetorDeDadosDxf _coletorDeDadosDxf;
         //private IConversorDxf _conversorDxf;
+        
         public MainWindow()
         {
+
+           
             InitializeComponent();
 
-            _userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-            _model = new TSM.Model();
-            _dh = new TSD.DrawingHandler();
+            //_userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+            //_model = new TSM.Model();
+            //_dh = new TSD.DrawingHandler();
 
-            string xsplot = "";
-            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+            //string xsplot = "";
+            //TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
 
-            var array = _model.GetInfo().ModelPath.Split('\\');
-            var descricaoProjeto = array[2];
-            string projeto = descricaoProjeto.Split('(')[1].Split(')')[0];
+            //var array = _model.GetInfo().ModelPath.Split('\\');
+            //var descricaoProjeto = array[2];
+            //string projeto = descricaoProjeto.Split('(')[1].Split(')')[0];
 
-            //_coletorDeDadosDxf = new ColetorDeDadosDxf();
-           
+            ////_coletorDeDadosDxf = new ColetorDeDadosDxf();
 
-            _colecaoDxfs = new ColecaoDxfs(_model.GetInfo().ModelPath + xsplot, projeto);
-            _listViewDxfs = new ListViewDxfs(_colecaoDxfs);
-            dgArquivos.ItemsSource = _listViewDxfs.CarregaCertos();
-            dgArquivosErrados.ItemsSource = _listViewDxfs.CarregaErrados();
-            //SetaDados();
+
+            //_colecaoDxfs = new ColecaoDxfs(_model.GetInfo().ModelPath + xsplot, projeto);
+            //_listViewDxfs = new ListViewDxfs(_colecaoDxfs);
+
+
+            ////dgArquivos.ItemsSource = _listViewDxfs.CarregaCertos();
+            ////dgArquivosErrados.ItemsSource = _listViewDxfs.CarregaErrados();
+            ////SetaDados();
         }
 
         private void btnTeste_Click(object sender, RoutedEventArgs e)
@@ -78,65 +80,66 @@ namespace TNKDxf
         private void btnEnviar_Click(object sender, RoutedEventArgs e)
         {
             //var conversorDxf = new ConversorDxf();
-            var certos = _listViewDxfs.CarregaCertos();
+            var certos = _listViewDxfs.CarregaArquivosItem().Where(x => x.Errado = false);
             foreach ( var certo in certos )
             {
-                certo.Converter(certo, _userName);
+                ArquivoDxf arquivoDxf = new ArquivoDxf(certo.Nome, _model.GetInfo().ModelPath);
+                arquivoDxf.Converter(_userName);
                 //conversorDxf.Converter(certo, _userName);
             }
             //conversorDxf.Converter(_colecaoDxfs, "TESTE");
         }
 
-        private void CarregaDetalhes(object sender, RoutedEventArgs e)
-        {
-            var arquivoDxf = (ArquivoDxf)dgArquivos.SelectedItem;
+        //private void CarregaDetalhes(object sender, RoutedEventArgs e)
+        //{
+        //    var arquivoDxf = (ArquivoDxf)dgArquivos.SelectedItem;
 
-            TabItem newTab = new TabItem();
+        //    TabItem newTab = new TabItem();
 
-            var nomeDesenho = arquivoDxf.Nome.Replace(".dxf", "");
+        //    var nomeDesenho = arquivoDxf.Nome.Replace(".dxf", "");
 
-            newTab.Header = nomeDesenho;
+        //    newTab.Header = nomeDesenho;
 
-            newTab.Content = new TextBlock
-            {
-                Text = $"Conteúdo do desenho {nomeDesenho}.",
-                Margin = new Thickness(10)
-            };
+        //    newTab.Content = new TextBlock
+        //    {
+        //        Text = $"Conteúdo do desenho {nomeDesenho}.",
+        //        Margin = new Thickness(10)
+        //    };
 
-            MainTabControl.Items.Add(newTab);
+        //    MainTabControl.Items.Add(newTab);
 
-            //lblplot.Content = arquivoDxf.Nome;
-        }
+        //    //lblplot.Content = arquivoDxf.Nome;
+        //}
 
-        private void AddTabsButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Lista de strings que serão os nomes das novas abas
-            List<string> tabNames = new List<string>
-            {
-                "Segunda Aba",
-                "Terceira Aba",
-                "Aba Personalizada",
-                "Última Aba"
-            };
+        //private void AddTabsButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // Lista de strings que serão os nomes das novas abas
+        //    List<string> tabNames = new List<string>
+        //    {
+        //        "Segunda Aba",
+        //        "Terceira Aba",
+        //        "Aba Personalizada",
+        //        "Última Aba"
+        //    };
 
-            // Adiciona cada nome da lista como uma nova TabItem
-            foreach (string name in tabNames)
-            {
-                // Cria uma nova TabItem
-                TabItem newTab = new TabItem();
-                newTab.Header = name;
+        //    // Adiciona cada nome da lista como uma nova TabItem
+        //    foreach (string name in tabNames)
+        //    {
+        //        // Cria uma nova TabItem
+        //        TabItem newTab = new TabItem();
+        //        newTab.Header = name;
 
-                // Adiciona conteúdo à TabItem (opcional)
-                newTab.Content = new TextBlock
-                {
-                    Text = $"Conteúdo da {name}",
-                    Margin = new Thickness(10)
-                };
+        //        // Adiciona conteúdo à TabItem (opcional)
+        //        newTab.Content = new TextBlock
+        //        {
+        //            Text = $"Conteúdo da {name}",
+        //            Margin = new Thickness(10)
+        //        };
 
-                // Adiciona a nova TabItem ao TabControl
-                MainTabControl.Items.Add(newTab);
-            }
-        }
+        //        // Adiciona a nova TabItem ao TabControl
+        //        MainTabControl.Items.Add(newTab);
+        //    }
+        //}
 
         //private void SetaDados()
         //{

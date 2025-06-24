@@ -21,7 +21,7 @@ namespace TNKDxf.Coletas
         private ColecaoConjuntos _colecaoConjuntos;
         private CamposFormato _camposFormato;
         private ColetaRevisoes _coletaRevisoes;
-        public void ColetarDados(ArquivoDxf arquivoDxf)//string projeto, string filePath)
+        public void ColetarDados(ArquivoDxf arquivoDxf)//, Formato formato)//string projeto, string filePath)
         {
             var servico = new ServicoFormatacao();
             var formatacaoDTO = servico.ObterFormatacao(arquivoDxf.ObterProjeto());

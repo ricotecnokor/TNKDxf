@@ -8,7 +8,7 @@ namespace TNKDxf.Dominio.Abstracoes
     public interface IColetorDeDadosDxf
     {
         void ApagarSelecao();
-        void ColetarDados(ArquivoDxf arquivoDxf);
+        void ColetarDados(ArquivoDxf arquivoDxf);//, Formato formato);
         
         List<string[]> ObterCamposDoFormato();
         IEnumerable<ConjuntoLM> ObterConjuntos();

@@ -1,53 +1,76 @@
 ﻿<Window x:Name="quadro" x:Class="TNKDxf.MainWindow"
-       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-       xmlns:local="clr-namespace:TNKDxf"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:local="clr-namespace:TNKDxf" 
+      xmlns:local1="clr-namespace:TNKDxf.ViewModel"
        mc:Ignorable="d"
-       Title="FLUXO DO DESENHO" Height="450" Width="800">
+      Title="FLUXO DO DESENHO" Height="450" Width="1400">
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
     <Grid>
-        <TabControl Name="MainTabControl">
-            <TabItem Header="ENVIAR">
-                <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
 
-                    <DataGrid x:Name="dgArquivos" Margin="10,10,10,40" AutoGenerateColumns="False">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="NOME"  Binding="{Binding Nome}"/>
-                            <DataGridTemplateColumn Header="DETALHES">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Click="AddTabsButton_Click">Exibir</Button>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                    <Button x:Name="btnEnviar" Content="ENVIAR" HorizontalAlignment="Left" Margin="10,0,0,10" VerticalAlignment="Bottom" Click="btnEnviar_Click"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="CORRIGIR">
-                <DataGrid x:Name="dgArquivosErrados" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="NOME" Binding="{Binding Nome}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </TabItem>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-            <TabItem Header="DESCRIÇÃO">
-                <Grid>
-                    <Label x:Name="lblprojeto" Content="PROJETO" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="590"/>
-                    <Label x:Name="lblcara" Content="DESENHISTA" HorizontalAlignment="Left" Margin="112,174,0,0" VerticalAlignment="Top" Width="590"/>
-                    <Label x:Name="lblplot" Content="NOME DESENHO" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
-                    <Label x:Name="lblmodificacao" Content="MOMENTO DA ÚLTIMA MODIFICAÇÃO" HorizontalAlignment="Left" Margin="112,139,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="btnTeste" Content="TESTE" HorizontalAlignment="Left" Margin="130,251,0,0" VerticalAlignment="Top" Click="btnTeste_Click"/>
-                </Grid>
-            </TabItem>
-            <TabItem Header="REVISÕES" />
-            <TabItem Header="MATERIAIS" />
+            <!-- DataGrid com os arquivos -->
+            <DataGrid ItemsSource="{Binding Arquivos}" AutoGenerateColumns="False"
+                 Grid.Column="0" Margin="5">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nome do Arquivo" Binding="{Binding Nome}" Width="200"/>
+                    <DataGridTemplateColumn Header="Ação" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Aberto, Converter={local:BoolToAbrirFecharConverter}}" 
+                                   Command="{Binding DataContext.ToggleAbrirCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" 
+                                   CommandParameter="{Binding}" 
+                                   Margin="2" Padding="5,2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Errado}" Value="True">
+                                <Setter Property="Background" Value="LightPink"/>
+                                <Setter Property="Foreground" Value="DarkRed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+            </DataGrid>
+
+            <!-- Botão para enviar arquivos corretos -->
+            <Button Content="Enviar Arquivos Corretos" 
+                Command="{Binding EnviarCorretosCommand}"
+                Grid.Row="1" Margin="5" Padding="10,5"
+                HorizontalAlignment="Stretch"/>
 
 
-
+        </Grid>
+        <!-- TabControl para exibir os arquivos abertos -->
+        <TabControl ItemsSource="{Binding Tabs}" Grid.Column="1" Margin="5">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Header}"/>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentPresenter Content="{Binding Content}"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
         </TabControl>
     </Grid>
 </Window>
