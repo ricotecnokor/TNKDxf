@@ -106,6 +106,8 @@
     <Compile Include="Dominio\Dwgs\ArquivoDwg.cs" />
     <Compile Include="Dominio\Dwgs\ColecaoDwgs.cs" />
     <Compile Include="ExportadoraDxf.cs" />
+    <Compile Include="Handles\HandleCriacaoDxfs.cs" />
+    <Compile Include="Infra\Dtos\ArquivoDTO.cs" />
     <Compile Include="Infra\IServicoEnvioDesenhos.cs" />
     <Compile Include="Infra\ServicoEnvioDesenhos.cs" />
     <Compile Include="MainViewModel.cs" />

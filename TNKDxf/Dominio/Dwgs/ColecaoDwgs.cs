@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TNKDxf.Infra.Dtos;
 
 namespace TNKDxf.Dominio.Dwgs
 {
     public class ColecaoDwgs
     {
         private List<ArquivoDwg> _dwgs = new List<ArquivoDwg>();
-        public ColecaoDwgs(string caminho, string projeto)
+        public ColecaoDwgs(List<ArquivoDTO> lista, string projeto)
         {
-            DirectoryInfo di = new DirectoryInfo(caminho);
+            //DirectoryInfo di = new DirectoryInfo(caminho);
 
-            FileInfo[] arquivos = di.GetFiles("*.dwg");
+            //FileInfo[] arquivos = di.GetFiles("*.dwg");
 
 
-            foreach (FileInfo fi in arquivos)
+            foreach (var arquivo in lista)
             {
-                ArquivoDwg arquivoDxf = new ArquivoDwg(fi.FullName, projeto);
+                ArquivoDwg arquivoDxf = new ArquivoDwg(arquivo, projeto);
 
                 //arquivoDxf.Validar();
                 _dwgs.Add(arquivoDxf);
