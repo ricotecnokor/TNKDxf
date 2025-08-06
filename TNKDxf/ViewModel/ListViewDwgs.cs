@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using TNKDxf.Dominio.Dwgs;
-using TNKDxf.Dxfs;
 
 namespace TNKDxf.ViewModel
 {
@@ -22,10 +16,17 @@ namespace TNKDxf.ViewModel
         {
             var lista = new ObservableCollection<ArquivoItem>();
 
-            var enviar = _colecaoDwgs.ObterArquivosCertos();
+            var enviar = _colecaoDwgs.ObterArquivos(); //.ObterArquivosCertos();
             foreach (var dxf in enviar)
             {
-                lista.Add(new ArquivoItem { Nome = dxf.Nome, Errado = dxf.TemErro() });
+                ArquivoItem arquivo = new ArquivoItem
+                {
+                    Nome = dxf.Nome,
+                    Errado = false,
+                    Aberto = false,
+                    Enviado = false
+                };
+                lista.Add(arquivo);
             }
             return lista;
         }

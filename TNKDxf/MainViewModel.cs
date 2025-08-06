@@ -1,88 +1,74 @@
-﻿using Dynamic.Tekla.Structures;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.ComponentModel;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TNKDxf.Dominio.Dwgs;
 using TNKDxf.Dominio.Entidades;
 using TNKDxf.Handles;
-using TNKDxf.Infra;
-using TNKDxf.Infra.Dtos;
 using TNKDxf.ViewModel;
-using TSD = Dynamic.Tekla.Structures.Drawing;
-using TSM = Dynamic.Tekla.Structures.Model;
+
 
 namespace TNKDxf
 {
     public class MainViewModel : ViewModelBase
     {
-        protected string _userName;
+        public event PropertyChangedEventHandler PropertyChanged;
+        private string _resultado = "Carregando...";
+        private string _projeto;
+        private string _userName;
         protected Formato _formato;
+        private List<CommandResult> _resultados;
 
-        TSM.Model _model;
-        TSD.DrawingHandler _dh;
+        public string Resultado
+        {
+            get => _resultado;
+            set { _resultado = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Resultado))); }
+        }
+
+
 
         private ColecaoDwgs _colecaoDwgs;
         private ListViewDwgs _listViewDwgs;
 
-        IServicoEnvioDesenhos _servicoEnvioDesenhos; 
 
-        public ObservableCollection<ArquivoItem> Arquivos { get; } = new ObservableCollection<ArquivoItem>();
-        public ObservableCollection<TabItem> Tabs { get; } = new ObservableCollection<TabItem>();
+        public ObservableCollection<ArquivoItem> Arquivos { get; set; } = new ObservableCollection<ArquivoItem>();
+        public ObservableCollection<AbaModel> Tabs { get; } = new ObservableCollection<AbaModel>();
 
-        public ICommand ToggleAbrirCommand { get; }
-        public ICommand EnviarCorretosCommand { get; }
+        public ICommand ToggleAbrirCommand { get; set; }
+        public ICommand EnviarCorretosCommand { get; set; }
+
+
 
         public MainViewModel()
         {
-
-            _servicoEnvioDesenhos = new ServicoEnvioDesenhos(new CfgEngAPI());
-
-            string xsplot = "";
-            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
-
-            _model = new TSM.Model();
-
-            string projeto = _model.GetProjectInfo().ProjectNumber;
-
-            var exportPath = System.IO.Path.Combine(_model.GetInfo().ModelPath, xsplot.Substring(2, xsplot.Length - 2));
-
-            _userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-
-         
-            HandleCriacaoDxfs handleCriacaoDxfs = new HandleCriacaoDxfs();
             
-            var desenhos = handleCriacaoDxfs.CriarDxfs(); 
-            
+            var extraidos = HandleCriacaoDxfs.Instancia.ObterExtraidos();
 
-            //gambiarra para pegar os desenhos
-            //var desenhos = new List<string>
-            //{
-            //    "PRJ00011-D-00652"
-            //};
 
-            DirectoryInfo diretorioRecebidos = new DirectoryInfo(exportPath);
-            FileInfo[] arquivosProcessar = diretorioRecebidos.GetFiles("*.dxf");
-            foreach (var desenho in desenhos)
+            _colecaoDwgs = new ColecaoDwgs(extraidos, _projeto);
+            _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
+
+            if (_listViewDwgs != null)
             {
-                var arquivo = arquivosProcessar.FirstOrDefault(a => a.Name.Contains(desenho));
-                _servicoEnvioDesenhos.UploadAsync(arquivo.FullName, "Tekla Structures", _userName, projeto);
-
+                Arquivos = _listViewDwgs.CarregaArquivosItem();
             }
 
             ToggleAbrirCommand = new RelayCommand<ArquivoItem>(ToggleAbrirArquivo);
             EnviarCorretosCommand = new RelayCommand(EnviarArquivosCorretos);
 
-            List<ArquivoDTO> arquivosProcessados = _servicoEnvioDesenhos.ListaProcessadosAsync(_userName, projeto);
-            _colecaoDwgs = new ColecaoDwgs(arquivosProcessados, projeto);
-            _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
+            _ = InitializeAsync();
+
+        }
 
 
-            Arquivos = _listViewDwgs.CarregaArquivosItem();
-
+        private async Task InitializeAsync()
+        {
+            await HandleCriacaoDxfs.Instancia.Manipular();
         }
 
         private void EnviarArquivosCorretos()
@@ -113,29 +99,53 @@ namespace TNKDxf
 
         private void ToggleAbrirArquivo(ArquivoItem arquivo)
         {
-            if (arquivo.Aberto)
+
+
+            var texto = new StringBuilder();
+
+            CommandResult resultadoApi = HandleCriacaoDxfs.Instancia.ObterResult(arquivo.Nome);
+
+            texto.AppendLine($"🟢 Sucesso: {resultadoApi.Success}");
+            texto.AppendLine($"📄 Mensagem: {resultadoApi.Message}");
+
+            if (!string.IsNullOrWhiteSpace(resultadoApi.Resultado))
             {
-                var tabToRemove = Tabs.FirstOrDefault(t => t.Header.ToString() == arquivo.Nome);
-                if (tabToRemove != null)
+                texto.AppendLine("\n📦 Resultado:");
+                texto.AppendLine(resultadoApi.Resultado);
+            }
+
+            if (resultadoApi.Notifications != null && resultadoApi.Notifications.Count > 0)
+            {
+                texto.AppendLine("\n⚠️ Notificações:");
+                foreach (var n in resultadoApi.Notifications)
                 {
-                    Tabs.Remove(tabToRemove);
+                    texto.AppendLine($" - [{n.Key}] {n.Message}");
                 }
             }
-            else
+
+            var textBlock = new TextBlock
             {
-                var newTab = new TabItem
-                {
-                    Header = arquivo.Nome,
-                    Content = new TextBlock
-                    {
-                        Text = $"Conteúdo do arquivo {arquivo.Nome}",
-                        Margin = new Thickness(10)
-                    }
-                };
-                Tabs.Add(newTab);
-            }
+                Text = texto.ToString(),
+                Margin = new Thickness(10),
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            var scrollViewer = new ScrollViewer
+            {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = textBlock
+            };
+
+            var tab = new AbaModel
+            {
+                Header = arquivo.Nome,
+                Content = scrollViewer
+            };
+
+            Tabs.Add(tab);
 
             arquivo.Aberto = !arquivo.Aberto;
         }
+
     }
 }

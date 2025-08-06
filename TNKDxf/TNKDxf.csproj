@@ -106,14 +106,22 @@
     <Compile Include="Dominio\Dwgs\ArquivoDwg.cs" />
     <Compile Include="Dominio\Dwgs\ColecaoDwgs.cs" />
     <Compile Include="ExportadoraDxf.cs" />
+    <Compile Include="Handles\AvaliadorDesenhos.cs" />
+    <Compile Include="Handles\CommandResult.cs" />
+    <Compile Include="Handles\ExtratorDXFs.cs" />
     <Compile Include="Handles\HandleCriacaoDxfs.cs" />
+    <Compile Include="Handles\MockExtratorDXFs.cs" />
+    <Compile Include="Handles\Notification.cs" />
     <Compile Include="Infra\Dtos\ArquivoDTO.cs" />
     <Compile Include="Infra\IServicoEnvioDesenhos.cs" />
+    <Compile Include="Infra\MockTeklaHandler.cs" />
     <Compile Include="Infra\ServicoEnvioDesenhos.cs" />
+    <Compile Include="Infra\TeklaHandler.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Ncs\NcParaDxf.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="ViewModelBase.cs" />
+    <Compile Include="ViewModel\Abstracoes\IExtratorDXFs.cs" />
     <Compile Include="ViewModel\CampoErroWpf.cs" />
     <Compile Include="ViewModel\ColetorDeDadosDxf.cs" />
     <Compile Include="Dominio\Abstracoes\IColetorDeDadosDxf.cs" />
@@ -121,6 +129,7 @@
     <Compile Include="TestesViabilidade\TesteA.cs" />
     <Compile Include="ViewModel\ListViewDwgs.cs" />
     <Compile Include="ViewModel\ListViewDxfs.cs" />
+    <Compile Include="ViewModel\AbaModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

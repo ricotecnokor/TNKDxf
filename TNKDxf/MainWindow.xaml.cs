@@ -1,75 +1,56 @@
-﻿using System.Linq;
-using System.Windows;
-using TNKDxf.Dominio.Dxfs;
+﻿using System.Windows;
 using TNKDxf.Dominio.Entidades;
 using TNKDxf.Dxfs;
+using TNKDxf.Handles;
 using TNKDxf.Infra;
 using TNKDxf.TestesViabilidade;
 using TNKDxf.ViewModel;
-using TSD = Dynamic.Tekla.Structures.Drawing;
-using TSM = Dynamic.Tekla.Structures.Model;
+
 
 
 namespace TNKDxf
 {
-    /// <summary>
-    /// Interação lógica para MainWindow.xam
-    /// </summary>
+   
     public partial class MainWindow : Window
     {
-        //protected const string ARQUIVO_ORIGEM = @"C:\BlocosTecnoedCSN\BLOCOS.dxf";
-
-        //protected const string BLOCO_CABECALHO = @"CABECALHO_LISTA";
-        //protected const string BLOCO_MARCA = @"ITEM_LISTA0";
-        //protected const string BLOCO_ITEM_LISTA1 = @"ITEM_LISTA1";
-
-        //protected const string BLOCO_FORMATO_VALE = @"A1_VALE";
-
-        //protected const string BLOCO_BLOCO_ERRO = @"ERRO";
-
-        //protected const double LARGURA_LINHA = 5.0;
-        //protected const double RECUO_ESTICAMENTO = 10.0;
-
-        protected string _userName;
+ 
         protected Formato _formato;
-        //protected ColetaErros _coletorDeErros;
 
-        TSM.Model _model;
-        TSD.DrawingHandler _dh = new TSD.DrawingHandler();
-        TSD.Drawing _drawing;
-        private ColecaoDxfs _colecaoDxfs;
-        private ListViewDxfs _listViewDxfs;
-        
-        //private IColetorDeDadosDxf _coletorDeDadosDxf;
-        //private IConversorDxf _conversorDxf;
-        
         public MainWindow()
         {
 
-           
+            //TODO: Tirar o mock quando for para produção
+            //var teklaHandler = new TeklaHandler();
+            //var extrator = new ExtratorDXFs();
+            var teklaHandler = new MockTeklaHandler();
+            var extrator = new MockExtratorDXFs();
+
+
+            teklaHandler.Iniciar();
+            //extrator.Extrair();
+            var avaliador = new AvaliadorDesenhos(teklaHandler.ExportPath, teklaHandler.Projeto, teklaHandler.UserName);
+            
+
+            HandleCriacaoDxfs.CriarManipulapor(extrator, avaliador);
+
             InitializeComponent();
+            Loaded += MainWindow_Loaded;
 
-            //_userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-            //_model = new TSM.Model();
-            //_dh = new TSD.DrawingHandler();
+           
+        }
 
-            //string xsplot = "";
-            //TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
-
-            //var array = _model.GetInfo().ModelPath.Split('\\');
-            //var descricaoProjeto = array[2];
-            //string projeto = descricaoProjeto.Split('(')[1].Split(')')[0];
-
-            ////_coletorDeDadosDxf = new ColetorDeDadosDxf();
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+           
 
 
-            //_colecaoDxfs = new ColecaoDxfs(_model.GetInfo().ModelPath + xsplot, projeto);
-            //_listViewDxfs = new ListViewDxfs(_colecaoDxfs);
+            // Remove o handler para evitar chamadas múltiplas
+            Loaded -= MainWindow_Loaded;
 
+            // Cria a ViewModel (parâmetros seriam injetados via DI na prática)
+            var viewModel = new MainViewModel();
 
-            ////dgArquivos.ItemsSource = _listViewDxfs.CarregaCertos();
-            ////dgArquivosErrados.ItemsSource = _listViewDxfs.CarregaErrados();
-            ////SetaDados();
+            DataContext = viewModel;
         }
 
         private void btnTeste_Click(object sender, RoutedEventArgs e)
@@ -79,15 +60,16 @@ namespace TNKDxf
 
         private void btnEnviar_Click(object sender, RoutedEventArgs e)
         {
-            //var conversorDxf = new ConversorDxf();
-            var certos = _listViewDxfs.CarregaArquivosItem().Where(x => x.Errado = false);
-            foreach ( var certo in certos )
-            {
-                ArquivoDxf arquivoDxf = new ArquivoDxf(certo.Nome, _model.GetInfo().ModelPath);
-                arquivoDxf.Converter(_userName);
-                //conversorDxf.Converter(certo, _userName);
-            }
-            //conversorDxf.Converter(_colecaoDxfs, "TESTE");
+            //var userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+            ////var conversorDxf = new ConversorDxf();
+            //var certos = _listViewDxfs.CarregaArquivosItem().Where(x => x.Errado = false);
+            //foreach ( var certo in certos )
+            //{
+            //    ArquivoDxf arquivoDxf = new ArquivoDxf(certo.Nome, _model.GetInfo().ModelPath);
+            //    arquivoDxf.Converter(userName);
+            //    //conversorDxf.Converter(certo, _userName);
+            //}
+            ////conversorDxf.Converter(_colecaoDxfs, "TESTE");
         }
 
         //private void CarregaDetalhes(object sender, RoutedEventArgs e)

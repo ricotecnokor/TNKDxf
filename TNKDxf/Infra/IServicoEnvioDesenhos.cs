@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using TNKDxf.Handles;
 using TNKDxf.Infra.Dtos;
 
 namespace TNKDxf.Infra
 {
     public interface IServicoEnvioDesenhos
     {
-        void UploadAsync(string file, string softwareOrigem, string usuario, string padrao);
+        Task<CommandResult> UploadAsync(string file, string softwareOrigem, string usuario, string padrao);
 
-        List<ArquivoDTO> ListaProcessadosAsync(string usuario, string padrao);
+       List<string> ListaProcessadosAsync(string usuario, string padrao);
     }
 }

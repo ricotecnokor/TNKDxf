@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Threading.Tasks;
+using TNKDxf.Handles;
 using TNKDxf.Infra.Dtos;
 
 namespace TNKDxf.Infra
@@ -16,10 +18,10 @@ namespace TNKDxf.Infra
             _uri = $"{tecnokorAPI.URI}/api";
         }
 
-        public void UploadAsync(string file, string softwareOrigem, string usuario, string padrao)
+        public async Task<CommandResult> UploadAsync(string file, string softwareOrigem, string usuario, string padrao)
         {
             var url = $"{_uri}/Dxf";
-            ResultConvertDxf respostas = new ResultConvertDxf();
+            CommandResult respostas = new CommandResult();
             try
             {
                 var client = new HttpClient();
@@ -33,18 +35,40 @@ namespace TNKDxf.Infra
                         formContent.Add(new StringContent(usuario), "Usuario");
                         formContent.Add(new StringContent(padrao), "Padrao");
 
-                        client.PostAsync(url, formContent).Wait();
+                        // Fix: Remove assignment to a variable since PostAsync().Wait() returns void
+                      var response = await client.PostAsync(url, formContent);
+                      if(response.IsSuccessStatusCode)
+                        {
+                            var content = await response.Content.ReadAsStringAsync();
+                            respostas = JsonConvert.DeserializeObject<CommandResult>(content); // Fix: Use JsonConvert.DeserializeObject
+                        }
+                        else
+                        {
+                            respostas = new CommandResult
+                            {
+                                Success = false,
+                                Message = $"Erro ao processar o arquivo: {response.StatusCode}",
+                                Notifications = new List<Notification>()
+                            };
+                        }
+                        return respostas;
                     }
                 }
             }
             catch (Exception ex)
             {
-                respostas.Aprovado = false;
-                respostas.Respostas.Add(softwareOrigem, "Não processada.");
+                respostas = new CommandResult
+                {
+                    Success = false,
+                    Message = $"Não processado",
+                    Notifications = new List<Notification>()
+                };
             }
+
+            return respostas;
         }
 
-        public List<ArquivoDTO> ListaProcessadosAsync(string usuario, string padrao)
+        public List<string> ListaProcessadosAsync(string usuario, string padrao)
         {
             var url = $"{_uri}/GetListaProcessados?Usuario={usuario}";
             try
@@ -56,7 +80,7 @@ namespace TNKDxf.Infra
                 if (response.IsSuccessStatusCode)
                 {
                     var content = response.Content.ReadAsStringAsync().Result;
-                    var listaProcessados = JsonConvert.DeserializeObject<List<ArquivoDTO>>(content); // Fix: Use JsonConvert.DeserializeObject
+                    var listaProcessados = JsonConvert.DeserializeObject<List<string>>(content); // Fix: Use JsonConvert.DeserializeObject
                     return listaProcessados;
                 }
                 else
@@ -69,15 +93,11 @@ namespace TNKDxf.Infra
                 throw;
             }
 
-            return new List<ArquivoDTO>();
+            return new List<string>();
         }
     }
 
 
 
-    public class ResultConvertDxf
-    {
-        public bool Aprovado { get; set; }
-        public Dictionary<string, string> Respostas { get; set; }
-    }
+   
 }

@@ -1,97 +1,89 @@
-﻿using Dynamic.Tekla.Structures;
-using Dynamic.Tekla.Structures.Model.Operations;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using TSD = Dynamic.Tekla.Structures.Drawing;
-using TSM = Dynamic.Tekla.Structures.Model;
+using System.Threading.Tasks;
+using TNKDxf.ViewModel.Abstracoes;
 
 namespace TNKDxf.Handles
 {
     public class HandleCriacaoDxfs
     {
-        public List<string> CriarDxfs()
+        
+        private readonly IExtratorDXFs _extrator;
+        private readonly AvaliadorDesenhos _avaliadorDesenhos;
+
+        public static HandleCriacaoDxfs _instancia;
+
+        private HandleCriacaoDxfs(IExtratorDXFs extrator, AvaliadorDesenhos avaliadorDesenhos) //string projeto, string username, string exportPath)
         {
-            var desenhos = new List<string>();
-
-            var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder(); 
-
-            var versao = appFolder.Split('\\').Last(); 
-
-            TSD.DrawingHandler _dh = new TSD.DrawingHandler();
-
-            TSM.Model model = new TSM.Model();
-            string modelPath = model.GetInfo().ModelPath;
-
-            string ApplicationName = "Dwg.exe";
-
-            string TSBinaryDir = "";
-            TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
-
-            string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
-
-            string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
-
-            var dg = _dh.GetDrawingSelector().GetSelected();
-
-            int count = 0;
-            while (dg.MoveNext())
-            {
-                var drawing = dg.Current;
-
-                if (drawing == null)
-                    break;
-
-                var tipo = drawing.GetType();
-
-                if (tipo == typeof(TSD.SinglePartDrawing))
-                {
-                    var spd = drawing as TSD.SinglePartDrawing;
-
-                    var marca = spd.Mark.Replace("[", "").Replace("]", "");
-                    spd.SetUserProperty("TCNM_N_KOCH", marca);
-                    desenhos.Add(marca);
-                }
-
-                if (tipo == typeof(TSD.AssemblyDrawing))
-                {
-                    var assd = drawing as TSD.AssemblyDrawing;
-
-                    var marca = assd.Mark.Replace("[", "").Replace("]", "");
-                    assd.SetUserProperty("TCNM_N_KOCH", marca);
-
-                    desenhos.Add(marca);
-
-                }
-
-                if (tipo == typeof(TSD.GADrawing))
-                {
-                    var gad = drawing as TSD.GADrawing;
-
-                    var marca = gad.Title1;
-                    desenhos.Add(marca);
-
-                }
-
-                if (tipo == typeof(TSD.MultiDrawing))
-                {
-                    var multid = drawing as TSD.MultiDrawing;
-
-                    var marca = multid.Title1;
-                    multid.SetUserProperty("TCNM_N_KOCH", marca);
-                    desenhos.Add(marca);
-                }
-
-            }
-
-            if (versao == "2024.0")
-            {
-                Operation.RunMacro(@"C:\ProgramData\Trimble\Tekla Structures\2024.0\Environments\common\macros\modeling\ExportaDxf.cs"); ;
-            }
-
-            return desenhos;
+            _extrator = extrator;   
+            _avaliadorDesenhos = avaliadorDesenhos;
+            //_model = new TSM.Model();
         }
 
-       
+        public static HandleCriacaoDxfs Instancia
+        {
+            get
+            {
+                if (_instancia == null)
+                {
+                    throw new System.Exception("Instância não criada. Use CriarManipulapor para inicializar.");
+                }
+                return _instancia;
+            }
+        }
+
+        public static void CriarManipulapor(IExtratorDXFs extrator, AvaliadorDesenhos avaliadorDesenhos)
+        {
+            _instancia = new HandleCriacaoDxfs(extrator, avaliadorDesenhos);
+        }
+
+        public async Task Manipular()
+        {
+            if (!_extrator.ForamExtraidos)
+            {
+                _extrator.Extrair();
+                foreach (string desenho in _extrator.Extraidos)
+                {
+                    await _avaliadorDesenhos.Avaliar(desenho);
+
+                }
+
+            }
+        }
+
+        public async Task Manipular(string nome)
+        {
+            if (!_extrator.ForamExtraidos)
+            {
+                _extrator.Extrair();
+                foreach (string desenho in _extrator.Extraidos)
+                {
+                    await _avaliadorDesenhos.Avaliar(desenho);
+
+                }
+
+            }
+        }
+
+
+        public IEnumerable<string> ObterExtraidos()
+        {
+            return _extrator.Extraidos;
+        }
+
+        //public List<CommandResult> ObterResultados()
+        //{
+        //   return _avaliadorDesenhos.ObterResultados();
+        //}
+
+        public bool VerificarSePossuiErro(string desenho)
+        {
+            return _avaliadorDesenhos.VerificarSePossuiErro(desenho); 
+        }
+
+        public CommandResult ObterResult(string nome)
+        {
+            return _avaliadorDesenhos.ObterResult(nome);
+        }
     }
 }

@@ -1,37 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using TNKDxf.Dominio.ObjetosValor;
-using TNKDxf.Infra;
-using TNKDxf.Infra.Dtos;
-using TNKDxf.ViewModel;
+using TNKDxf.Handles;
 
 namespace TNKDxf.Dominio.Dwgs
 {
     public class ArquivoDwg
     {
         private string _projeto;
-        //private string _nomeCompleto;
-        private string _nome;
-        private List<CampoErroWpf> _erros = new List<CampoErroWpf>();
-        public ArquivoDwg(ArquivoDTO arquivoDTO, string projeto)
+
+        private string _commandResult;// = new CommandResult();
+        public ArquivoDwg(string commandResult, string projeto)
         {
-            //_nomeCompleto = arquivoDTO.Nome;
-            _nome = arquivoDTO.Nome;//nomeCompleto.Split('\\').Last();
+
             _projeto = projeto;
-            _erros = arquivoDTO.Erros ?? new List<CampoErroWpf>();  
+            _commandResult = commandResult;
+
         }
 
-        public string Nome { get => _nome; private set => _nome = value; }
+        public string Nome { get => _commandResult; private set => _commandResult = value; }
 
         public bool TemErro()
         {
-            return _erros.Count > 0;
+            return HandleCriacaoDxfs.Instancia.VerificarSePossuiErro(_commandResult);
         }
 
         public void Enviar(string userName)
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

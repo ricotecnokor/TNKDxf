@@ -43,6 +43,7 @@ namespace TNKDxf.ViewModel
 
     public class ArquivoItem
     {
+        
         public string Nome { get; set; }
         public bool Errado { get; set; }
         public bool Aberto { get; set; } // Para controlar se está aberto ou não
