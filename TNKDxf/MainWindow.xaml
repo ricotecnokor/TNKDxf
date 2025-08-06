@@ -60,17 +60,8 @@
 
         </Grid>
         <!-- TabControl para exibir os arquivos abertos -->
-        <TabControl ItemsSource="{Binding Tabs}" Grid.Column="1" Margin="5">
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Header}"/>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
-            <TabControl.ContentTemplate>
-                <DataTemplate>
-                    <ContentPresenter Content="{Binding Content}"/>
-                </DataTemplate>
-            </TabControl.ContentTemplate>
-        </TabControl>
+        <ContentControl Grid.Column="1"
+                    Content="{Binding ConteudoSelecionado}"
+                    Margin="5" />
     </Grid>
 </Window>

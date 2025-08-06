@@ -23,6 +23,8 @@ namespace TNKDxf
         private string _userName;
         protected Formato _formato;
         private List<CommandResult> _resultados;
+        private ArquivoItem _arquivoSelecionado;
+        private object _conteudoSelecionado;    
 
         public string Resultado
         {
@@ -30,15 +32,27 @@ namespace TNKDxf
             set { _resultado = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Resultado))); }
         }
 
+      
 
+        
+
+        public object ConteudoSelecionado
+        {
+            get => _conteudoSelecionado;
+            set
+            {
+                _conteudoSelecionado = value;
+                OnPropertyChanged(nameof(ConteudoSelecionado));
+            }
+        }
 
         private ColecaoDwgs _colecaoDwgs;
         private ListViewDwgs _listViewDwgs;
 
 
         public ObservableCollection<ArquivoItem> Arquivos { get; set; } = new ObservableCollection<ArquivoItem>();
-        public ObservableCollection<AbaModel> Tabs { get; } = new ObservableCollection<AbaModel>();
-
+        public ObservableCollection<TabViewModel> Tabs { get; } = new ObservableCollection<TabViewModel>();
+        public TabViewModel SelectedTab { get; set; }
         public ICommand ToggleAbrirCommand { get; set; }
         public ICommand EnviarCorretosCommand { get; set; }
 
@@ -101,50 +115,44 @@ namespace TNKDxf
         {
 
 
-            var texto = new StringBuilder();
+            if (arquivo == null)
+                return;
 
-            CommandResult resultadoApi = HandleCriacaoDxfs.Instancia.ObterResult(arquivo.Nome);
+            var resultadoApi = HandleCriacaoDxfs.Instancia.ObterResult(arquivo.Nome);
 
-            texto.AppendLine($"🟢 Sucesso: {resultadoApi.Success}");
-            texto.AppendLine($"📄 Mensagem: {resultadoApi.Message}");
+            var sb = new StringBuilder();
 
             if (!string.IsNullOrWhiteSpace(resultadoApi.Resultado))
             {
-                texto.AppendLine("\n📦 Resultado:");
-                texto.AppendLine(resultadoApi.Resultado);
+                sb.AppendLine("📦 Arquivo:");
+                sb.AppendLine(resultadoApi.Resultado);
             }
+
+
+            sb.AppendLine($"\n🟢 Sucesso: {resultadoApi.Success}");
+            sb.AppendLine($"📄 Mensagem: {resultadoApi.Message}");
+
+           
 
             if (resultadoApi.Notifications != null && resultadoApi.Notifications.Count > 0)
             {
-                texto.AppendLine("\n⚠️ Notificações:");
+                sb.AppendLine("\n⚠️ Notificações:");
                 foreach (var n in resultadoApi.Notifications)
                 {
-                    texto.AppendLine($" - [{n.Key}] {n.Message}");
+                    sb.AppendLine($" - [{n.Key}] {n.Message}");
                 }
             }
 
-            var textBlock = new TextBlock
-            {
-                Text = texto.ToString(),
-                Margin = new Thickness(10),
-                TextWrapping = TextWrapping.Wrap
-            };
-
-            var scrollViewer = new ScrollViewer
+            ConteudoSelecionado = new ScrollViewer
             {
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                Content = textBlock
+                Content = new TextBlock
+                {
+                    Text = sb.ToString(),
+                    TextWrapping = TextWrapping.Wrap,
+                    Margin = new Thickness(10)
+                }
             };
-
-            var tab = new AbaModel
-            {
-                Header = arquivo.Nome,
-                Content = scrollViewer
-            };
-
-            Tabs.Add(tab);
-
-            arquivo.Aberto = !arquivo.Aberto;
         }
 
     }

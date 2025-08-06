@@ -129,7 +129,7 @@
     <Compile Include="TestesViabilidade\TesteA.cs" />
     <Compile Include="ViewModel\ListViewDwgs.cs" />
     <Compile Include="ViewModel\ListViewDxfs.cs" />
-    <Compile Include="ViewModel\AbaModel.cs" />
+    <Compile Include="ViewModel\TabViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
