@@ -7,5 +7,7 @@ namespace TNKDxf.ViewModel.Abstracoes
         void Extrair();
         bool ForamExtraidos { get; }
         IEnumerable<string> Extraidos { get; }
+
+        string Xsplot { get; }
     }
 }

@@ -13,9 +13,9 @@ namespace TNKDxf.Handles
     {
         List<string> _desenhos;
         bool _foramExtraidos = false;
-        
-      
-        
+        string _xsplot = "";
+
+
 
         public ExtratorDXFs()
         {
@@ -26,6 +26,8 @@ namespace TNKDxf.Handles
         public bool ForamExtraidos { get => _foramExtraidos; private set => _foramExtraidos = value; }
         public IEnumerable<object> Desenhos { get; internal set; }
         public IEnumerable<string> Extraidos => _desenhos;
+
+        public string Xsplot { get => _xsplot; private set => _xsplot = value; }
 
         public void Extrair()
         {
@@ -49,6 +51,9 @@ namespace TNKDxf.Handles
             string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
 
             var dg = _dh.GetDrawingSelector().GetSelected();
+
+            
+            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref _xsplot);
 
             int count = 0;
             while (dg.MoveNext())

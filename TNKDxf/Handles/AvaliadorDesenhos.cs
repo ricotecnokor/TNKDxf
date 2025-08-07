@@ -44,6 +44,11 @@ namespace TNKDxf.Handles
 
         }
 
+        public async Task Download(string fileName, string diretorioSalvar)
+        {
+            await _servicoEnvioDesenhos.DownloadFile(_userName, _projeto, "Tekla Structures", fileName, diretorioSalvar);
+        }
+
         //public List<CommandResult> ObterResultados()
         //{
         //    return _resultados; 

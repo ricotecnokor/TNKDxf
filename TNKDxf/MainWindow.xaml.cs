@@ -34,6 +34,7 @@ namespace TNKDxf
             HandleCriacaoDxfs.CriarManipulapor(extrator, avaliador);
 
             InitializeComponent();
+           
             Loaded += MainWindow_Loaded;
 
            

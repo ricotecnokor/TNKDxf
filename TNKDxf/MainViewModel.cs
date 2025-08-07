@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,19 +20,13 @@ namespace TNKDxf
         private string _projeto;
         private string _userName;
         protected Formato _formato;
-        private List<CommandResult> _resultados;
-        private ArquivoItem _arquivoSelecionado;
         private object _conteudoSelecionado;    
-
+        public bool _processado = false;
         public string Resultado
         {
             get => _resultado;
             set { _resultado = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Resultado))); }
         }
-
-      
-
-        
 
         public object ConteudoSelecionado
         {
@@ -48,7 +40,7 @@ namespace TNKDxf
 
         private ColecaoDwgs _colecaoDwgs;
         private ListViewDwgs _listViewDwgs;
-
+        private string _arquivoSelecionado;  
 
         public ObservableCollection<ArquivoItem> Arquivos { get; set; } = new ObservableCollection<ArquivoItem>();
         public ObservableCollection<TabViewModel> Tabs { get; } = new ObservableCollection<TabViewModel>();
@@ -56,11 +48,23 @@ namespace TNKDxf
         public ICommand ToggleAbrirCommand { get; set; }
         public ICommand EnviarCorretosCommand { get; set; }
 
-
+        //private Visibility _coluna0Visibilidade = Visibility.Collapsed;
+        //public Visibility Coluna0Visibilidade
+        //{
+        //    get => _coluna0Visibilidade;
+        //    set
+        //    {
+        //        _coluna0Visibilidade = value;
+        //        OnPropertyChanged(nameof(Coluna0Visibilidade));
+        //    }
+        //}
 
         public MainViewModel()
         {
-            
+            //Coluna0Visibilidade = Visibility.Collapsed;
+
+
+
             var extraidos = HandleCriacaoDxfs.Instancia.ObterExtraidos();
 
 
@@ -76,39 +80,31 @@ namespace TNKDxf
             EnviarCorretosCommand = new RelayCommand(EnviarArquivosCorretos);
 
             _ = InitializeAsync();
-
+           /*Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                await InitializeAsync();
+            });*/
         }
+
+      
 
 
         private async Task InitializeAsync()
         {
+            //Coluna0Visibilidade = Visibility.Collapsed; // Oculta antes de iniciar
+            
             await HandleCriacaoDxfs.Instancia.Manipular();
+
+            /*if (HandleCriacaoDxfs.Instancia.ContadorProcessados == 0)
+            {
+                Coluna0Visibilidade = Visibility.Visible;
+            }*/
+            //  // Exibe após finalizar
         }
 
-        private void EnviarArquivosCorretos()
+        private async void EnviarArquivosCorretos()
         {
-            var arquivosCorretos = Arquivos.Where(a => !a.Errado).ToList();
-
-            if (!arquivosCorretos.Any())
-            {
-                MessageBox.Show("Nenhum arquivo correto para enviar.");
-                return;
-            }
-
-            var result = MessageBox.Show($"Deseja enviar {arquivosCorretos.Count} arquivo(s)?",
-                                       "Confirmar envio",
-                                       MessageBoxButton.YesNo);
-
-
-            if (result == MessageBoxResult.Yes)
-            {
-
-                foreach (var certo in arquivosCorretos)
-                {
-                    ArquivoDwg arquivoDwg = _colecaoDwgs.ObterArquivoDwg(certo.Nome);
-                    arquivoDwg.Enviar(_userName);
-                }
-            }
+            await HandleCriacaoDxfs.Instancia.Download(_arquivoSelecionado);
         }
 
         private void ToggleAbrirArquivo(ArquivoItem arquivo)
@@ -117,6 +113,8 @@ namespace TNKDxf
 
             if (arquivo == null)
                 return;
+
+            _arquivoSelecionado = arquivo.Nome;
 
             var resultadoApi = HandleCriacaoDxfs.Instancia.ObterResult(arquivo.Nome);
 
@@ -154,6 +152,8 @@ namespace TNKDxf
                 }
             };
         }
+
+
 
     }
 }

@@ -10,7 +10,7 @@ namespace TNKDxf.Handles
         bool _foramExtraidos = false;
 
 
-
+        public string Xsplot => @"C:\MockPastaPlotagem";
 
         public MockExtratorDXFs()
         {
@@ -27,7 +27,9 @@ namespace TNKDxf.Handles
 
             _desenhos = new List<string>
             {
-                "PRJ00200-D-00000 rev0.dxf"
+                "PRJ00200-D-00000 rev0.dxf",
+                "PRJ00200-D-00000 rev1.dxf",
+                "PRJ00200-D-00022 rev0.dxf"
             };
 
             _foramExtraidos = true;

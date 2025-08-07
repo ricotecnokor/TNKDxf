@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TNKDxf.ViewModel.Abstracoes;
 
@@ -10,7 +11,7 @@ namespace TNKDxf.Handles
         
         private readonly IExtratorDXFs _extrator;
         private readonly AvaliadorDesenhos _avaliadorDesenhos;
-
+        private int _contadorProcessados = 1;
         public static HandleCriacaoDxfs _instancia;
 
         private HandleCriacaoDxfs(IExtratorDXFs extrator, AvaliadorDesenhos avaliadorDesenhos) //string projeto, string username, string exportPath)
@@ -32,6 +33,8 @@ namespace TNKDxf.Handles
             }
         }
 
+        public int ContadorProcessados { get => _contadorProcessados; private set => _contadorProcessados = value; }
+
         public static void CriarManipulapor(IExtratorDXFs extrator, AvaliadorDesenhos avaliadorDesenhos)
         {
             _instancia = new HandleCriacaoDxfs(extrator, avaliadorDesenhos);
@@ -39,16 +42,25 @@ namespace TNKDxf.Handles
 
         public async Task Manipular()
         {
+            
             if (!_extrator.ForamExtraidos)
             {
                 _extrator.Extrair();
+
+                _contadorProcessados = _extrator.Extraidos.ToList().Count();
+
                 foreach (string desenho in _extrator.Extraidos)
                 {
                     await _avaliadorDesenhos.Avaliar(desenho);
-
+                    _contadorProcessados--;
                 }
 
             }
+        }
+
+        public async Task Download(string arquivo)
+        {
+           await _avaliadorDesenhos.Download(arquivo, _extrator.Xsplot + @"\Download");
         }
 
         public async Task Manipular(string nome)

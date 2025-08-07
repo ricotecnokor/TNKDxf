@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:TNKDxf" 
       xmlns:local1="clr-namespace:TNKDxf.ViewModel"
        mc:Ignorable="d"
-      Title="FLUXO DO DESENHO" Height="450" Width="1400">
+      Title="FLUXO DO DESENHO" Height="450" Width="900">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -16,7 +16,7 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="0" Visibility="{Binding Coluna0Visibilidade}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -27,7 +27,7 @@
                  Grid.Column="0" Margin="5">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nome do Arquivo" Binding="{Binding Nome}" Width="200"/>
-                    <DataGridTemplateColumn Header="Ação" Width="100">
+                    <DataGridTemplateColumn x:Name="colunaAcao" Header="Ação" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="{Binding Aberto, Converter={local:BoolToAbrirFecharConverter}}" 
@@ -52,7 +52,7 @@
             </DataGrid>
 
             <!-- Botão para enviar arquivos corretos -->
-            <Button Content="Enviar Arquivos Corretos" 
+            <Button Content="Download do arquivo selecionado" 
                 Command="{Binding EnviarCorretosCommand}"
                 Grid.Row="1" Margin="5" Padding="10,5"
                 HorizontalAlignment="Stretch"/>

@@ -15,7 +15,7 @@ namespace TNKDxf.Infra
         public void Iniciar()
         {
             _exportPath = @"C:\TesteDxf\semprocessar";
-            _userName = "usuario_teste";
+            _userName = "ricardopinto";
             _projeto = "PRJ00200";
         }
     }

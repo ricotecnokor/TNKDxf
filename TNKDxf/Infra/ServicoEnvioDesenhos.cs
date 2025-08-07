@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Threading.Tasks;
+using System.Windows;
 using TNKDxf.Handles;
 using TNKDxf.Infra.Dtos;
 
@@ -68,6 +70,8 @@ namespace TNKDxf.Infra
             return respostas;
         }
 
+
+
         public List<string> ListaProcessadosAsync(string usuario, string padrao)
         {
             var url = $"{_uri}/GetListaProcessados?Usuario={usuario}";
@@ -94,6 +98,36 @@ namespace TNKDxf.Infra
             }
 
             return new List<string>();
+        }
+
+        public async Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName, string diretorioSalvamento)
+        {
+            //var fileURL = $"{_uri}/GetDownloadDxf/{usuario}/{padrao}/{aplicativo}/{fileName}";
+
+            var fileURL = $"{_uri}/GetDownloadDxf?Usuario={usuario}&Arquivo={fileName}";
+            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+            var filePath = Path.Combine(diretorioSalvamento, fileName);
+            HttpClient httpClient = new HttpClient();
+
+            var response = await httpClient.GetAsync(fileURL);
+
+            if (!Directory.Exists(diretorioSalvamento))
+            {
+                Directory.CreateDirectory(diretorioSalvamento);
+            }
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+                
+
+            using (var fs = new FileStream(filePath, FileMode.CreateNew))
+            {
+                await response.Content.CopyToAsync(fs);
+                MessageBox.Show($"Arquivo {fileName} salvo em {diretorioSalvamento}", "Download Concluído", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
     }
 
