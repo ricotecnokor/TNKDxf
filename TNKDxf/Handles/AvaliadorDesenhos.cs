@@ -12,7 +12,6 @@ namespace TNKDxf.Handles
     {
 
         IServicoEnvioDesenhos _servicoEnvioDesenhos;
-        //FileInfo[] _arquivosProcessar = null;
         private List<CommandResult> _resultados;
         protected string _userName;
         protected string _projeto;
@@ -31,13 +30,11 @@ namespace TNKDxf.Handles
         {
             DirectoryInfo diretorioRecebidos = new DirectoryInfo(_exportPath);
             FileInfo[] _arquivosProcessar = diretorioRecebidos.GetFiles("*.dxf");
-            //var arquivo = Path.Combine(_exportPath, desenho + ".dxf");
             var arquivo = _arquivosProcessar.FirstOrDefault(a => a.Name.Contains(desenho));
             var resp = await _servicoEnvioDesenhos.UploadAsync(arquivo.FullName, "Tekla Structures", _userName, _projeto);
            
             if (resp != null)
             {
-                //_resultados.Add(resp);
                 return resp;
             }
 
@@ -56,11 +53,7 @@ namespace TNKDxf.Handles
             await _servicoEnvioDesenhos.DownloadFile(_userName, _projeto, "Tekla Structures", fileName, diretorioSalvar);
         }
 
-        //public List<CommandResult> ObterResultados()
-        //{
-        //    return _resultados; 
-        //}
-
+      
         public bool VerificarSePossuiErro(string desenho)
         {
           return  _resultados.All(r => r.Resultado != desenho || r.Success == false);

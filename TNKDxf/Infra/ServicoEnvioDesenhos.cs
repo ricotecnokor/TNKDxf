@@ -3,11 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using TNKDxf.Handles;
-using TNKDxf.Infra.Dtos;
 
 namespace TNKDxf.Infra
 {
@@ -102,8 +100,7 @@ namespace TNKDxf.Infra
 
         public async Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName, string diretorioSalvamento)
         {
-            //var fileURL = $"{_uri}/GetDownloadDxf/{usuario}/{padrao}/{aplicativo}/{fileName}";
-
+ 
             var fileURL = $"{_uri}/GetDownloadDxf?Usuario={usuario}&Arquivo={fileName}";
             string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
             var filePath = Path.Combine(diretorioSalvamento, fileName);
