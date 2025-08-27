@@ -104,7 +104,6 @@ namespace TNKDxf
 
         private async void ToggleAbrirArquivo(ArquivoItem arquivo)
         {
-
            int indice = _listViewDwgs.ObterIndice(arquivo);
 
      
@@ -124,11 +123,7 @@ namespace TNKDxf
                resultadoApi = await _avaliadorDesenhos.Avaliar(arquivo.Nome);
                 _avaliadorDesenhos.IncluirResultado(resultadoApi);
             }
-            
-
            
-
-
             if (arquivo == null)
                 return;
 

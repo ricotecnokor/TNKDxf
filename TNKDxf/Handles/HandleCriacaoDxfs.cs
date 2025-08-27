@@ -13,6 +13,7 @@ namespace TNKDxf.Handles
         private int _contadorProcessados = 1;
         public static HandleCriacaoDxfs _instancia;
 
+
         private HandleCriacaoDxfs(IExtratorDXFs extrator, AvaliadorDesenhos avaliadorDesenhos) 
         {
             _extrator = extrator;   
