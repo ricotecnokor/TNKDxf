@@ -150,8 +150,7 @@ namespace TNKDxf
 
         private async void ToggleAbrirArquivo(ArquivoItem arquivo)
         {
-            //await HandleCriacaoDxfs.Instancia.Manipular(arquivo.Nome);
-
+           
            int indice = _listViewDwgs.ObterIndice(arquivo);
 
      

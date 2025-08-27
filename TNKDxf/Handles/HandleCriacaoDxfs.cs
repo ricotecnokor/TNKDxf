@@ -18,7 +18,6 @@ namespace TNKDxf.Handles
         {
             _extrator = extrator;   
             _avaliadorDesenhos = avaliadorDesenhos;
-            //_model = new TSM.Model();
         }
 
         public int Aprocessar => _extrator.Extraidos.ToList().Count();
