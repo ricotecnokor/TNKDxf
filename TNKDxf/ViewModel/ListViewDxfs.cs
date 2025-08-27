@@ -45,6 +45,7 @@ namespace TNKDxf.ViewModel
     {
         
         public string Nome { get; set; }
+        public bool Selecionado { get; set; }
         public bool Errado { get; set; }
         public bool Aberto { get; set; } // Para controlar se está aberto ou não
         public bool Enviado { get; set; }

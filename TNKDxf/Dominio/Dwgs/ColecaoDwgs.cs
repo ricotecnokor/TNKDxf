@@ -56,5 +56,10 @@ namespace TNKDxf.Dominio.Dwgs
                 .Select(x => new ArquivoItem { Nome = x.Nome, Errado = x.TemErro() })
                 .ToList();
         }
+
+        public int ObterIndice(string nome)
+        {
+            return _dwgs.FindIndex(x => x.Nome == nome);
+        }
     }
 }

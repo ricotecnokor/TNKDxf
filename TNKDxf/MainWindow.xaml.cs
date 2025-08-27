@@ -19,19 +19,8 @@ namespace TNKDxf
         public MainWindow()
         {
 
-            //TODO: Tirar o mock quando for para produção
-            //var teklaHandler = new TeklaHandler();
-            //var extrator = new ExtratorDXFs();
-            var teklaHandler = new MockTeklaHandler();
-            var extrator = new MockExtratorDXFs();
 
-
-            teklaHandler.Iniciar();
-            //extrator.Extrair();
-            var avaliador = new AvaliadorDesenhos(teklaHandler.ExportPath, teklaHandler.Projeto, teklaHandler.UserName);
-            
-
-            HandleCriacaoDxfs.CriarManipulapor(extrator, avaliador);
+           
 
             InitializeComponent();
            

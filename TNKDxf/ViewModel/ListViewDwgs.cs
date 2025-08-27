@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using TNKDxf.Dominio.Dwgs;
 
 namespace TNKDxf.ViewModel
@@ -29,6 +30,11 @@ namespace TNKDxf.ViewModel
                 lista.Add(arquivo);
             }
             return lista;
+        }
+
+        public int ObterIndice(ArquivoItem arquivo)
+        {
+            return _colecaoDwgs.ObterIndice(arquivo.Nome);
         }
     }
 }

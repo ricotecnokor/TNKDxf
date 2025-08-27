@@ -27,7 +27,7 @@ namespace TNKDxf.Handles
             _servicoEnvioDesenhos = new ServicoEnvioDesenhos(new CfgEngAPI());
         }
 
-        public async Task Avaliar(string desenho)
+        public async Task<CommandResult> Avaliar(string desenho)
         {
             DirectoryInfo diretorioRecebidos = new DirectoryInfo(_exportPath);
             FileInfo[] _arquivosProcessar = diretorioRecebidos.GetFiles("*.dxf");
@@ -37,10 +37,17 @@ namespace TNKDxf.Handles
            
             if (resp != null)
             {
-                _resultados.Add(resp);
+                //_resultados.Add(resp);
+                return resp;
             }
 
-
+            return new CommandResult
+            {
+                Success = false,
+                Message = "Erro ao processar o arquivo API não encontrada.",
+                Resultado = desenho,
+                Notifications = new List<Notification>()
+            };
 
         }
 
@@ -63,5 +70,11 @@ namespace TNKDxf.Handles
         {
             return _resultados.FirstOrDefault(r => r.Resultado == nome);
         }
+
+        public void IncluirResultado(CommandResult resultado)
+        {
+            _resultados.Add(resultado);
+        }   
+
     }
 }

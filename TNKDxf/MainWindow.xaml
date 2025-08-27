@@ -16,7 +16,7 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Visibility="{Binding Coluna0Visibilidade}">
+        <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -42,7 +42,7 @@
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Errado}" Value="True">
+                            <DataTrigger Binding="{Binding Selecionado}" Value="True">
                                 <Setter Property="Background" Value="LightPink"/>
                                 <Setter Property="Foreground" Value="DarkRed"/>
                             </DataTrigger>

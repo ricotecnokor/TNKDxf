@@ -21,6 +21,8 @@ namespace TNKDxf.Handles
             //_model = new TSM.Model();
         }
 
+        public int Aprocessar => _extrator.Extraidos.ToList().Count();
+
         public static HandleCriacaoDxfs Instancia
         {
             get
@@ -37,45 +39,37 @@ namespace TNKDxf.Handles
 
         public static void CriarManipulapor(IExtratorDXFs extrator, AvaliadorDesenhos avaliadorDesenhos)
         {
-            _instancia = new HandleCriacaoDxfs(extrator, avaliadorDesenhos);
-        }
-
-        public async Task Manipular()
-        {
-            
-            if (!_extrator.ForamExtraidos)
+            if (_instancia == null)
             {
-                _extrator.Extrair();
-
-                _contadorProcessados = _extrator.Extraidos.ToList().Count();
-
-                foreach (string desenho in _extrator.Extraidos)
-                {
-                    await _avaliadorDesenhos.Avaliar(desenho);
-                    _contadorProcessados--;
-                }
-
+                 _instancia = new HandleCriacaoDxfs(extrator, avaliadorDesenhos);
             }
+               
         }
+
+        //public async Task Manipular()
+        //{
+            
+        //    if (!_extrator.ForamExtraidos)
+        //    {
+        //        _extrator.Extrair();
+
+                
+
+        //        foreach (string desenho in _extrator.Extraidos)
+        //        {
+        //            await _avaliadorDesenhos.Avaliar(desenho);
+        //            _contadorProcessados++;
+        //        }
+
+        //    }
+        //}
 
         public async Task Download(string arquivo)
         {
            await _avaliadorDesenhos.Download(arquivo, _extrator.Xsplot + @"\Download");
         }
 
-        public async Task Manipular(string nome)
-        {
-            if (!_extrator.ForamExtraidos)
-            {
-                _extrator.Extrair();
-                foreach (string desenho in _extrator.Extraidos)
-                {
-                    await _avaliadorDesenhos.Avaliar(desenho);
-
-                }
-
-            }
-        }
+        
 
 
         public IEnumerable<string> ObterExtraidos()
@@ -96,6 +90,12 @@ namespace TNKDxf.Handles
         public CommandResult ObterResult(string nome)
         {
             return _avaliadorDesenhos.ObterResult(nome);
+        }
+
+        public bool NaoProcessou()
+        {
+            var aProcessar = _extrator.Extraidos.ToList().Count();
+            return _contadorProcessados < aProcessar;
         }
     }
 }

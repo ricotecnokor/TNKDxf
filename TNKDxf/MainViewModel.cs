@@ -8,6 +8,7 @@ using System.Windows.Input;
 using TNKDxf.Dominio.Dwgs;
 using TNKDxf.Dominio.Entidades;
 using TNKDxf.Handles;
+using TNKDxf.Infra;
 using TNKDxf.ViewModel;
 
 
@@ -20,8 +21,9 @@ namespace TNKDxf
         private string _projeto;
         private string _userName;
         protected Formato _formato;
-        private object _conteudoSelecionado;    
+        private object _conteudoSelecionado;
         public bool _processado = false;
+        AvaliadorDesenhos _avaliadorDesenhos;
         public string Resultado
         {
             get => _resultado;
@@ -40,11 +42,11 @@ namespace TNKDxf
 
         private ColecaoDwgs _colecaoDwgs;
         private ListViewDwgs _listViewDwgs;
-        private string _arquivoSelecionado;  
+        private string _arquivoSelecionado;
 
         public ObservableCollection<ArquivoItem> Arquivos { get; set; } = new ObservableCollection<ArquivoItem>();
-        public ObservableCollection<TabViewModel> Tabs { get; } = new ObservableCollection<TabViewModel>();
-        public TabViewModel SelectedTab { get; set; }
+        //public ObservableCollection<TabViewModel> Tabs { get; } = new ObservableCollection<TabViewModel>();
+        //public TabViewModel SelectedTab { get; set; }
         public ICommand ToggleAbrirCommand { get; set; }
         public ICommand EnviarCorretosCommand { get; set; }
 
@@ -61,14 +63,35 @@ namespace TNKDxf
 
         public MainViewModel()
         {
+
+            
+
             //Coluna0Visibilidade = Visibility.Collapsed;
 
+            //var teklaHandler = new MockTeklaHandler();
+            var teklaHandler = new TeklaHandler();
 
 
-            var extraidos = HandleCriacaoDxfs.Instancia.ObterExtraidos();
+            //var extrator = new MockExtratorDXFs();
+            var extrator = new ExtratorDXFs();
 
 
-            _colecaoDwgs = new ColecaoDwgs(extraidos, _projeto);
+            if (!extrator.ForamExtraidos)
+            {
+                extrator.Extrair();
+            }
+
+            teklaHandler.Iniciar();
+            //extrator.Extrair();
+            _avaliadorDesenhos = new AvaliadorDesenhos(teklaHandler.ExportPath, teklaHandler.Projeto, teklaHandler.UserName);
+
+
+            HandleCriacaoDxfs.CriarManipulapor(extrator, _avaliadorDesenhos);
+
+            //var extraidos = HandleCriacaoDxfs.Instancia.ObterExtraidos();
+
+
+            _colecaoDwgs = new ColecaoDwgs(extrator.Extraidos, _projeto);
             _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
 
             if (_listViewDwgs != null)
@@ -79,36 +102,78 @@ namespace TNKDxf
             ToggleAbrirCommand = new RelayCommand<ArquivoItem>(ToggleAbrirArquivo);
             EnviarCorretosCommand = new RelayCommand(EnviarArquivosCorretos);
 
-            _ = InitializeAsync();
-           /*Application.Current.Dispatcher.InvokeAsync(async () =>
-            {
-                await InitializeAsync();
-            });*/
-        }
-
-      
 
 
-        private async Task InitializeAsync()
-        {
-            //Coluna0Visibilidade = Visibility.Collapsed; // Oculta antes de iniciar
+
+
+            //_ = InitializeAsync();
+            //Application.Current.Dispatcher.InvokeAsync(async () =>
+            // {
+            //     await InitializeAsync();
+            // });
+
             
-            await HandleCriacaoDxfs.Instancia.Manipular();
 
-            /*if (HandleCriacaoDxfs.Instancia.ContadorProcessados == 0)
-            {
-                Coluna0Visibilidade = Visibility.Visible;
-            }*/
-            //  // Exibe após finalizar
         }
+
+
+
+
+        //private async Task InitializeAsync()
+        //{
+
+        //await HandleCriacaoDxfs.Instancia.Manipular();
+
+        //    //await Task.Delay(1000 * HandleCriacaoDxfs.Instancia.Aprocessar); // Aguarda um segundo para garantir que o contador seja atualizado
+
+
+
+        //    //Coluna0Visibilidade = Visibility.Visible;
+
+        //}
 
         private async void EnviarArquivosCorretos()
         {
-            await HandleCriacaoDxfs.Instancia.Download(_arquivoSelecionado);
+            var resultadoApi = _avaliadorDesenhos.ObterResult(_arquivoSelecionado);
+
+            if (resultadoApi.Success)
+            {
+                await HandleCriacaoDxfs.Instancia.Download(_arquivoSelecionado);
+            }
+            else
+            {
+                MessageBox.Show($"Arquivo inválido para download: {resultadoApi.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+
         }
 
-        private void ToggleAbrirArquivo(ArquivoItem arquivo)
+        private async void ToggleAbrirArquivo(ArquivoItem arquivo)
         {
+            //await HandleCriacaoDxfs.Instancia.Manipular(arquivo.Nome);
+
+           int indice = _listViewDwgs.ObterIndice(arquivo);
+
+     
+            for (int i = 0; i < Arquivos.Count; i++)
+            {
+                Arquivos[i].Selecionado = false;
+                if (i == indice)
+                {
+                    Arquivos[i].Selecionado = true;
+                }
+            }
+              
+
+            var resultadoApi = _avaliadorDesenhos.ObterResult(arquivo.Nome);
+            if(resultadoApi == null)
+            {
+               resultadoApi = await _avaliadorDesenhos.Avaliar(arquivo.Nome);
+                _avaliadorDesenhos.IncluirResultado(resultadoApi);
+            }
+            
+
+           
 
 
             if (arquivo == null)
@@ -116,7 +181,7 @@ namespace TNKDxf
 
             _arquivoSelecionado = arquivo.Nome;
 
-            var resultadoApi = HandleCriacaoDxfs.Instancia.ObterResult(arquivo.Nome);
+            //var resultadoApi = HandleCriacaoDxfs.Instancia.ObterResult(arquivo.Nome);
 
             var sb = new StringBuilder();
 
@@ -130,7 +195,7 @@ namespace TNKDxf
             sb.AppendLine($"\n🟢 Sucesso: {resultadoApi.Success}");
             sb.AppendLine($"📄 Mensagem: {resultadoApi.Message}");
 
-           
+
 
             if (resultadoApi.Notifications != null && resultadoApi.Notifications.Count > 0)
             {
