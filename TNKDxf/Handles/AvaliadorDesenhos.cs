@@ -12,7 +12,6 @@ namespace TNKDxf.Handles
     {
 
         IServicoEnvioDesenhos _servicoEnvioDesenhos;
-        //FileInfo[] _arquivosProcessar = null;
         private List<CommandResult> _resultados;
         protected string _userName;
         protected string _projeto;
@@ -36,7 +35,6 @@ namespace TNKDxf.Handles
            
             if (resp != null)
             {
-                //_resultados.Add(resp);
                 return resp;
             }
 
@@ -55,11 +53,7 @@ namespace TNKDxf.Handles
             await _servicoEnvioDesenhos.DownloadFile(_userName, _projeto, "Tekla Structures", fileName, diretorioSalvar);
         }
 
-        //public List<CommandResult> ObterResultados()
-        //{
-        //    return _resultados; 
-        //}
-
+      
         public bool VerificarSePossuiErro(string desenho)
         {
           return  _resultados.All(r => r.Resultado != desenho || r.Success == false);

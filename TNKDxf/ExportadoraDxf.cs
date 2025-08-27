@@ -11,14 +11,6 @@ namespace TNKDxf
         public static void Run(string DWGFolder)
         {
 
-            //string DWGFolder = @"C:\TeklaStructuresModels\PONTE-CSN3_ricardo\PlotFiles";
-
-            //string nomePastaDesenho = DWGFolder + "\\" + nomeDesenho;   
-            //if (!Directory.Exists(nomePastaDesenho))
-            //{
-            //    Directory.CreateDirectory(nomePastaDesenho);
-            //}
-
             TSM.Operations.Operation.DisplayPrompt("Exporting DWG Files.");
 
             string TSBinaryDir = "";
@@ -31,8 +23,6 @@ namespace TNKDxf
             string ApplicationName = "Dwg.exe";
 
             string ApplicationPath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
-
-            //string dwgxportParams = @"export settingsFile=""C:\\TeklaStructuresModels\\PONTE-CSN3_ricardo\\PlotFiles\\mysettings.xml""";
 
             string dwgxportParams = "export outputDirectory=\""  + DWGFolder + "\"";
 
