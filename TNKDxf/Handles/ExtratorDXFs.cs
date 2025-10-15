@@ -3,27 +3,35 @@ using Dynamic.Tekla.Structures.Model.Operations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TNKDxf.ViewModel.Abstracoes;
 using TSD = Dynamic.Tekla.Structures.Drawing;
 using TSM = Dynamic.Tekla.Structures.Model;
 
 namespace TNKDxf.Handles
 {
-    public class ExtratorDXFs : IExtratorDXFs
+    public class ExtratorDXFs //: IExtratorDXFs
     {
         List<string> _desenhos;
         bool _foramExtraidos = false;
         string _xsplot = "";
 
+        private static ExtratorDXFs _instance;
 
-
-        public ExtratorDXFs()
+        private ExtratorDXFs()
         {
             _desenhos = new List<string>();
            
         }
 
-        public bool ForamExtraidos { get => _foramExtraidos; private set => _foramExtraidos = value; }
+        public static ExtratorDXFs GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new ExtratorDXFs();
+            }
+            return _instance;
+        }
+
+        //public bool ForamExtraidos { get => _foramExtraidos; private set => _foramExtraidos = value; }
         public IEnumerable<object> Desenhos { get; internal set; }
         public IEnumerable<string> Extraidos => _desenhos;
 
@@ -31,6 +39,8 @@ namespace TNKDxf.Handles
 
         public void Extrair()
         {
+            if (_foramExtraidos)
+                return;
 
             var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder();
 
@@ -54,6 +64,16 @@ namespace TNKDxf.Handles
 
             
             TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref _xsplot);
+
+            var caminhoArquivos = modelPath + _xsplot.Replace(".", "");
+
+            var files = Directory.GetFiles(caminhoArquivos);
+
+            foreach ( var file in files )
+            {
+                if(!file.EndsWith("Thumbs.db"))
+                File.Delete(file);
+            }
 
             int count = 0;
             while (dg.MoveNext())
@@ -107,7 +127,8 @@ namespace TNKDxf.Handles
 
             if (versao == "2024.0")
             {
-                Operation.RunMacro(@"C:\ProgramData\Trimble\Tekla Structures\2024.0\Environments\common\macros\modeling\ExportaDxf.cs"); ;
+                Operation.RunMacro(@"C:\ProgramData\Trimble\Tekla Structures\2024.0\Environments\common\macros\modeling\ExportaDxf.cs");
+                _foramExtraidos = true;
             }
 
             _foramExtraidos = true;
