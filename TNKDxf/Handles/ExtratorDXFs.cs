@@ -8,12 +8,10 @@ using TSM = Dynamic.Tekla.Structures.Model;
 
 namespace TNKDxf.Handles
 {
-    public class ExtratorDXFs //: IExtratorDXFs
+    public class ExtratorDXFs 
     {
         List<string> _desenhos;
         bool _foramExtraidos = false;
-        //string _xsplot = "";
-        //string _versao;
 
         private static ExtratorDXFs _instance;
 
@@ -31,12 +29,11 @@ namespace TNKDxf.Handles
             return _instance;
         }
 
-        //public bool ForamExtraidos { get => _foramExtraidos; private set => _foramExtraidos = value; }
+  
         public IEnumerable<object> Desenhos { get; internal set; }
         public IEnumerable<string> Extraidos => _desenhos;
 
-        //public string Xsplot { get => _xsplot; private set => _xsplot = value; }
-
+    
         public void Extrair()
         {
             if (_foramExtraidos)
@@ -51,19 +48,7 @@ namespace TNKDxf.Handles
             TSM.Model model = new TSM.Model();
             string modelPath = model.GetInfo().ModelPath;
 
-            //string ApplicationName = "Dwg.exe";
-
-            //string TSBinaryDir = "";
-            //TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
-
-            //string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
-
-            //string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
-
-         
-
-            
-
+        
             var dg = dh.GetDrawingSelector().GetSelected();
 
             string xsplot = "";
