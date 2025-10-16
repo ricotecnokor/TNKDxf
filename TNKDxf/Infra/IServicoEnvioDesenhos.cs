@@ -9,7 +9,7 @@ namespace TNKDxf.Infra
     {
         Task<CommandResult> UploadAsync(string file, string softwareOrigem, string usuario, string padrao);
 
-        Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName, string diretoroSalvar);
+        Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName);
        List<string> ListaProcessadosAsync(string usuario, string padrao);
     }
 }

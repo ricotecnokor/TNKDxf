@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Dynamic.Tekla.Structures;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using TSM = Dynamic.Tekla.Structures.Model;
 
 namespace TNKDxf.Handles
 {
@@ -46,7 +47,7 @@ namespace TNKDxf.Handles
 
         public async Task Download(string arquivo)
         {
-           await _avaliadorDesenhos.Download(arquivo, ExtratorDXFs.GetInstance().Xsplot + @"\Download");
+            await _avaliadorDesenhos.Download(arquivo);
         }
 
        

@@ -96,7 +96,7 @@ namespace TNKDxf
 
             if (resultadoApi.Success)
             {
-                await HandleCriacaoDxfs.Instancia.Download(_arquivoSelecionado);
+                await HandleCriacaoDxfs.Instancia.Download(resultadoApi.Resultado);
             }
             else
             {

@@ -12,14 +12,41 @@ namespace TNKDxf.Handles
     {
         List<string> _desenhos;
         bool _foramExtraidos = false;
-        string _xsplot = "";
+        //string _xsplot = "";
+        //string _versao;
 
         private static ExtratorDXFs _instance;
 
         private ExtratorDXFs()
         {
             _desenhos = new List<string>();
-           
+
+            //var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder();
+
+            //_versao = appFolder.Split('\\').Last();
+
+            //TSD.DrawingHandler dh = new TSD.DrawingHandler();
+
+            //TSM.Model model = new TSM.Model();
+            //string modelPath = model.GetInfo().ModelPath;
+
+            //string ApplicationName = "Dwg.exe";
+
+            //string TSBinaryDir = "";
+            //TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
+
+            //string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
+
+            //string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
+
+            //var dg = dh.GetDrawingSelector().GetSelected();
+
+            //string xsplot = "";
+            //TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+
+            //var caminhoArquivos = modelPath + xsplot.Replace(".", "");
+            //var _xsplot = modelPath + xsplot.Replace(".", "");
+
         }
 
         public static ExtratorDXFs GetInstance()
@@ -35,7 +62,7 @@ namespace TNKDxf.Handles
         public IEnumerable<object> Desenhos { get; internal set; }
         public IEnumerable<string> Extraidos => _desenhos;
 
-        public string Xsplot { get => _xsplot; private set => _xsplot = value; }
+        //public string Xsplot { get => _xsplot; private set => _xsplot = value; }
 
         public void Extrair()
         {
@@ -46,28 +73,33 @@ namespace TNKDxf.Handles
 
             var versao = appFolder.Split('\\').Last();
 
-            TSD.DrawingHandler _dh = new TSD.DrawingHandler();
+            TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
             TSM.Model model = new TSM.Model();
             string modelPath = model.GetInfo().ModelPath;
 
-            string ApplicationName = "Dwg.exe";
+            //string ApplicationName = "Dwg.exe";
 
-            string TSBinaryDir = "";
-            TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
+            //string TSBinaryDir = "";
+            //TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
 
-            string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
+            //string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
 
-            string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
+            //string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
 
-            var dg = _dh.GetDrawingSelector().GetSelected();
+         
 
             
-            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref _xsplot);
 
-            var caminhoArquivos = modelPath + _xsplot.Replace(".", "");
+            var dg = dh.GetDrawingSelector().GetSelected();
 
-            var files = Directory.GetFiles(caminhoArquivos);
+            string xsplot = "";
+            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+
+            var caminhoArquivos = modelPath + xsplot.Replace(".", "");
+            var _xsplot = modelPath + xsplot.Replace(".", "");
+
+            var files = Directory.GetFiles(_xsplot); //Directory.GetFiles(caminhoArquivos);
 
             foreach ( var file in files )
             {

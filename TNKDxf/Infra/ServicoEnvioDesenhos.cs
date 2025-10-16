@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dynamic.Tekla.Structures;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using TNKDxf.Handles;
+using TSM = Dynamic.Tekla.Structures.Model;
 
 namespace TNKDxf.Infra
 {
@@ -98,29 +100,48 @@ namespace TNKDxf.Infra
             return new List<string>();
         }
 
-        public async Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName, string diretorioSalvamento)
+        public async Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName)
         {
  
             var fileURL = $"{_uri}/GetDownloadDxf?Usuario={usuario}&Arquivo={fileName}";
             string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-            var filePath = Path.Combine(diretorioSalvamento, fileName);
+
+            string xsplot = "";
+            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+
+            TSM.Model model = new TSM.Model();
+            string modelPath = model.GetInfo().ModelPath;
+
+            var dir = $"{modelPath}{xsplot.Replace(".", "")}";
+           
             HttpClient httpClient = new HttpClient();
 
             var response = await httpClient.GetAsync(fileURL);
 
+            
+            var diretorioSalvamento = dir + @"\Download";
+
+            
             if (!Directory.Exists(diretorioSalvamento))
             {
                 Directory.CreateDirectory(diretorioSalvamento);
             }
 
+            var filePath = Path.Combine(dir, fileName);
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
             }
 
-                
+            var arquivoSalvamento = Path.Combine(diretorioSalvamento, fileName);
+            if (File.Exists(arquivoSalvamento))
+            {
+                File.Delete(arquivoSalvamento);
+            }
 
-            using (var fs = new FileStream(filePath, FileMode.CreateNew))
+
+
+            using (var fs = new FileStream(arquivoSalvamento, FileMode.CreateNew))
             {
                 await response.Content.CopyToAsync(fs);
                 MessageBox.Show($"Arquivo {fileName} salvo em {diretorioSalvamento}", "Download Concluído", MessageBoxButton.OK, MessageBoxImage.Information);
