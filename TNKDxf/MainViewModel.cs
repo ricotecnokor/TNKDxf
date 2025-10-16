@@ -46,6 +46,7 @@ namespace TNKDxf
 
         public ICommand ToggleAbrirCommand { get; set; }
         public ICommand EnviarCorretosCommand { get; set; }
+        public ICommand DownloadArquivoCommand { get; set; }
 
         public MainViewModel()
         {
@@ -82,6 +83,7 @@ namespace TNKDxf
 
             ToggleAbrirCommand = new RelayCommand<ArquivoItem>(ToggleAbrirArquivo);
             EnviarCorretosCommand = new RelayCommand(EnviarArquivosCorretos);
+            DownloadArquivoCommand = new RelayCommand<ArquivoItem>(DownloadArquivo);
 
         }
 
@@ -104,6 +106,29 @@ namespace TNKDxf
             }
 
 
+        }
+
+        private async void DownloadArquivo(ArquivoItem arquivo)
+        {
+            if (arquivo == null)
+                return;
+
+            var resultadoApi = _avaliadorDesenhos.ObterResult(arquivo.Nome);
+
+            if (resultadoApi == null)
+            {
+                resultadoApi = await _avaliadorDesenhos.Avaliar(arquivo.Nome);
+                _avaliadorDesenhos.IncluirResultado(resultadoApi);
+            }
+
+            if (resultadoApi.Success)
+            {
+                await HandleCriacaoDxfs.Instancia.Download(resultadoApi.Resultado);
+            }
+            else
+            {
+                MessageBox.Show($"Arquivo inválido para download: {resultadoApi.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async void ToggleAbrirArquivo(ArquivoItem arquivo)
