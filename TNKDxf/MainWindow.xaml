@@ -19,28 +19,29 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- DataGrid com os arquivos -->
             <DataGrid ItemsSource="{Binding Arquivos}" AutoGenerateColumns="False"
-                 Grid.Column="0" Margin="5">
+                 Grid.Column="0" Margin="5" CanUserAddRows="False">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Nome do Arquivo" Binding="{Binding Nome}" Width="200"/>
-                    <DataGridTemplateColumn x:Name="colunaAcao" Header="Ação" Width="100">
+                    <DataGridTextColumn Header="Nome do Arquivo" Binding="{Binding Nome}" Width="*"/>
+                    <DataGridTemplateColumn x:Name="colunaAcao" Header="Converter" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="{Binding Aberto, Converter={local:BoolToAbrirFecharConverter}}" 
+                                <Button FontFamily="Segoe MDL2 Assets"
+                                   Content="{Binding Aberto, Converter={local:BoolToAbrirFecharConverter}}" 
                                    Command="{Binding DataContext.ToggleAbrirCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" 
                                    CommandParameter="{Binding}" 
                                    Margin="2" Padding="5,2"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn x:Name="colunaDownload" Header="Download" Width="100">
+                    <DataGridTemplateColumn x:Name="colunaDownload" Header="Download" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Download"
+                                <Button FontFamily="Segoe MDL2 Assets"
+                                        Content="&#xE896;"
                                         Command="{Binding DataContext.DownloadArquivoCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                         CommandParameter="{Binding}"
                                         Margin="2" Padding="5,2"/>
@@ -60,8 +61,6 @@
                     </Style>
                 </DataGrid.RowStyle>
             </DataGrid>
-
-
         </Grid>
         <!-- TabControl para exibir os arquivos abertos -->
         <ContentControl Grid.Column="1"
