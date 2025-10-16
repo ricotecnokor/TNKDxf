@@ -3,57 +3,109 @@ using Dynamic.Tekla.Structures.Model.Operations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TNKDxf.ViewModel.Abstracoes;
 using TSD = Dynamic.Tekla.Structures.Drawing;
 using TSM = Dynamic.Tekla.Structures.Model;
 
 namespace TNKDxf.Handles
 {
-    public class ExtratorDXFs : IExtratorDXFs
+    public class ExtratorDXFs //: IExtratorDXFs
     {
         List<string> _desenhos;
         bool _foramExtraidos = false;
-        string _xsplot = "";
+        //string _xsplot = "";
+        //string _versao;
 
+        private static ExtratorDXFs _instance;
 
-
-        public ExtratorDXFs()
+        private ExtratorDXFs()
         {
             _desenhos = new List<string>();
-           
+
+            //var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder();
+
+            //_versao = appFolder.Split('\\').Last();
+
+            //TSD.DrawingHandler dh = new TSD.DrawingHandler();
+
+            //TSM.Model model = new TSM.Model();
+            //string modelPath = model.GetInfo().ModelPath;
+
+            //string ApplicationName = "Dwg.exe";
+
+            //string TSBinaryDir = "";
+            //TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
+
+            //string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
+
+            //string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
+
+            //var dg = dh.GetDrawingSelector().GetSelected();
+
+            //string xsplot = "";
+            //TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+
+            //var caminhoArquivos = modelPath + xsplot.Replace(".", "");
+            //var _xsplot = modelPath + xsplot.Replace(".", "");
+
         }
 
-        public bool ForamExtraidos { get => _foramExtraidos; private set => _foramExtraidos = value; }
+        public static ExtratorDXFs GetInstance()
+        {
+            if (_instance == null)
+            {
+                _instance = new ExtratorDXFs();
+            }
+            return _instance;
+        }
+
+        //public bool ForamExtraidos { get => _foramExtraidos; private set => _foramExtraidos = value; }
         public IEnumerable<object> Desenhos { get; internal set; }
         public IEnumerable<string> Extraidos => _desenhos;
 
-        public string Xsplot { get => _xsplot; private set => _xsplot = value; }
+        //public string Xsplot { get => _xsplot; private set => _xsplot = value; }
 
         public void Extrair()
         {
+            if (_foramExtraidos)
+                return;
 
             var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder();
 
             var versao = appFolder.Split('\\').Last();
 
-            TSD.DrawingHandler _dh = new TSD.DrawingHandler();
+            TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
             TSM.Model model = new TSM.Model();
             string modelPath = model.GetInfo().ModelPath;
 
-            string ApplicationName = "Dwg.exe";
+            //string ApplicationName = "Dwg.exe";
 
-            string TSBinaryDir = "";
-            TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
+            //string TSBinaryDir = "";
+            //TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
 
-            string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
+            //string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
 
-            string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
+            //string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
 
-            var dg = _dh.GetDrawingSelector().GetSelected();
+         
 
             
-            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref _xsplot);
+
+            var dg = dh.GetDrawingSelector().GetSelected();
+
+            string xsplot = "";
+            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+
+            var caminhoArquivos = modelPath + xsplot.Replace(".", "");
+            var _xsplot = modelPath + xsplot.Replace(".", "");
+
+            var files = Directory.GetFiles(_xsplot); //Directory.GetFiles(caminhoArquivos);
+
+            foreach ( var file in files )
+            {
+                if(!file.EndsWith("Thumbs.db"))
+                File.Delete(file);
+            }
 
             int count = 0;
             while (dg.MoveNext())
@@ -107,7 +159,8 @@ namespace TNKDxf.Handles
 
             if (versao == "2024.0")
             {
-                Operation.RunMacro(@"C:\ProgramData\Trimble\Tekla Structures\2024.0\Environments\common\macros\modeling\ExportaDxf.cs"); ;
+                Operation.RunMacro(@"C:\ProgramData\Trimble\Tekla Structures\2024.0\Environments\common\macros\modeling\ExportaDxf.cs");
+                _foramExtraidos = true;
             }
 
             _foramExtraidos = true;

@@ -1,19 +1,15 @@
 ﻿using Dynamic.Tekla.Structures;
-using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TNKDxf.Blocos.Atributacao;
 using TNKDxf.Blocos;
+using TNKDxf.Blocos.Atributacao;
 using TNKDxf.Coletas;
 using TNKDxf.Dominio.Abstracoes;
-using TNKDxf.Dominio.Construtores;
 using TNKDxf.Dominio.Entidades;
-using TNKDxf.Dominio.Extensoes;
 using TNKDxf.Dominio.ObjetosValor;
-using TNKDxf.Infra;
 using TNKDxf.ViewModel;
-using System.IO;
 
 namespace TNKDxf.Dominio.Dxfs
 {
@@ -114,14 +110,7 @@ namespace TNKDxf.Dominio.Dxfs
             string xsplot = "";
             TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
 
-
-
-
-            //var nomeDestino = _projeto + "-D-" + _nome;
-
-            // var caminho = _model.GetInfo().ModelPath + xsplot + "\\" + _nome;
             _coletorDeDadosDxf.ColetarDados(this);
-                //converter(_caminho, _nome, userName);
             
         }
 

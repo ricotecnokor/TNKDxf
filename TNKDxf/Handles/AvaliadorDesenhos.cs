@@ -48,9 +48,9 @@ namespace TNKDxf.Handles
 
         }
 
-        public async Task Download(string fileName, string diretorioSalvar)
+        public async Task Download(string fileName)
         {
-            await _servicoEnvioDesenhos.DownloadFile(_userName, _projeto, "Tekla Structures", fileName, diretorioSalvar);
+            await _servicoEnvioDesenhos.DownloadFile(_userName, _projeto, "Tekla Structures", fileName);
         }
 
       
@@ -61,7 +61,7 @@ namespace TNKDxf.Handles
 
         public CommandResult ObterResult(string nome)
         {
-            return _resultados.FirstOrDefault(r => r.Resultado == nome);
+            return _resultados.FirstOrDefault(r => r.Resultado.StartsWith(nome));
         }
 
         public void IncluirResultado(CommandResult resultado)

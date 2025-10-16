@@ -53,22 +53,26 @@ namespace TNKDxf
            
             var teklaHandler = new TeklaHandler();
 
-            var extrator = new ExtratorDXFs();
+            //var extrator = new ExtratorDXFs();
 
+            ExtratorDXFs.GetInstance().Extrair();
+            
+            //if (!ExtratorDXFs.GetInstance().ForamExtraidos)
+            //{
+            //    MessageBox.Show("Nenhum desenho foi extraído. Por favor, selecione desenhos no Tekla e tente novamente.", "Atenção", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //    Resultado = "Nenhum desenho extraído.";
+            //    return;
+            //}
 
-            if (!extrator.ForamExtraidos)
-            {
-                extrator.Extrair();
-            }
 
             teklaHandler.Iniciar();
 
             _avaliadorDesenhos = new AvaliadorDesenhos(teklaHandler.ExportPath, teklaHandler.Projeto, teklaHandler.UserName);
 
 
-            HandleCriacaoDxfs.CriarManipulapor(extrator, _avaliadorDesenhos);
+            HandleCriacaoDxfs.CriarManipulapor(_avaliadorDesenhos);
 
-            _colecaoDwgs = new ColecaoDwgs(extrator.Extraidos, _projeto);
+            _colecaoDwgs = new ColecaoDwgs(ExtratorDXFs.GetInstance().Extraidos, _projeto);   //extrator.Extraidos, _projeto);
             _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
 
             if (_listViewDwgs != null)
@@ -92,7 +96,7 @@ namespace TNKDxf
 
             if (resultadoApi.Success)
             {
-                await HandleCriacaoDxfs.Instancia.Download(_arquivoSelecionado);
+                await HandleCriacaoDxfs.Instancia.Download(resultadoApi.Resultado);
             }
             else
             {

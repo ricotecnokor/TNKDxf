@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using TNKDxf.ViewModel.Abstracoes;
 
 namespace TNKDxf.Handles
 {
-    public class MockExtratorDXFs : IExtratorDXFs
+    public class MockExtratorDXFs //: IExtratorDXFs
     {
     
         List<string> _desenhos;
@@ -22,7 +21,7 @@ namespace TNKDxf.Handles
         public IEnumerable<object> Desenhos { get; internal set; }
         public IEnumerable<string> Extraidos => _desenhos;
 
-        public void Extrair()
+        public bool Extrair()
         {
 
             _desenhos = new List<string>
@@ -32,7 +31,7 @@ namespace TNKDxf.Handles
                 "PRJ00200-D-00022 rev0.dxf"
             };
 
-            _foramExtraidos = true;
+            return true;
 
         }
     }
