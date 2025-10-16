@@ -1,7 +1,5 @@
 ﻿using netDxf;
 using netDxf.Entities;
-using TNKDxf.Coletas;
-using TNKDxf.Dominio.Abstracoes;
 using TNKDxf.Dominio.Dxfs;
 using TNKDxf.Dominio.Entidades;
 using TNKDxf.Dominio.Extensoes;
@@ -11,11 +9,9 @@ namespace TNKDxf.Blocos
     public class InsercaoCabecalho : Insercao
     {
         protected const string BLOCO_MARCA = @"ITEM_LISTA0";
-        //ColecaoConjuntos _conjuntos;
       
         public InsercaoCabecalho(string arquivoOrigem, string nomeBloco, Formato formato, ArquivoDxf arquivoDxf) : base(arquivoOrigem, nomeBloco, formato, arquivoDxf)
         {
-            //_conjuntos = conjuntos;
         }
    
         public override Insert Inserir()
@@ -28,9 +24,9 @@ namespace TNKDxf.Blocos
             Insert insert = inserir(ptReferenciaLista, _formato.FatorEscala);
 
             var ajusteCabecalho = new AjusteCabecalho(_formato, _arquivoDxf);
-            ajusteCabecalho.Ajustar(insert); //_conjuntos.PesoTotal);
+            ajusteCabecalho.Ajustar(insert); 
 
-            InsercaoConjuntos insercaoConjuntos = new InsercaoConjuntos(_arquivoOrigem, BLOCO_MARCA, _formato, _arquivoDxf);// _coletaErros, _conjuntos);
+            InsercaoConjuntos insercaoConjuntos = new InsercaoConjuntos(_arquivoOrigem, BLOCO_MARCA, _formato, _arquivoDxf);
             insercaoConjuntos.Inserir();
 
             return insert;  

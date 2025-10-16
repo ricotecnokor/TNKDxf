@@ -19,28 +19,26 @@ namespace TNKDxf.Blocos
 
         protected const double RECUO_ESTICAMENTO = 10.0;
         protected Formato _formato;
-        //protected ColecaoConjuntos _conjuntos;
         private ArquivoDxf _arquivoDxf;
-        public AjusteCabecalho(Formato formato, ArquivoDxf arquivoDxf) //ColecaoConjuntos conjuntos)
+        public AjusteCabecalho(Formato formato, ArquivoDxf arquivoDxf) 
         {
             _formato = formato;
-            //_conjuntos = conjuntos;
             _arquivoDxf = arquivoDxf;
         }
 
-        public void Ajustar(Insert insert)//, double pesoTotal)
+        public void Ajustar(Insert insert)
         {
             double recuoLinha = RECUO_ESTICAMENTO;
 
             double acrescimoComprimento = 0.0;
             if (_formato.DirecaoLM == "Down")
             {
-                acrescimoComprimento = _arquivoDxf.ObterTamanhoDaLista() * -1;//  _conjuntos.TamanhoLista * -1;
+                acrescimoComprimento = _arquivoDxf.ObterTamanhoDaLista() * -1;
                 recuoLinha = recuoLinha * -1;
             }
             else
             {
-                acrescimoComprimento = _arquivoDxf.ObterTamanhoDaLista(); //_conjuntos.TamanhoLista;
+                acrescimoComprimento = _arquivoDxf.ObterTamanhoDaLista(); 
             }
 
             foreach (var ent in insert.Block.Entities)
@@ -98,7 +96,6 @@ namespace TNKDxf.Blocos
                     if (texto.Value.Contains("CALCULADO"))
                     {
                         texto.Value =
-                            //$"PESO TOTAL CALCULADO={Math.Round(pesoTotal, 1)}kg";
                         $"PESO TOTAL CALCULADO={Math.Round(_arquivoDxf.ObterPesoTotalDaLM(), 1)}kg";
                         moverTextoCabecalho(acrescimoComprimento, recuoLinha, texto);
                     }

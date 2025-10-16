@@ -37,6 +37,16 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTemplateColumn x:Name="colunaDownload" Header="Download" Width="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Download"
+                                        Command="{Binding DataContext.DownloadArquivoCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                        CommandParameter="{Binding}"
+                                        Margin="2" Padding="5,2"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
 
                 <DataGrid.RowStyle>
@@ -50,12 +60,6 @@
                     </Style>
                 </DataGrid.RowStyle>
             </DataGrid>
-
-            <!-- Botão para enviar arquivos corretos -->
-            <Button Content="Download do arquivo selecionado" 
-                Command="{Binding EnviarCorretosCommand}"
-                Grid.Row="1" Margin="5" Padding="10,5"
-                HorizontalAlignment="Stretch"/>
 
 
         </Grid>

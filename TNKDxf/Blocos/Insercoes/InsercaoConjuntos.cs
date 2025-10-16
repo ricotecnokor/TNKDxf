@@ -1,6 +1,5 @@
 ﻿using netDxf;
 using netDxf.Entities;
-using TNKDxf.Dominio.Abstracoes;
 using TNKDxf.Dominio.Dxfs;
 using TNKDxf.Dominio.Entidades;
 
@@ -11,11 +10,11 @@ namespace TNKDxf.Blocos
         protected const string ARQUIVO_ORIGEM = @"C:\BlocosTecnoedCSN\BLOCOS.dxf";
         protected const string BLOCO_ITEM_LISTA1 = @"ITEM_LISTA1";
         protected const double LARGURA_LINHA = 5.0;
-        //protected ColecaoConjuntos _conjuntos;
+
         
-        public InsercaoConjuntos(string arquivoOrigem, string nomeBloco, Formato formato, ArquivoDxf arquivoDxf):base(arquivoOrigem, nomeBloco, formato, arquivoDxf)//IColetaErros coletaErros, ColecaoConjuntos conjuntos) : base(arquivoOrigem, nomeBloco, formato, coletaErros)
+        public InsercaoConjuntos(string arquivoOrigem, string nomeBloco, Formato formato, ArquivoDxf arquivoDxf):base(arquivoOrigem, nomeBloco, formato, arquivoDxf)
         {
-            //_conjuntos = conjuntos;
+            
             
         }
 
@@ -29,7 +28,7 @@ namespace TNKDxf.Blocos
                 ptReferenciaLista.Z);
 
             var espacoEntreMarcas = 0.0;
-            foreach (ConjuntoLM conjunto in _arquivoDxf.ObterConjuntos())//_conjuntos)
+            foreach (ConjuntoLM conjunto in _arquivoDxf.ObterConjuntos())
             {
                 ptInsercaoLocal = new Vector3(
                     ptInsercaoLocal.X,
@@ -38,7 +37,7 @@ namespace TNKDxf.Blocos
 
                 var conjuntoInserido = inserir(ptInsercaoLocal, _formato.FatorEscala);
 
-                var atributos = new AtributosLinhaMarca(_arquivoDxf, conjunto); //conjunto);
+                var atributos = new AtributosLinhaMarca(_arquivoDxf, conjunto);
                 atributos.Atributar(conjuntoInserido);
 
                 foreach (var item in conjunto.LinhasItem)

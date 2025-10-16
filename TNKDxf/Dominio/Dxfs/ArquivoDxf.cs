@@ -141,39 +141,25 @@ namespace TNKDxf.Dominio.Dxfs
 
         public void Converter(string usuario)
         {
-            //var servico = new ServicoFormatacao();
-            //var formatacaoDTO = servico.ObterFormatacao(this.ObterProjeto());
-            //var formatacao = formatacaoDTO.Converter();
 
-            //DxfSingleton.Load(this.ObterNomeCompleto());
-
-            //Ponto2d extMax = DxfSingleton.DxfDocument.Extmax();
-
-
-            //var formatoDATABuilder = new FormatoDATABuilder(extMax.X, Ponto2d.CriarSemEscala(0.0, 0.0), formatacao);
-            //var formato = formatoDATABuilder.Build();
-
-            //_coletaLista.ApagarSelecao();
             var insercaoCabecalho =
-                new InsercaoCabecalho(ARQUIVO_ORIGEM, BLOCO_CABECALHO, _formato, this);//_coletorDeErros, _colecaoConjuntos);
+                new InsercaoCabecalho(ARQUIVO_ORIGEM, BLOCO_CABECALHO, _formato, this);
             insercaoCabecalho.Inserir();
 
-            var insercaoFormato = new InsercaoFormato(ARQUIVO_ORIGEM, BLOCO_FORMATO_VALE, _formato, this);//_coletorDeErros);
+            var insercaoFormato = new InsercaoFormato(ARQUIVO_ORIGEM, BLOCO_FORMATO_VALE, _formato, this);
             var insertFormato = insercaoFormato.Inserir();
 
 
 
-            var atributosCampos = new AtributosCampos(this); //_camposFormato);
+            var atributosCampos = new AtributosCampos(this);
             atributosCampos.Atributar(insertFormato);
 
 
 
-            var atributosRevisoes = new AtributosRevisoes(this); //_coletaRevisoes);
+            var atributosRevisoes = new AtributosRevisoes(this); 
             atributosRevisoes.Atributar(insertFormato);
 
-            //_coletaRevisoes.ApagarSelecao();
 
-            //_camposFormato.ApagarSelecao();
 
             this.ApagarSelecao();
 

@@ -14,14 +14,13 @@ namespace TNKDxf.Coletas
 {
     public class ColetorDeDadosDxf : IColetorDeDadosDxf
     {
-        //private Formatacao _formatacao;
-        //protected Formato _formato;
+
         protected ColetaErros _coletorDeErros;
         private ColetaLmTNK _coletaLista;
         private ColecaoConjuntos _colecaoConjuntos;
         private CamposFormato _camposFormato;
         private ColetaRevisoes _coletaRevisoes;
-        public void ColetarDados(ArquivoDxf arquivoDxf)//, Formato formato)//string projeto, string filePath)
+        public void ColetarDados(ArquivoDxf arquivoDxf)
         {
             var servico = new ServicoFormatacao();
             var formatacaoDTO = servico.ObterFormatacao(arquivoDxf.ObterProjeto());

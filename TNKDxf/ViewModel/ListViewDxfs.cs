@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using TNKDxf.Dominio.Dxfs;
+﻿using System.Collections.ObjectModel;
 using TNKDxf.Dxfs;
 
 namespace TNKDxf.ViewModel
@@ -28,17 +24,6 @@ namespace TNKDxf.ViewModel
             return lista;
         }
 
-        //public List<ArquivoDxf> CarregaErrados()
-        //{
-        //    var lista = new List<ArquivoDxf>();
-
-        //    var corrigir = _colecaoDxfs.ObterArquivosErrados();
-        //    foreach (var dxf in corrigir)
-        //    {
-        //        lista.Add(dxf);
-        //    }
-        //    return lista;
-        //}
     }
 
     public class ArquivoItem
@@ -47,7 +32,7 @@ namespace TNKDxf.ViewModel
         public string Nome { get; set; }
         public bool Selecionado { get; set; }
         public bool Errado { get; set; }
-        public bool Aberto { get; set; } // Para controlar se está aberto ou não
+        public bool Aberto { get; set; } 
         public bool Enviado { get; set; }
     }
 }

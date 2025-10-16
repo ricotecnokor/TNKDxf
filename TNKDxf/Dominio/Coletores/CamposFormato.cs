@@ -8,7 +8,7 @@ using TNKDxf.Dominio.ObjetosValor;
 
 namespace TNKDxf.Dominio.Coletores
 {
-    public class CamposFormato : AbsColeta //IColetaCampos
+    public class CamposFormato : AbsColeta 
     {
        
         private List<string[]> _campos = new List<string[]>();
@@ -26,7 +26,7 @@ namespace TNKDxf.Dominio.Coletores
             return _campos.Find(x => x[0] == campo)[1];
         }
 
-        public void Coletar()//CampoExtraido campos)
+        public void Coletar()
         {
             foreach (var entity in DxfSingleton.DxfDocument.Entities.All)
             {
@@ -35,16 +35,16 @@ namespace TNKDxf.Dominio.Coletores
 
                     incluiBlocodoFormatoApagar((Insert)entity);
 
-                    buscarEntidades((Insert)entity);//, campos);
+                    buscarEntidades((Insert)entity);
                 }
                 else
                 {
-                    coletarLinhasTextos(entity); //, campos);
+                    coletarLinhasTextos(entity); 
                 }
             }
         }
 
-        private void incluiBlocodoFormatoApagar(Insert bloco) //CampoExtraido campos)
+        private void incluiBlocodoFormatoApagar(Insert bloco) 
         {
             try
             {
@@ -123,7 +123,7 @@ namespace TNKDxf.Dominio.Coletores
             return valor == "DF-SD-1000KN-M-88148-M-505408" ? true : false;
         }
 
-        private void buscarEntidades(Insert insert) //CampoExtraido campos)
+        private void buscarEntidades(Insert insert) 
         {
             var block = insert.Block;
 
@@ -131,18 +131,18 @@ namespace TNKDxf.Dominio.Coletores
             {
                 if (entity.Type == EntityType.Insert)
                 {
-                    buscarEntidades((Insert)entity); //campos);
+                    buscarEntidades((Insert)entity); 
                 }
                 else
                 {
-                    coletarLinhasTextos(entity);   //, campos);
+                    coletarLinhasTextos(entity);   
                 }
             }
 
 
         }
 
-        private void coletarLinhasTextos(EntityObject entity)//, CampoExtraido campos)
+        private void coletarLinhasTextos(EntityObject entity)
         {
             entity.GetType().ToString();
 

@@ -16,13 +16,6 @@ namespace TNKDxf.Blocos
             _conjuntoLM = conjuntoLM;
         }
 
-        //ConjuntoLM _conjuntoLM;
-        //public AtributosLinhaMarca(ConjuntoLM conjunto)
-        //{
-        //    _conjuntoLM = conjunto;
-
-        //}
-
         public override void Atributar(Insert inserido)
         {
             Hashtable hashtableMarca = _conjuntoLM.ObterHashTableLinhas();

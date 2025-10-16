@@ -3,7 +3,6 @@ using netDxf;
 using netDxf.Blocks;
 using netDxf.Entities;
 using System.Linq;
-using TNKDxf.Dominio.Abstracoes;
 using TNKDxf.Dominio.Dxfs;
 using TNKDxf.Dominio.Entidades;
 
@@ -14,7 +13,6 @@ namespace TNKDxf.Blocos
         protected string _arquivoOrigem;
         protected string _nomeBloco;
         protected Formato _formato;
-        //protected IColetaErros _coletaErros;
         protected ArquivoDxf _arquivoDxf;
         public Insercao(string arquivoOrigem, string nomeBloco, Formato formato, ArquivoDxf arquivoDxf)
         {
