@@ -9,7 +9,7 @@ using Line = netDxf.Entities.Line;
 
 namespace TNKDxf.Dominio.Coletores
 {
-    public class ColetaLmTNK : AbsColeta //ColetaLista
+    public class ColetaLmTNK : AbsColeta
     {
         protected List<Linha> _linhasHorizontais = new List<Linha>();
         protected List<Linha> _linhasVerticais = new List<Linha>();
@@ -95,34 +95,7 @@ namespace TNKDxf.Dominio.Coletores
                             .ToList();
         }
 
-        //public bool ColetaLinha(Linha linha)
-        //{
-        //    if (linha.PontoInicial.X.IgualComTolerancia(linha.PontoFinal.X, 0.5, Formato.FatorEscala))
-        //    {
-        //        var linhaEncontrada = _linhasVerticais.FirstOrDefault(l => l.PontoInicial.X.IgualComTolerancia(linha.PontoInicial.X, 0.5, Formato.FatorEscala));
-        //        if (linhaEncontrada == null)
-        //        {
-        //            _linhasVerticais.Add(linha);
-        //            return true;
-        //        }
-
-        //    }
-
-        //    if (linha.PontoInicial.Y.IgualComTolerancia(linha.PontoFinal.Y, 0.5, Formato.FatorEscala))
-        //    {
-        //        var linhaEncontrada = _linhasHorizontais.FirstOrDefault(l => l.PontoInicial.Y.IgualComTolerancia(linha.PontoInicial.Y, 0.5, Formato.FatorEscala));
-        //        if (linhaEncontrada == null)
-        //        {
-        //            _linhasHorizontais.Add(linha);
-        //            return true;
-        //        }
-
-        //    }
-
-        //    return false;
-        //}
-
-
+    
         private void incluiBlocodaLMParaApagar(Insert bloco)
         {
             try

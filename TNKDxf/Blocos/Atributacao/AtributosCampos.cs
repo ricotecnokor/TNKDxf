@@ -18,24 +18,11 @@ namespace TNKDxf.Blocos.Atributacao
         {
         }
 
-        //private CamposFormato _campos;
-
-
-        //public AtributosCampos(CamposFormato campos)
-        //{
-        //    _campos = campos;
-        //}
-
         public override void Atributar(Insert inserido)
         {
             Ponto2d ptReferenciaLista = DxfSingleton.DxfDocument.Extmin();
 
             Hashtable hashtableMarca = new Hashtable();
-
-            // Use LINQ's GroupBy to achieve the same effect as DistinctBy
-            //var campos = _campos.ObterCampos()
-            //                           .GroupBy(c => c[0])
-            //                           .Select(g => g.First());
 
             var campos = _arquivoDxf.ObterCamposDoFormato();
                
@@ -44,9 +31,6 @@ namespace TNKDxf.Blocos.Atributacao
             {
                 var nomeCampo = campo[0];
                 nomeCampo = Encoding.UTF8.GetString(Encoding.Default.GetBytes(nomeCampo));
-             
-                //nomeCampo = nomeCampo.Replace("Ãš", "Ú");
-                //nomeCampo = nomeCampo.Replace("Ã\\u008d", "Í");
 
                 hashtableMarca.Add(nomeCampo, campo[1]);
             }

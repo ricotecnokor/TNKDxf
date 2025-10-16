@@ -8,14 +8,14 @@ using TNKDxf.Dominio.ObjetosValor;
 
 namespace TNKDxf.Dominio.Coletores
 {
-    public class ColetaRevisoes //: AbsColeta, IColetaRevisoes
+    public class ColetaRevisoes 
     {
         IColetaErros _coletaErros;
         protected List<Texto> _textos = new List<Texto>();
         private List<Dictionary<string, string>> _revisoes = new List<Dictionary<string, string>>();
         Formato _formato;
         protected Dictionary<string, string> _objectIdsToDelete = new Dictionary<string, string>();
-        public ColetaRevisoes(Formato formato, IColetaErros coletaErros) //: base(formato)
+        public ColetaRevisoes(Formato formato, IColetaErros coletaErros) 
         {
             _formato = formato;
             _coletaErros = coletaErros;
@@ -23,26 +23,26 @@ namespace TNKDxf.Dominio.Coletores
 
         public int QtdConjuntos => throw new NotImplementedException();
 
-        public void Coletar()//IRevisoesExtraidas revs)
+        public void Coletar()
         {
             foreach (var entity in DxfSingleton.DxfDocument.Entities.All)
             {
                 if (entity.Type == EntityType.Insert)
                 {
-                    incluiBlocodoFormatoApagar((Insert)entity); //, revs);
+                    incluiBlocodoFormatoApagar((Insert)entity);
 
-                    buscarEntidades((Insert)entity); //, revs);
+                    buscarEntidades((Insert)entity);
                 }
                 else
                 {
-                    coletarLinhasTextos(entity); //, revs);
+                    coletarLinhasTextos(entity); 
                 }
             }
         }
 
 
 
-        private void buscarEntidades(Insert insert) //IRevisoesExtraidas revs)
+        private void buscarEntidades(Insert insert) 
         {
             var block = insert.Block;
 
@@ -50,18 +50,18 @@ namespace TNKDxf.Dominio.Coletores
             {
                 if (entity.Type == EntityType.Insert)
                 {
-                    buscarEntidades((Insert)entity); //, revs);
+                    buscarEntidades((Insert)entity); 
                 }
                 else
                 {
-                    coletarLinhasTextos(entity); //, revs);
+                    coletarLinhasTextos(entity); 
                 }
             }
 
 
         }
 
-        private void incluiBlocodoFormatoApagar(Insert insert)//, IRevisoesExtraidas revs)
+        private void incluiBlocodoFormatoApagar(Insert insert)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace TNKDxf.Dominio.Coletores
             }
         }
 
-        private void coletarLinhasTextos(EntityObject entity)  //, IRevisoesExtraidas revs)
+        private void coletarLinhasTextos(EntityObject entity)
         {
             if (entity.Type == EntityType.Text)
             {
@@ -156,7 +156,6 @@ namespace TNKDxf.Dominio.Coletores
 
         private bool textoErrado(string atributo, string valor)
         {
-            //return valor.Equals("0");
             return false;
         }
 

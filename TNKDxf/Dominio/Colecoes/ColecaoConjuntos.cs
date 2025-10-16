@@ -13,10 +13,8 @@ namespace TNKDxf.Dominio.Colecoes
 {
     public class ColecaoConjuntos : IEnumerable<ConjuntoLM>
     {
-        //protected List<Texto> _textos = new List<Texto>();
         protected List<ConjuntoLM> _conjuntos = new List<ConjuntoLM>();
         protected IEnumerable<ConjuntoLM> _ienumerableConjuntos;
-        //protected ILmExtraida _lmExtraida;
         private ColetaLmTNK _coleta;
         private double _yBase;
         protected double _pesoTotal;
@@ -26,9 +24,8 @@ namespace TNKDxf.Dominio.Colecoes
         public double TamanhoLista { get => _tamanhoLista; private set => _tamanhoLista = value; }
         public double PesoTotal => _pesoTotal;
 
-        public ColecaoConjuntos(ColetaLmTNK coleta, IColetaErros coletaErros)//ILmExtraida lmExtraida, IColetaErros coletaErros)
+        public ColecaoConjuntos(ColetaLmTNK coleta, IColetaErros coletaErros)
         {
-            //_lmExtraida = lmExtraida;
             _coleta = coleta;
             _yBase = setYBase();
             _coletaErros = coletaErros;

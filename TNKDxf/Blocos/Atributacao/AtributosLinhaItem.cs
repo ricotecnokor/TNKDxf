@@ -16,11 +16,6 @@ namespace TNKDxf.Blocos
             _topicoLM = topicoLM;
         }
 
-        //public AtributosLinhaItem(TopicoLM topicoLM)
-        //{
-        //    _topicoLM = topicoLM;
-        //}
-
         public override void Atributar(Insert inserido)
         {
             Hashtable hashtableItem = new Hashtable();
