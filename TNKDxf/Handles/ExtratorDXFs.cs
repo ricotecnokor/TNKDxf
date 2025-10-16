@@ -20,33 +20,6 @@ namespace TNKDxf.Handles
         private ExtratorDXFs()
         {
             _desenhos = new List<string>();
-
-            //var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder();
-
-            //_versao = appFolder.Split('\\').Last();
-
-            //TSD.DrawingHandler dh = new TSD.DrawingHandler();
-
-            //TSM.Model model = new TSM.Model();
-            //string modelPath = model.GetInfo().ModelPath;
-
-            //string ApplicationName = "Dwg.exe";
-
-            //string TSBinaryDir = "";
-            //TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref TSBinaryDir);
-
-            //string dwgExePath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
-
-            //string configPath = "\"C:\\Configs\\dwgExportConfig.xml\"";
-
-            //var dg = dh.GetDrawingSelector().GetSelected();
-
-            //string xsplot = "";
-            //TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
-
-            //var caminhoArquivos = modelPath + xsplot.Replace(".", "");
-            //var _xsplot = modelPath + xsplot.Replace(".", "");
-
         }
 
         public static ExtratorDXFs GetInstance()
