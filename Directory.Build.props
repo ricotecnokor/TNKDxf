@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <!-- Automatically include font files under any Fonts folder as WPF Resources -->
+  <ItemGroup>
+    <Resource Include="**\Fonts\**\*.ttf" />
+    <Resource Include="**\Fonts\**\*.otf" />
+  </ItemGroup>
+</Project>
