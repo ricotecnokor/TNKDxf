@@ -30,10 +30,18 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button FontFamily="Segoe MDL2 Assets"
-                                   Content="{Binding Aberto, Converter={local:BoolToAbrirFecharConverter}}" 
-                                   Command="{Binding DataContext.ToggleAbrirCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" 
-                                   CommandParameter="{Binding}" 
-                                   Margin="2" Padding="5,2"/>
+                                        Content="{Binding Aberto, Converter={local:BoolToAbrirFecharConverter}}"
+                                        Command="{Binding DataContext.ToggleAbrirCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                        CommandParameter="{Binding}"
+                                        Margin="2"
+                                        Padding="0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Width="32"
+                                        Height="28"
+                                        FontSize="16"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -44,7 +52,15 @@
                                         Content="&#xE896;"
                                         Command="{Binding DataContext.DownloadArquivoCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                         CommandParameter="{Binding}"
-                                        Margin="2" Padding="5,2"/>
+                                        Margin="2"
+                                        Padding="0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Width="32"
+                                        Height="28"
+                                        FontSize="16"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

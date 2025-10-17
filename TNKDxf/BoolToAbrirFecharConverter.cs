@@ -11,8 +11,10 @@ namespace TNKDxf
         private static BoolToAbrirFecharConverter converter;
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // Return Segoe MDL2 Assets glyphs: Cancel (E711) when true, Sync/Convert (E72E) when false
-            return (value is bool && (bool)value) ? "\uE711" : "\uE72E";
+            // Segoe MDL2 Assets glyphs:
+            // true  -> Cancel (E711)
+            // false -> Import (E8B5)
+            return (value is bool && (bool)value) ? "\uE711" : "\uE8B5";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
