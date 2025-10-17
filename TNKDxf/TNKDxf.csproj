@@ -257,5 +257,8 @@
   <ItemGroup>
     <Folder Include="ViewModel\Abstracoes\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Fonts\README.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
