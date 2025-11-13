@@ -9,6 +9,7 @@ using TNKDxf.Dominio.Entidades;
 using TNKDxf.Handles;
 using TNKDxf.Infra;
 using TNKDxf.ViewModel;
+using System.Threading.Tasks;
 
 
 namespace TNKDxf
@@ -47,50 +48,48 @@ namespace TNKDxf
         public ICommand ToggleAbrirCommand { get; set; }
         public ICommand EnviarCorretosCommand { get; set; }
         public ICommand DownloadArquivoCommand { get; set; }
+        public ICommand ExtrairCommand { get; set; }
 
         public MainViewModel()
         {
-
-           
             var teklaHandler = new TeklaHandler();
 
-            //var extrator = new ExtratorDXFs();
-
-            ExtratorDXFs.GetInstance().Extrair();
-            
-            //if (!ExtratorDXFs.GetInstance().ForamExtraidos)
-            //{
-            //    MessageBox.Show("Nenhum desenho foi extraído. Por favor, selecione desenhos no Tekla e tente novamente.", "Atenção", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //    Resultado = "Nenhum desenho extraído.";
-            //    return;
-            //}
-
-
+            // Inicializa Tekla, mas não dispara a extração aqui
             teklaHandler.Iniciar();
 
             _avaliadorDesenhos = new AvaliadorDesenhos(teklaHandler.ExportPath, teklaHandler.Projeto, teklaHandler.UserName);
 
-
             HandleCriacaoDxfs.CriarManipulapor(_avaliadorDesenhos);
 
-            _colecaoDwgs = new ColecaoDwgs(ExtratorDXFs.GetInstance().Extraidos, _projeto);   //extrator.Extraidos, _projeto);
+            // Inicializa a coleção com o estado atual (possivelmente vazio)
+            _colecaoDwgs = new ColecaoDwgs(ExtratorDXFs.GetInstance().Extraidos, _projeto);
             _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
 
-            if (_listViewDwgs != null)
-            {
-                Arquivos = _listViewDwgs.CarregaArquivosItem();
-            }
+            var iniciais = _listViewDwgs.CarregaArquivosItem();
+            Arquivos.Clear();
+            foreach (var item in iniciais)
+                Arquivos.Add(item);
 
             ToggleAbrirCommand = new RelayCommand<ArquivoItem>(ToggleAbrirArquivo);
             EnviarCorretosCommand = new RelayCommand(EnviarArquivosCorretos);
             DownloadArquivoCommand = new RelayCommand<ArquivoItem>(DownloadArquivo);
-
+            ExtrairCommand = new RelayCommand(async () => await ExtrairArquivosAsync());
         }
 
+        private async Task ExtrairArquivosAsync()
+        {
+            // Executa extração em background para não travar a UI
+            await Task.Run(() => ExtratorDXFs.GetInstance().Extrair());
 
+            // Recria coleção a partir do resultado e atualiza a tabela
+            _colecaoDwgs = new ColecaoDwgs(ExtratorDXFs.GetInstance().Extraidos, _projeto);
+            _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
 
-
-        
+            var atualizados = _listViewDwgs.CarregaArquivosItem();
+            Arquivos.Clear();
+            foreach (var item in atualizados)
+                Arquivos.Add(item);
+        }
 
         private async void EnviarArquivosCorretos()
         {

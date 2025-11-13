@@ -69,7 +69,6 @@ namespace TNKDxf.Handles
             _resultados.Add(resultado);
         } 
         
-        //teste
 
     }
 }
