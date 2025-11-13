@@ -9,13 +9,14 @@ using TNKDxf.Dominio.Entidades;
 using TNKDxf.Handles;
 using TNKDxf.Infra;
 using TNKDxf.ViewModel;
+using System.Threading.Tasks;
+using System.IO;
 
 
 namespace TNKDxf
 {
     public class MainViewModel : ViewModelBase
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         private string _resultado = "Carregando...";
         private string _projeto;
         protected Formato _formato;
@@ -25,7 +26,7 @@ namespace TNKDxf
         public string Resultado
         {
             get => _resultado;
-            set { _resultado = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Resultado))); }
+            set { _resultado = value; OnPropertyChanged(nameof(Resultado)); }
         }
 
         public object ConteudoSelecionado
@@ -47,50 +48,144 @@ namespace TNKDxf
         public ICommand ToggleAbrirCommand { get; set; }
         public ICommand EnviarCorretosCommand { get; set; }
         public ICommand DownloadArquivoCommand { get; set; }
+        public ICommand ExtrairCommand { get; set; }
+
+        // Propriedades de progresso
+        private bool _isExtraindo;
+        public bool IsExtraindo
+        {
+            get => _isExtraindo;
+            set { _isExtraindo = value; OnPropertyChanged(nameof(IsExtraindo)); OnPropertyChanged(nameof(PodeExtrair)); OnPropertyChanged(nameof(ProgressoIndeterminado)); }
+        }
+
+        private int _progressoAtual;
+        public int ProgressoAtual
+        {
+            get => _progressoAtual;
+            set { _progressoAtual = value; OnPropertyChanged(nameof(ProgressoAtual)); }
+        }
+
+        private int _progressoMaximo;
+        public int ProgressoMaximo
+        {
+            get => _progressoMaximo;
+            set { _progressoMaximo = value; OnPropertyChanged(nameof(ProgressoMaximo)); OnPropertyChanged(nameof(ProgressoIndeterminado)); }
+        }
+
+        private string _statusProgresso = "Pronto";
+        public string StatusProgresso
+        {
+            get => _statusProgresso;
+            set { _statusProgresso = value; OnPropertyChanged(nameof(StatusProgresso)); }
+        }
+
+        public bool PodeExtrair => !IsExtraindo;
+        public bool ProgressoIndeterminado => IsExtraindo && ProgressoMaximo <= 0;
 
         public MainViewModel()
         {
-
-           
             var teklaHandler = new TeklaHandler();
 
-            //var extrator = new ExtratorDXFs();
-
-            ExtratorDXFs.GetInstance().Extrair();
-            
-            //if (!ExtratorDXFs.GetInstance().ForamExtraidos)
-            //{
-            //    MessageBox.Show("Nenhum desenho foi extraído. Por favor, selecione desenhos no Tekla e tente novamente.", "Atenção", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //    Resultado = "Nenhum desenho extraído.";
-            //    return;
-            //}
-
-
+            // Não extrai na inicialização; apenas prepara ambiente
             teklaHandler.Iniciar();
 
             _avaliadorDesenhos = new AvaliadorDesenhos(teklaHandler.ExportPath, teklaHandler.Projeto, teklaHandler.UserName);
 
-
             HandleCriacaoDxfs.CriarManipulapor(_avaliadorDesenhos);
 
-            _colecaoDwgs = new ColecaoDwgs(ExtratorDXFs.GetInstance().Extraidos, _projeto);   //extrator.Extraidos, _projeto);
+            // Inicializa coleção (vazia inicialmente)
+            _colecaoDwgs = new ColecaoDwgs(ExtratorDXFs.GetInstance().Extraidos, _projeto);
             _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
 
-            if (_listViewDwgs != null)
-            {
-                Arquivos = _listViewDwgs.CarregaArquivosItem();
-            }
+            var iniciais = _listViewDwgs.CarregaArquivosItem();
+            Arquivos.Clear();
+            foreach (var item in iniciais)
+                Arquivos.Add(item);
 
             ToggleAbrirCommand = new RelayCommand<ArquivoItem>(ToggleAbrirArquivo);
             EnviarCorretosCommand = new RelayCommand(EnviarArquivosCorretos);
             DownloadArquivoCommand = new RelayCommand<ArquivoItem>(DownloadArquivo);
-
+            ExtrairCommand = new RelayCommand(async () => await ExtrairArquivosAsync());
         }
 
+        private async Task ExtrairArquivosAsync()
+        {
+            IsExtraindo = true;
+            ProgressoAtual = 0;
+            ProgressoMaximo = 0;
+            StatusProgresso = "Preparando extração...";
 
+            var extrator = ExtratorDXFs.GetInstance();
 
+            // Dispara a extração em background
+            var tarefaExtracao = Task.Run(() => extrator.Extrair());
 
-        
+            // Monitora progresso por contagem de arquivos na pasta de saída
+            while (!tarefaExtracao.IsCompleted)
+            {
+                if (ProgressoMaximo == 0 && extrator.TotalEsperado > 0)
+                {
+                    ProgressoMaximo = extrator.TotalEsperado;
+                }
+
+                if (!string.IsNullOrWhiteSpace(extrator.PastaSaida) && Directory.Exists(extrator.PastaSaida))
+                {
+                    try
+                    {
+                        var gerados = Directory.GetFiles(extrator.PastaSaida, "*.dxf").Length;
+                        ProgressoAtual = gerados;
+                        StatusProgresso = ProgressoMaximo > 0
+                            ? $"Gerando DXFs: {ProgressoAtual}/{ProgressoMaximo}"
+                            : $"Gerando DXFs: {ProgressoAtual}...";
+                    }
+                    catch { }
+                }
+                else
+                {
+                    StatusProgresso = "Iniciando...";
+                }
+
+                await Task.Delay(500);
+            }
+
+            await tarefaExtracao;
+
+            // Finaliza progresso
+            if (!string.IsNullOrWhiteSpace(extrator.PastaSaida) && Directory.Exists(extrator.PastaSaida))
+            {
+                var gerados = Directory.GetFiles(extrator.PastaSaida, "*.dxf").Length;
+                ProgressoAtual = gerados;
+            }
+            if (ProgressoMaximo == 0) ProgressoMaximo = ProgressoAtual;
+
+            StatusProgresso = $"Geração concluída: {ProgressoAtual} arquivo(s).";
+
+            // Atualiza a tabela
+            _colecaoDwgs = new ColecaoDwgs(extrator.Extraidos, _projeto);
+            _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
+            var atualizados = _listViewDwgs.CarregaArquivosItem();
+            Arquivos.Clear();
+            foreach (var item in atualizados)
+                Arquivos.Add(item);
+
+            // Toast de conclusão
+            try
+            {
+                System.Windows.Forms.NotifyIcon notify = new System.Windows.Forms.NotifyIcon();
+                notify.Visible = true;
+                notify.Icon = System.Drawing.SystemIcons.Information;
+                notify.BalloonTipTitle = "DXFs Gerados";
+                notify.BalloonTipText = $"{ProgressoAtual} arquivo(s) gerado(s) com sucesso.";
+                notify.ShowBalloonTip(3000);
+
+                // Oculta depois de alguns segundos
+                await Task.Delay(4000);
+                notify.Dispose();
+            }
+            catch { }
+
+            IsExtraindo = false;
+        }
 
         private async void EnviarArquivosCorretos()
         {
@@ -104,8 +199,6 @@ namespace TNKDxf
             {
                 MessageBox.Show($"Arquivo inválido para download: {resultadoApi.Message}", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-
         }
 
         private async void DownloadArquivo(ArquivoItem arquivo)
@@ -135,7 +228,6 @@ namespace TNKDxf
         {
            int indice = _listViewDwgs.ObterIndice(arquivo);
 
-     
             for (int i = 0; i < Arquivos.Count; i++)
             {
                 Arquivos[i].Selecionado = false;
@@ -144,7 +236,6 @@ namespace TNKDxf
                     Arquivos[i].Selecionado = true;
                 }
             }
-              
 
             var resultadoApi = _avaliadorDesenhos.ObterResult(arquivo.Nome);
             if(resultadoApi == null)
@@ -165,7 +256,6 @@ namespace TNKDxf
                 sb.AppendLine("📦 Arquivo:");
                 sb.AppendLine(resultadoApi.Resultado);
             }
-
 
             sb.AppendLine($"\n🟢 Sucesso: {resultadoApi.Success}");
             sb.AppendLine($"📄 Mensagem: {resultadoApi.Message}");
