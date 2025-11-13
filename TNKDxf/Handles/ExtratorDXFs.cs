@@ -33,95 +33,122 @@ namespace TNKDxf.Handles
         public IEnumerable<object> Desenhos { get; internal set; }
         public IEnumerable<string> Extraidos => _desenhos;
 
+        // Novas propriedades para UI de progresso
+        public int TotalEsperado { get; private set; } = 0;
+        public string PastaSaida { get; private set; } = string.Empty;
+        public bool EmExecucao { get; private set; } = false;
     
         public void Extrair()
         {
             if (_foramExtraidos)
                 return;
 
-            var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder();
+            EmExecucao = true;
+            try
+            {
+                var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder();
 
-            var versao = appFolder.Split('\\').Last();
+                var versao = appFolder.Split('\\').Last();
 
-            TSD.DrawingHandler dh = new TSD.DrawingHandler();
+                TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
-            TSM.Model model = new TSM.Model();
-            string modelPath = model.GetInfo().ModelPath;
+                TSM.Model model = new TSM.Model();
+                string modelPath = model.GetInfo().ModelPath;
 
         
-            var dg = dh.GetDrawingSelector().GetSelected();
+                var dg = dh.GetDrawingSelector().GetSelected();
 
-            string xsplot = "";
-            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+                string xsplot = "";
+                TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
 
-            var caminhoArquivos = modelPath + xsplot.Replace(".", "");
-            var _xsplot = modelPath + xsplot.Replace(".", "");
+                var caminhoArquivos = modelPath + xsplot.Replace(".", "");
+                var _xsplot = modelPath + xsplot.Replace(".", "");
 
-            var files = Directory.GetFiles(_xsplot); //Directory.GetFiles(caminhoArquivos);
+                PastaSaida = _xsplot;
 
-            foreach ( var file in files )
-            {
-                if(!file.EndsWith("Thumbs.db"))
-                File.Delete(file);
-            }
-
-            int count = 0;
-            while (dg.MoveNext())
-            {
-                var drawing = dg.Current;
-
-                if (drawing == null)
-                    break;
-
-                var tipo = drawing.GetType();
-
-                if (tipo == typeof(TSD.SinglePartDrawing))
+                // Limpa arquivos antigos
+                if (Directory.Exists(_xsplot))
                 {
-                    var spd = drawing as TSD.SinglePartDrawing;
+                    var files = Directory.GetFiles(_xsplot); //Directory.GetFiles(caminhoArquivos);
 
-                    var marca = spd.Mark.Replace("[", "").Replace("]", "");
-                    spd.SetUserProperty("TCNM_N_KOCH", marca);
-                    _desenhos.Add(marca);
+                    foreach ( var file in files )
+                    {
+                        if(!file.EndsWith("Thumbs.db"))
+                            File.Delete(file);
+                    }
+                }
+                else
+                {
+                    Directory.CreateDirectory(_xsplot);
                 }
 
-                if (tipo == typeof(TSD.AssemblyDrawing))
+                _desenhos.Clear();
+                int count = 0;
+                while (dg.MoveNext())
                 {
-                    var assd = drawing as TSD.AssemblyDrawing;
+                    var drawing = dg.Current;
 
-                    var marca = assd.Mark.Replace("[", "").Replace("]", "");
-                    assd.SetUserProperty("TCNM_N_KOCH", marca);
+                    if (drawing == null)
+                        break;
 
-                    _desenhos.Add(marca);
+                    var tipo = drawing.GetType();
+
+                    if (tipo == typeof(TSD.SinglePartDrawing))
+                    {
+                        var spd = drawing as TSD.SinglePartDrawing;
+
+                        var marca = spd.Mark.Replace("[", "").Replace("]", "");
+                        spd.SetUserProperty("TCNM_N_KOCH", marca);
+                        _desenhos.Add(marca);
+                    }
+
+                    if (tipo == typeof(TSD.AssemblyDrawing))
+                    {
+                        var assd = drawing as TSD.AssemblyDrawing;
+
+                        var marca = assd.Mark.Replace("[", "").Replace("]", "");
+                        assd.SetUserProperty("TCNM_N_KOCH", marca);
+
+                        _desenhos.Add(marca);
+
+                    }
+
+                    if (tipo == typeof(TSD.GADrawing))
+                    {
+                        var gad = drawing as TSD.GADrawing;
+
+                        var marca = gad.Title1;
+                        _desenhos.Add(marca);
+
+                    }
+
+                    if (tipo == typeof(TSD.MultiDrawing))
+                    {
+                        var multid = drawing as TSD.MultiDrawing;
+
+                        var marca = multid.Title1;
+                        multid.SetUserProperty("TCNM_N_KOCH", marca);
+                        _desenhos.Add(marca);
+                    }
 
                 }
 
-                if (tipo == typeof(TSD.GADrawing))
+                // informa total esperado à UI
+                TotalEsperado = _desenhos.Count;
+
+                if (versao == "2024.0")
                 {
-                    var gad = drawing as TSD.GADrawing;
-
-                    var marca = gad.Title1;
-                    _desenhos.Add(marca);
-
+                    Operation.RunMacro(@"C:\ProgramData\Trimble\Tekla Structures\2024.0\Environments\common\macros\modeling\ExportaDxf.cs");
+                    _foramExtraidos = true;
                 }
 
-                if (tipo == typeof(TSD.MultiDrawing))
-                {
-                    var multid = drawing as TSD.MultiDrawing;
-
-                    var marca = multid.Title1;
-                    multid.SetUserProperty("TCNM_N_KOCH", marca);
-                    _desenhos.Add(marca);
-                }
-
-            }
-
-            if (versao == "2024.0")
-            {
-                Operation.RunMacro(@"C:\ProgramData\Trimble\Tekla Structures\2024.0\Environments\common\macros\modeling\ExportaDxf.cs");
                 _foramExtraidos = true;
-            }
 
-            _foramExtraidos = true;
+            }
+            finally
+            {
+                EmExecucao = false;
+            }
 
         }
     }
