@@ -4,7 +4,6 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:local="clr-namespace:TNKDxf" 
-      xmlns:local1="clr-namespace:TNKDxf.ViewModel"
        mc:Ignorable="d"
       Title="FLUXO DO DESENHO" Height="450" Width="900">
     <Window.DataContext>
@@ -20,13 +19,23 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Barra de comandos -->
+        <!-- Barra de comandos com progresso -->
         <ToolBarTray Grid.Row="0" Grid.ColumnSpan="2">
             <ToolBar>
                 <Button Content="Extrair"
                         Command="{Binding ExtrairCommand}"
                         Padding="12,6"
-                        ToolTip="Extrair desenhos do Tekla"/>
+                        ToolTip="Extrair desenhos do Tekla"
+                        IsEnabled="{Binding PodeExtrair}"/>
+                <Separator/>
+                <ProgressBar Width="220" Height="16"
+                             Minimum="0"
+                             IsIndeterminate="{Binding ProgressoIndeterminado}"
+                             Maximum="{Binding ProgressoMaximo}"
+                             Value="{Binding ProgressoAtual}"/>
+                <TextBlock Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           Text="{Binding StatusProgresso}"/>
             </ToolBar>
         </ToolBarTray>
 
@@ -92,7 +101,7 @@
                 </DataGrid.RowStyle>
             </DataGrid>
         </Grid>
-        <!-- TabControl para exibir os arquivos abertos -->
+        <!-- Conteúdo à direita -->
         <ContentControl Grid.Row="1" Grid.Column="1"
                     Content="{Binding ConteudoSelecionado}"
                     Margin="5" />

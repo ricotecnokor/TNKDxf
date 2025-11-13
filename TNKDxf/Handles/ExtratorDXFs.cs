@@ -1,4 +1,5 @@
-﻿using Dynamic.Tekla.Structures;
+﻿using System;
+using Dynamic.Tekla.Structures;
 using Dynamic.Tekla.Structures.Model.Operations;
 using System.Collections.Generic;
 using System.IO;
@@ -29,15 +30,81 @@ namespace TNKDxf.Handles
             return _instance;
         }
 
-  
         public IEnumerable<object> Desenhos { get; internal set; }
         public IEnumerable<string> Extraidos => _desenhos;
 
-        // Novas propriedades para UI de progresso
+        // Propriedades para UI de progresso
         public int TotalEsperado { get; private set; } = 0;
         public string PastaSaida { get; private set; } = string.Empty;
         public bool EmExecucao { get; private set; } = false;
-    
+
+        // Limpa a pasta de saída para não contar DXFs antigos
+        public void LimparPastaSaida()
+        {
+            TSM.Model model = new TSM.Model();
+            string modelPath = model.GetInfo().ModelPath;
+
+            string xsplot = "";
+            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+
+            var destino = modelPath + xsplot.Replace(".", "");
+            PastaSaida = destino;
+
+            TentarLimparDxfs(destino);
+        }
+
+        // Rotina centralizada para limpar DXFs e avisar se falhar
+        private void TentarLimparDxfs(string destino)
+        {
+            try
+            {
+                if (!Directory.Exists(destino))
+                {
+                    Directory.CreateDirectory(destino);
+                    return;
+                }
+
+                Exception firstEx = null;
+                foreach (var file in Directory.GetFiles(destino, "*.dxf"))
+                {
+                    try
+                    {
+                        var fi = new FileInfo(file);
+                        if (fi.IsReadOnly) fi.IsReadOnly = false;
+                        File.SetAttributes(file, FileAttributes.Normal);
+                        File.Delete(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (firstEx == null) firstEx = ex;
+                    }
+                }
+
+                // Verificação pós-limpeza
+                var restantes = Directory.GetFiles(destino, "*.dxf").Length;
+                if (restantes > 0)
+                {
+                    System.Windows.MessageBox.Show(
+                        $"Não foi possível limpar todos os DXFs em \"{destino}\".\n" +
+                        $"Arquivos restantes: {restantes}. Verifique permissões ou se estão em uso.\n" +
+                        $"Detalhes: {firstEx?.Message}",
+                        "Aviso: limpeza incompleta",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Warning
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(
+                    $"Falha ao limpar a pasta de DXFs \"{destino}\".\nDetalhes: {ex.Message}",
+                    "Erro ao limpar DXFs",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error
+                );
+            }
+        }
+
         public void Extrair()
         {
             if (_foramExtraidos)
@@ -47,7 +114,6 @@ namespace TNKDxf.Handles
             try
             {
                 var appFolder = TeklaStructuresInfo.GetLocalAppDataFolder();
-
                 var versao = appFolder.Split('\\').Last();
 
                 TSD.DrawingHandler dh = new TSD.DrawingHandler();
@@ -55,85 +121,54 @@ namespace TNKDxf.Handles
                 TSM.Model model = new TSM.Model();
                 string modelPath = model.GetInfo().ModelPath;
 
-        
                 var dg = dh.GetDrawingSelector().GetSelected();
 
                 string xsplot = "";
                 TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
 
-                var caminhoArquivos = modelPath + xsplot.Replace(".", "");
                 var _xsplot = modelPath + xsplot.Replace(".", "");
-
                 PastaSaida = _xsplot;
 
-                // Limpa arquivos antigos
-                if (Directory.Exists(_xsplot))
-                {
-                    var files = Directory.GetFiles(_xsplot); //Directory.GetFiles(caminhoArquivos);
-
-                    foreach ( var file in files )
-                    {
-                        if(!file.EndsWith("Thumbs.db"))
-                            File.Delete(file);
-                    }
-                }
-                else
-                {
-                    Directory.CreateDirectory(_xsplot);
-                }
+                // Limpa apenas DXFs antes de exportar e verifica
+                TentarLimparDxfs(_xsplot);
 
                 _desenhos.Clear();
-                int count = 0;
                 while (dg.MoveNext())
                 {
                     var drawing = dg.Current;
-
-                    if (drawing == null)
-                        break;
+                    if (drawing == null) break;
 
                     var tipo = drawing.GetType();
 
                     if (tipo == typeof(TSD.SinglePartDrawing))
                     {
                         var spd = drawing as TSD.SinglePartDrawing;
-
                         var marca = spd.Mark.Replace("[", "").Replace("]", "");
                         spd.SetUserProperty("TCNM_N_KOCH", marca);
                         _desenhos.Add(marca);
                     }
-
-                    if (tipo == typeof(TSD.AssemblyDrawing))
+                    else if (tipo == typeof(TSD.AssemblyDrawing))
                     {
                         var assd = drawing as TSD.AssemblyDrawing;
-
                         var marca = assd.Mark.Replace("[", "").Replace("]", "");
                         assd.SetUserProperty("TCNM_N_KOCH", marca);
-
                         _desenhos.Add(marca);
-
                     }
-
-                    if (tipo == typeof(TSD.GADrawing))
+                    else if (tipo == typeof(TSD.GADrawing))
                     {
                         var gad = drawing as TSD.GADrawing;
-
                         var marca = gad.Title1;
                         _desenhos.Add(marca);
-
                     }
-
-                    if (tipo == typeof(TSD.MultiDrawing))
+                    else if (tipo == typeof(TSD.MultiDrawing))
                     {
                         var multid = drawing as TSD.MultiDrawing;
-
                         var marca = multid.Title1;
                         multid.SetUserProperty("TCNM_N_KOCH", marca);
                         _desenhos.Add(marca);
                     }
-
                 }
 
-                // informa total esperado à UI
                 TotalEsperado = _desenhos.Count;
 
                 if (versao == "2024.0")
@@ -143,13 +178,11 @@ namespace TNKDxf.Handles
                 }
 
                 _foramExtraidos = true;
-
             }
             finally
             {
                 EmExecucao = false;
             }
-
         }
     }
 }

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -102,17 +103,27 @@ namespace TNKDxf.Infra
 
         public async Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName)
         {
- 
-            var fileURL = $"{_uri}/GetDownloadDxf?Usuario={usuario}&Arquivo={fileName}";
-            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+            TSM.Model model = new TSM.Model();
+            string modelPath = model.GetInfo().ModelPath;
 
             string xsplot = "";
             TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
 
-            TSM.Model model = new TSM.Model();
-            string modelPath = model.GetInfo().ModelPath;
-
             var dir = $"{modelPath}{xsplot.Replace(".", "")}";
+
+            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+
+            
+
+            var lista = Directory.EnumerateFiles(dir).ToList();
+
+            var nomeCompletoDoArquivo = lista.FirstOrDefault(x => x.Contains(fileName)).Split('\\').Last().Replace(".dxf","");
+
+           
+
+            var fileURL = $"{_uri}/GetDownloadDxf?Usuario={usuario}&Arquivo={nomeCompletoDoArquivo}";
+
+            
            
             HttpClient httpClient = new HttpClient();
 
@@ -127,13 +138,15 @@ namespace TNKDxf.Infra
                 Directory.CreateDirectory(diretorioSalvamento);
             }
 
-            var filePath = Path.Combine(dir, fileName);
+
+
+            var filePath = Path.Combine(dir, $"{nomeCompletoDoArquivo}.dxf");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
             }
 
-            var arquivoSalvamento = Path.Combine(diretorioSalvamento, fileName);
+            var arquivoSalvamento = Path.Combine(diretorioSalvamento, $"{nomeCompletoDoArquivo}.dxf");
             if (File.Exists(arquivoSalvamento))
             {
                 File.Delete(arquivoSalvamento);
