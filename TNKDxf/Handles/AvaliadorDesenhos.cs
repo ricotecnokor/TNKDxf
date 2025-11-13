@@ -67,7 +67,9 @@ namespace TNKDxf.Handles
         public void IncluirResultado(CommandResult resultado)
         {
             _resultados.Add(resultado);
-        }   
+        } 
+        
+        //teste
 
     }
 }
