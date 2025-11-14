@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,8 +10,6 @@ using TNKDxf.Dominio.Entidades;
 using TNKDxf.Handles;
 using TNKDxf.Infra;
 using TNKDxf.ViewModel;
-using System.Threading.Tasks;
-using System.IO;
 
 
 namespace TNKDxf
@@ -135,8 +134,8 @@ namespace TNKDxf
                         var gerados = Directory.GetFiles(extrator.PastaSaida, "*.dxf").Length;
                         ProgressoAtual = gerados;
                         StatusProgresso = ProgressoMaximo > 0
-                            ? $"Gerando DXFs: {ProgressoAtual}/{ProgressoMaximo}"
-                            : $"Gerando DXFs: {ProgressoAtual}...";
+                            ? $"Preparando remessa: {ProgressoAtual}/{ProgressoMaximo}"
+                            : $"Preparando remessa: {ProgressoAtual}...";
                     }
                     catch { }
                 }

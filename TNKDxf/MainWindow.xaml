@@ -5,7 +5,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:local="clr-namespace:TNKDxf" 
        mc:Ignorable="d"
-      Title="FLUXO DO DESENHO" Height="450" Width="900">
+      Title="FLUXO DO DESENHO" Height="450" Width="900"
+      Icon="Assets/Icons/favicon.ico">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>

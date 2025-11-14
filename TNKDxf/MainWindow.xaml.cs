@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using TNKDxf.Dominio.Entidades;
 using TNKDxf.TestesViabilidade;
+using System;
+using System.Linq;
 
 namespace TNKDxf
 {
@@ -12,20 +14,37 @@ namespace TNKDxf
 
         public MainWindow()
         {
-
-
-           
-
             InitializeComponent();
+
+            // Se o ícone estiver definido no XAML, não é necessário carregar o recurso vetorial
+            // Mantemos o carregamento do vetor como fallback se desejar comentar a linha Icon no XAML
+            try
+            {
+                if (this.Icon == null)
+                {
+                    var dict = new ResourceDictionary
+                    {
+                        Source = new Uri("pack://application:,,,/Assets/Icons/FlowDrawingIcon.xaml", UriKind.Absolute)
+                    };
+                    Application.Current.Resources.MergedDictionaries.Add(dict);
+
+                    if (Application.Current.Resources.Contains("FlowDrawingIcon"))
+                    {
+                        var img = Application.Current.Resources["FlowDrawingIcon"] as System.Windows.Media.ImageSource;
+                        if (img != null)
+                        {
+                            this.Icon = img;
+                        }
+                    }
+                }
+            }
+            catch { }
            
             Loaded += MainWindow_Loaded;
-
-           
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-           
             // Remove o handler para evitar chamadas múltiplas
             Loaded -= MainWindow_Loaded;
 
