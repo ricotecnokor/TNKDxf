@@ -57,6 +57,7 @@
                                         Content="{Binding Aberto, Converter={local:BoolToAbrirFecharConverter}}"
                                         Command="{Binding DataContext.ToggleAbrirCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                         CommandParameter="{Binding}"
+                                        IsEnabled="{Binding PodeConverter}"
                                         Margin="2"
                                         Padding="0"
                                         HorizontalAlignment="Center"

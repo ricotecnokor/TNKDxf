@@ -225,7 +225,13 @@ namespace TNKDxf
 
         private async void ToggleAbrirArquivo(ArquivoItem arquivo)
         {
-           int indice = _listViewDwgs.ObterIndice(arquivo);
+            if (arquivo == null)
+                return;
+
+            // desabilita o botão Converter desta linha imediatamente para evitar cliques repetidos
+            arquivo.PodeConverter = false;
+
+            int indice = _listViewDwgs.ObterIndice(arquivo);
 
             for (int i = 0; i < Arquivos.Count; i++)
             {
@@ -237,14 +243,11 @@ namespace TNKDxf
             }
 
             var resultadoApi = _avaliadorDesenhos.ObterResult(arquivo.Nome);
-            if(resultadoApi == null)
+            if (resultadoApi == null)
             {
-               resultadoApi = await _avaliadorDesenhos.Avaliar(arquivo.Nome);
+                resultadoApi = await _avaliadorDesenhos.Avaliar(arquivo.Nome);
                 _avaliadorDesenhos.IncluirResultado(resultadoApi);
             }
-           
-            if (arquivo == null)
-                return;
 
             _arquivoSelecionado = arquivo.Nome;
 

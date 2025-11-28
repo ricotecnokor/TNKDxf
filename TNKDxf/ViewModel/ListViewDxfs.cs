@@ -19,20 +19,10 @@ namespace TNKDxf.ViewModel
             var enviar = _colecaoDxfs.ObterArquivosCertos();
             foreach (var dxf in enviar)
             {
-                lista.Add(new ArquivoItem { Nome = dxf.Nome, Errado = dxf.TemErro() });
+                lista.Add(new ArquivoItem { Nome = dxf.Nome, Errado = dxf.TemErro(), PodeConverter = true, Aberto = false, Enviado = false });
             }
             return lista;
         }
 
-    }
-
-    public class ArquivoItem
-    {
-        
-        public string Nome { get; set; }
-        public bool Selecionado { get; set; }
-        public bool Errado { get; set; }
-        public bool Aberto { get; set; } 
-        public bool Enviado { get; set; }
     }
 }

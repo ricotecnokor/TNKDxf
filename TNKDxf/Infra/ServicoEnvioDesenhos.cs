@@ -121,7 +121,7 @@ namespace TNKDxf.Infra
 
            
 
-            var fileURL = $"{_uri}/GetDownloadDxf?Usuario={usuario}&Arquivo={nomeCompletoDoArquivo}";
+            var fileURL = $"{_uri}/Dxf/Download?Usuario={usuario}&Arquivo={nomeCompletoDoArquivo}";
 
             
            
