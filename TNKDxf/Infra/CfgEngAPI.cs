@@ -12,7 +12,7 @@
             //URI = "http://192.168.200.67:7080";
 
             //DEBUG DIRETO
-            URI = @"https://localhost:7463";
+            //URI = @"https://localhost:7463";
 
             //mediator
             //URI = @"https://localhost:7098";
@@ -24,7 +24,7 @@
             //URI = "http://192.168.200.67:8040/conversor";
 
             //HOMOLOGAÇÃO DIRETO
-            //URI = "http://192.168.200.67:8080/conversor";
+            URI = "http://192.168.200.67:8080/conversor";
 
 
         }

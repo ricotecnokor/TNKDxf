@@ -215,7 +215,16 @@ namespace TNKDxf
 
             if (resultadoApi.Success)
             {
-                await HandleCriacaoDxfs.Instancia.Download(resultadoApi.Resultado);
+                var path = await HandleCriacaoDxfs.Instancia.Download(resultadoApi.Resultado);
+                if (!string.IsNullOrEmpty(path))
+                {
+                    arquivo.PodeBaixar = false;
+                    MessageBox.Show($"Download concluído com sucesso!\nArquivo salvo em: {path}", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Erro ao baixar o arquivo. Arquivo não encontrado no servidor.", "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             else
             {

@@ -45,9 +45,9 @@ namespace TNKDxf.Handles
                
         }
 
-        public async Task Download(string arquivo)
+        public async Task<string> Download(string arquivo)
         {
-            await _avaliadorDesenhos.Download(arquivo);
+            return await _avaliadorDesenhos.Download(arquivo);
         }
 
        
