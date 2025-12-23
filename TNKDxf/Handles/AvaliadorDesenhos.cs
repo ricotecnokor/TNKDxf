@@ -48,9 +48,9 @@ namespace TNKDxf.Handles
 
         }
 
-        public async Task Download(string fileName)
+        public async Task<string> Download(string fileName)
         {
-            await _servicoEnvioDesenhos.DownloadFile(_userName, _projeto, "Tekla Structures", fileName);
+            return await _servicoEnvioDesenhos.DownloadFile(_userName, _projeto, "Tekla Structures", fileName);
         }
 
       

@@ -28,7 +28,8 @@ namespace TNKDxf.ViewModel
                     Errado = false,
                     Aberto = false,
                     Enviado = false,
-                    PodeConverter = true
+                    PodeConverter = true,
+                    PodeBaixar = true
                 };
                 lista.Add(arquivo);
             }
@@ -49,6 +50,7 @@ namespace TNKDxf.ViewModel
         private bool _aberto;
         private bool _enviado;
         private bool _podeConverter = true;
+        private bool _podeBaixar = true;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -60,6 +62,7 @@ namespace TNKDxf.ViewModel
 
         // controla se o botão Converter está habilitado para esta linha
         public bool PodeConverter { get => _podeConverter; set { _podeConverter = value; OnPropertyChanged(); } }
+        public bool PodeBaixar { get => _podeBaixar; set { _podeBaixar = value; OnPropertyChanged(); } }
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

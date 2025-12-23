@@ -104,7 +104,7 @@ namespace TNKDxf.Infra
             return new List<string>();
         }
 
-        public async Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName)
+        public async Task<string> DownloadFile(string usuario, string padrao, string aplicativo, string fileName)
         {
             
 
@@ -141,7 +141,7 @@ namespace TNKDxf.Infra
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 // file not found on server - nothing to save
-                return;
+                return null;
             }
 
 
@@ -186,6 +186,8 @@ namespace TNKDxf.Infra
             {
                 await response.Content.CopyToAsync(fs);
             }
+
+            return arquivoSalvamento;
         }
     }
 
