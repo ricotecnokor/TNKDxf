@@ -118,12 +118,12 @@ namespace TNKDxf.Infra
 
             string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
 
-            var revisao = "0";
+            
 
             var lista = Directory.EnumerateFiles(dir).ToList();
 
             var nomeCompletoDoArquivo = lista.FirstOrDefault(x => x.Contains(fileName)).Split('\\').Last().Replace(".dxf","");
-            
+            var revisao = nomeCompletoDoArquivo.Split(' ').Last().Replace("rev","");
 
             /////////////////////////
             ///
