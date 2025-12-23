@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using TNKDxf.Handles;
+using static System.Net.WebRequestMethods;
 using TSM = Dynamic.Tekla.Structures.Model;
 
 namespace TNKDxf.Infra
@@ -15,10 +17,11 @@ namespace TNKDxf.Infra
     public class ServicoEnvioDesenhos : IServicoEnvioDesenhos
     {
         private readonly string _uri;
-
+        HttpClient _http;
         public ServicoEnvioDesenhos(CfgEngAPI tecnokorAPI)
         {
             _uri = $"{tecnokorAPI.URI}/api";
+            _http = new HttpClient();
         }
 
         public async Task<CommandResult> UploadAsync(string file, string softwareOrigem, string usuario, string padrao)
@@ -31,7 +34,7 @@ namespace TNKDxf.Infra
 
                 using (var formContent = new MultipartFormDataContent())
                 {
-                    using (var fileStream = File.OpenRead(file))
+                    using (var fileStream = System.IO.File.OpenRead(file))
                     {
                         formContent.Add(new StreamContent(fileStream), "File", file);
                         formContent.Add(new StringContent(softwareOrigem), "SoftwareOrigem");
@@ -103,6 +106,8 @@ namespace TNKDxf.Infra
 
         public async Task DownloadFile(string usuario, string padrao, string aplicativo, string fileName)
         {
+            
+
             TSM.Model model = new TSM.Model();
             string modelPath = model.GetInfo().ModelPath;
 
@@ -113,21 +118,44 @@ namespace TNKDxf.Infra
 
             string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
 
-            
+            var revisao = "0";
 
             var lista = Directory.EnumerateFiles(dir).ToList();
 
             var nomeCompletoDoArquivo = lista.FirstOrDefault(x => x.Contains(fileName)).Split('\\').Last().Replace(".dxf","");
+            
 
-           
+            /////////////////////////
+            ///
+            var baseApi = _uri ?? string.Empty;
+            if (baseApi.EndsWith("/api/Dxf", StringComparison.OrdinalIgnoreCase))
+            {
+                baseApi = baseApi.Replace("/api/Dxf", "/api");
+            }
 
-            var fileURL = $"{_uri}/Dxf/Download?Usuario={usuario}&Arquivo={nomeCompletoDoArquivo}";
+            var fileURL = $"{baseApi.TrimEnd('/')}/GetDownloadDxf?Usuario={Uri.EscapeDataString(usuario)}&Arquivo={Uri.EscapeDataString(fileName)}&Revisao={Uri.EscapeDataString(revisao)}";
+
+            // Use the injected HttpClient instead of creating a new one
+            var response = await _http.GetAsync(fileURL);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // file not found on server - nothing to save
+                return;
+            }
+
+
+            /////////////////
+
+
+
+            //var fileURL = $"{_uri}/Dxf/Download?Usuario={usuario}&Arquivo={Uri.EscapeDataString(nomeCompletoDoArquivo)}";
 
             
            
-            HttpClient httpClient = new HttpClient();
+            //HttpClient httpClient = new HttpClient();
 
-            var response = await httpClient.GetAsync(fileURL);
+            //var response = await httpClient.GetAsync(fileURL);
 
             
             var diretorioSalvamento = dir + @"\Download";
@@ -141,15 +169,15 @@ namespace TNKDxf.Infra
 
 
             var filePath = Path.Combine(dir, $"{nomeCompletoDoArquivo}.dxf");
-            if (File.Exists(filePath))
+            if (System.IO.File.Exists(filePath))
             {
-                File.Delete(filePath);
+                System.IO.File.Delete(filePath);
             }
 
             var arquivoSalvamento = Path.Combine(diretorioSalvamento, $"{nomeCompletoDoArquivo}.dxf");
-            if (File.Exists(arquivoSalvamento))
+            if (System.IO.File.Exists(arquivoSalvamento))
             {
-                File.Delete(arquivoSalvamento);
+                System.IO.File.Delete(arquivoSalvamento);
             }
 
 
@@ -157,7 +185,6 @@ namespace TNKDxf.Infra
             using (var fs = new FileStream(arquivoSalvamento, FileMode.CreateNew))
             {
                 await response.Content.CopyToAsync(fs);
-                MessageBox.Show($"Arquivo {fileName} salvo em {diretorioSalvamento}", "Download Concluído", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
     }
