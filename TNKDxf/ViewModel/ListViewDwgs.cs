@@ -29,7 +29,7 @@ namespace TNKDxf.ViewModel
                     Aberto = false,
                     Enviado = false,
                     PodeConverter = true,
-                    PodeBaixar = true
+                    PodeBaixar = false
                 };
                 lista.Add(arquivo);
             }
@@ -50,7 +50,7 @@ namespace TNKDxf.ViewModel
         private bool _aberto;
         private bool _enviado;
         private bool _podeConverter = true;
-        private bool _podeBaixar = true;
+        private bool _podeBaixar = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

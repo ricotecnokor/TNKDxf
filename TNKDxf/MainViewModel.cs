@@ -124,7 +124,8 @@ namespace TNKDxf
             {
                 if (ProgressoMaximo == 0 && extrator.TotalEsperado > 0)
                 {
-                    ProgressoMaximo = extrator.TotalEsperado;
+                    // Adiciona 1 para considerar a etapa de preencher a tabela
+                    ProgressoMaximo = extrator.TotalEsperado + 1;
                 }
 
                 if (!string.IsNullOrWhiteSpace(extrator.PastaSaida) && Directory.Exists(extrator.PastaSaida))
@@ -134,7 +135,7 @@ namespace TNKDxf
                         var gerados = Directory.GetFiles(extrator.PastaSaida, "*.dxf").Length;
                         ProgressoAtual = gerados;
                         StatusProgresso = ProgressoMaximo > 0
-                            ? $"Preparando remessa: {ProgressoAtual}/{ProgressoMaximo}"
+                            ? $"Preparando remessa: {ProgressoAtual}/{ProgressoMaximo - 1}"
                             : $"Preparando remessa: {ProgressoAtual}...";
                     }
                     catch { }
@@ -149,23 +150,43 @@ namespace TNKDxf
 
             await tarefaExtracao;
 
-            // Finaliza progresso
+            // Finaliza progresso da extração
             if (!string.IsNullOrWhiteSpace(extrator.PastaSaida) && Directory.Exists(extrator.PastaSaida))
             {
                 var gerados = Directory.GetFiles(extrator.PastaSaida, "*.dxf").Length;
                 ProgressoAtual = gerados;
             }
-            if (ProgressoMaximo == 0) ProgressoMaximo = ProgressoAtual;
 
-            StatusProgresso = $"Geração concluída: {ProgressoAtual} arquivo(s).";
+            // Garante que o máximo considere a etapa final de atualização da tabela
+            if (ProgressoMaximo == 0 || ProgressoMaximo <= ProgressoAtual)
+            {
+                ProgressoMaximo = ProgressoAtual + 1;
+            }
 
-            // Atualiza a tabela
-            _colecaoDwgs = new ColecaoDwgs(extrator.Extraidos, _projeto);
-            _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
-            var atualizados = _listViewDwgs.CarregaArquivosItem();
+            StatusProgresso = "Atualizando lista de arquivos...";
+
+            // Atualiza a tabela em background para não travar a UI
+            var atualizados = await Task.Run(() =>
+            {
+                _colecaoDwgs = new ColecaoDwgs(extrator.Extraidos, _projeto);
+                _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
+                return _listViewDwgs.CarregaArquivosItem();
+            });
+
             Arquivos.Clear();
             foreach (var item in atualizados)
+            {
+                var res = _avaliadorDesenhos.ObterResult(item.Nome);
+                if (res != null && res.Success)
+                {
+                    item.PodeBaixar = true;
+                }
                 Arquivos.Add(item);
+            }
+
+            // Conclui o progresso
+            ProgressoAtual = ProgressoMaximo;
+            StatusProgresso = $"Geração concluída: {Arquivos.Count} arquivo(s).";
 
             // Toast de conclusão
             try
@@ -174,7 +195,7 @@ namespace TNKDxf
                 notify.Visible = true;
                 notify.Icon = System.Drawing.SystemIcons.Information;
                 notify.BalloonTipTitle = "DXFs Gerados";
-                notify.BalloonTipText = $"{ProgressoAtual} arquivo(s) gerado(s) com sucesso.";
+                notify.BalloonTipText = $"{Arquivos.Count} arquivo(s) gerado(s) com sucesso.";
                 notify.ShowBalloonTip(3000);
 
                 // Oculta depois de alguns segundos
@@ -280,6 +301,11 @@ namespace TNKDxf
                 {
                     sb.AppendLine($" - [{n.Key}] {n.Message}");
                 }
+            }
+
+            if (resultadoApi.Success)
+            {
+                arquivo.PodeBaixar = true;
             }
 
             ConteudoSelecionado = new ScrollViewer
