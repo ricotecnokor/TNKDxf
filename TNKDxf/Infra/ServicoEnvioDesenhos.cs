@@ -120,7 +120,7 @@ namespace TNKDxf.Infra
 
             
 
-            var lista = Directory.EnumerateFiles(dir).ToList();
+            var lista = Directory.EnumerateFiles(dir).Where(x => x.EndsWith("dxf")).ToList();
 
             var nomeCompletoDoArquivo = lista.FirstOrDefault(x => x.Contains(fileName)).Split('\\').Last().Replace(".dxf","");
             var revisao = nomeCompletoDoArquivo.Split(' ').Last().Replace("rev","");

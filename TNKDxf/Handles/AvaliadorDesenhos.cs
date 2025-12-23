@@ -31,6 +31,17 @@ namespace TNKDxf.Handles
             DirectoryInfo diretorioRecebidos = new DirectoryInfo(_exportPath);
             FileInfo[] _arquivosProcessar = diretorioRecebidos.GetFiles("*.dxf");
             var arquivo = _arquivosProcessar.FirstOrDefault(a => a.Name.Contains(desenho));
+            if (arquivo == null)
+            {
+                return new CommandResult
+                {
+                    Success = false,
+                    Message = "Erro ao processar,o arquivo dxf não foi gerado.",
+                    Resultado = desenho,
+                    Notifications = new List<Notification>()
+                };
+            }
+
             var resp = await _servicoEnvioDesenhos.UploadAsync(arquivo.FullName, "Tekla Structures", _userName, _projeto);
            
             if (resp != null)
