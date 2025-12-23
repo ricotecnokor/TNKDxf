@@ -175,7 +175,14 @@ namespace TNKDxf
 
             Arquivos.Clear();
             foreach (var item in atualizados)
+            {
+                var res = _avaliadorDesenhos.ObterResult(item.Nome);
+                if (res != null && res.Success)
+                {
+                    item.PodeBaixar = true;
+                }
                 Arquivos.Add(item);
+            }
 
             // Conclui o progresso
             ProgressoAtual = ProgressoMaximo;
@@ -294,6 +301,11 @@ namespace TNKDxf
                 {
                     sb.AppendLine($" - [{n.Key}] {n.Message}");
                 }
+            }
+
+            if (resultadoApi.Success)
+            {
+                arquivo.PodeBaixar = true;
             }
 
             ConteudoSelecionado = new ScrollViewer
