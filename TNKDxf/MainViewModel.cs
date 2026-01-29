@@ -39,7 +39,7 @@ namespace TNKDxf
         }
 
         private ColecaoDwgs _colecaoDwgs;
-        private ListViewDwgs _listViewDwgs;
+        private ListViewDxf _listViewDwgs;
         private string _arquivoSelecionado;
 
         public ObservableCollection<ArquivoItem> Arquivos { get; set; } = new ObservableCollection<ArquivoItem>();
@@ -94,7 +94,7 @@ namespace TNKDxf
 
             // Inicializa coleção (vazia inicialmente)
             _colecaoDwgs = new ColecaoDwgs(ExtratorDXFs.GetInstance().Extraidos, _projeto);
-            _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
+            _listViewDwgs = new ListViewDxf(_colecaoDwgs);
 
             var iniciais = _listViewDwgs.CarregaArquivosItem();
             Arquivos.Clear();
@@ -169,7 +169,7 @@ namespace TNKDxf
             var atualizados = await Task.Run(() =>
             {
                 _colecaoDwgs = new ColecaoDwgs(extrator.Extraidos, _projeto);
-                _listViewDwgs = new ListViewDwgs(_colecaoDwgs);
+                _listViewDwgs = new ListViewDxf(_colecaoDwgs);
                 return _listViewDwgs.CarregaArquivosItem();
             });
 
