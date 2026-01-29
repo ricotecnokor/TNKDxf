@@ -105,8 +105,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BoolToAbrirFecharConverter.cs" />
-    <Compile Include="Dominio\Dwgs\ArquivoDwg.cs" />
-    <Compile Include="Dominio\Dwgs\ColecaoDwgs.cs" />
+    <Compile Include="Dominio\Dxfs\ArquivoDxf.cs" />
+    <Compile Include="Dominio\Dxfs\ColecaoDxfs.cs" />
     <Compile Include="ExportadoraDxf.cs" />
     <Compile Include="Handles\AvaliadorDesenhos.cs" />
     <Compile Include="Handles\CommandResult.cs" />

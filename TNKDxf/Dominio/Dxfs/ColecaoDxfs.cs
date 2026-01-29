@@ -4,15 +4,15 @@ using System.Linq;
 using TNKDxf.Handles;
 using TNKDxf.ViewModel;
 
-namespace TNKDxf.Dominio.Dwgs
+namespace TNKDxf.Dominio.Dxfs
 {
-    public class ColecaoDwgs
+    public class ColecaoDxfs
     {
-        private List<ArquivoDwg> _dwgs = new List<ArquivoDwg>();
-        public ColecaoDwgs(IEnumerable<string> lista, string projeto)
+        private List<ArquivoDxf> _dwgs = new List<ArquivoDxf>();
+        public ColecaoDxfs(IEnumerable<string> lista, string projeto)
         {
             _dwgs = lista
-                .Select(x => new ArquivoDwg(x, projeto))
+                .Select(x => new ArquivoDxf(x, projeto))
                 .ToList();
 
         }

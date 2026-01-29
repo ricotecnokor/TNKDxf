@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using TNKDxf.Dominio.Dwgs;
+﻿using System.Collections.ObjectModel;
+using TNKDxf.Dominio.Dxfs;
 
 namespace TNKDxf.ViewModel
 {
     public class ListViewDxf
     {
-        private readonly ColecaoDwgs _colecaoDwgs;
+        private readonly ColecaoDxfs _colecaoDwgs;
 
-        public ListViewDxf(ColecaoDwgs colecaoDwgs)
+        public ListViewDxf(ColecaoDxfs colecaoDwgs)
         {
             _colecaoDwgs = colecaoDwgs;
         }

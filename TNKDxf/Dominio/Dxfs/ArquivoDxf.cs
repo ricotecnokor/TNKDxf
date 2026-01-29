@@ -1,14 +1,14 @@
 ﻿using System;
 using TNKDxf.Handles;
 
-namespace TNKDxf.Dominio.Dwgs
+namespace TNKDxf.Dominio.Dxfs
 {
-    public class ArquivoDwg
+    public class ArquivoDxf
     {
         private string _projeto;
 
         private string _commandResult;// = new CommandResult();
-        public ArquivoDwg(string commandResult, string projeto)
+        public ArquivoDxf(string commandResult, string projeto)
         {
 
             _projeto = projeto;

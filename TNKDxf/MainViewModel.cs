@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using TNKDxf.Dominio.Dwgs;
-using TNKDxf.Dominio.Entidades;
+using TNKDxf.Dominio.Dxfs;
 using TNKDxf.Handles;
 using TNKDxf.Infra;
 using TNKDxf.ViewModel;
@@ -37,7 +36,7 @@ namespace TNKDxf
             }
         }
 
-        private ColecaoDwgs _colecaoDwgs;
+        private ColecaoDxfs _colecaoDwgs;
         private ListViewDxf _listViewDwgs;
         private string _arquivoSelecionado;
 
@@ -92,7 +91,7 @@ namespace TNKDxf
             HandleCriacaoDxfs.CriarManipulapor(_avaliadorDesenhos);
 
             // Inicializa coleção (vazia inicialmente)
-            _colecaoDwgs = new ColecaoDwgs(ExtratorDXFs.GetInstance().Extraidos, _projeto);
+            _colecaoDwgs = new ColecaoDxfs(ExtratorDXFs.GetInstance().Extraidos, _projeto);
             _listViewDwgs = new ListViewDxf(_colecaoDwgs);
 
             var iniciais = _listViewDwgs.CarregaArquivosItem();
@@ -167,7 +166,7 @@ namespace TNKDxf
             // Atualiza a tabela em background para não travar a UI
             var atualizados = await Task.Run(() =>
             {
-                _colecaoDwgs = new ColecaoDwgs(extrator.Extraidos, _projeto);
+                _colecaoDwgs = new ColecaoDxfs(extrator.Extraidos, _projeto);
                 _listViewDwgs = new ListViewDxf(_colecaoDwgs);
                 return _listViewDwgs.CarregaArquivosItem();
             });
