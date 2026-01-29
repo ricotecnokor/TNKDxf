@@ -4,11 +4,11 @@ using TNKDxf.Dominio.Dwgs;
 
 namespace TNKDxf.ViewModel
 {
-    public class ListViewDwgs
+    public class DxfsListView
     {
         private readonly ColecaoDwgs _colecaoDwgs;
 
-        public ListViewDwgs(ColecaoDwgs colecaoDwgs)
+        public DxfsListView(ColecaoDwgs colecaoDwgs)
         {
             _colecaoDwgs = colecaoDwgs;
         }
