@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using TNKDxf.Dominio.Dxfs;
 
-namespace TNKDxf.ViewModel
+namespace TNKDxf.Dominio.Listas
 {
     public class ListViewDxf
     {

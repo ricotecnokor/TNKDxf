@@ -1,4 +1,4 @@
-﻿namespace TNKDxf.ViewModel
+﻿namespace TNKDxf.Dominio.Entidades
 {
     public class TabViewModel
     {

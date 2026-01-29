@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using TNKDxf.Handles;
-using TNKDxf.ViewModel;
+using TNKDxf.Dominio.Entidades;
+using TNKDxf.Dominio.Listas;
 
 namespace TNKDxf.Dominio.Dxfs
 {
