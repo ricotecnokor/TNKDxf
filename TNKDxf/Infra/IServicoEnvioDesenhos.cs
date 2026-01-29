@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using TNKDxf.Handles;
-using TNKDxf.Infra.Dtos;
 
 namespace TNKDxf.Infra
 {
