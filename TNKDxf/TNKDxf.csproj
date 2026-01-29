@@ -107,7 +107,6 @@
     <Compile Include="BoolToAbrirFecharConverter.cs" />
     <Compile Include="Dominio\Dxfs\ArquivoDxf.cs" />
     <Compile Include="Dominio\Dxfs\ColecaoDxfs.cs" />
-    <Compile Include="Dominio\Entidades\Class1.cs" />
     <Compile Include="ExportadoraDxf.cs" />
     <Compile Include="Handles\AvaliadorDesenhos.cs" />
     <Compile Include="Handles\CommandResult.cs" />
@@ -138,13 +137,6 @@
     </Compile>
     <Compile Include="Dominio\Enumeracoes\Enumeration.cs" />
     <Compile Include="Dominio\Extensoes\ExtensionsDouble.cs" />
-    <Compile Include="Dominio\ObjetosValor\Codigo.cs" />
-    <Compile Include="Dominio\ObjetosValor\Descricao.cs" />
-    <Compile Include="Dominio\ObjetosValor\Item.cs" />
-    <Compile Include="Dominio\ObjetosValor\Material.cs" />
-    <Compile Include="Dominio\ObjetosValor\Observacao.cs" />
-    <Compile Include="Dominio\ObjetosValor\Peso.cs" />
-    <Compile Include="Dominio\ObjetosValor\Quantidade.cs" />
     <Compile Include="Infra\CfgEngAPI.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
