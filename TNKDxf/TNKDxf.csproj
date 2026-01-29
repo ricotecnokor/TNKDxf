@@ -133,7 +133,6 @@
     <Compile Include="Dominio\Dxfs\ArquivoDxf.cs" />
     <Compile Include="TestesViabilidade\TesteA.cs" />
     <Compile Include="ViewModel\ListViewDwgs.cs" />
-    <Compile Include="ViewModel\ListViewDxfs.cs" />
     <Compile Include="ViewModel\TabViewModel.cs" />
     <Page Include="Assets\Icons\FlowDrawingIcon.xaml">
       <Generator>MSBuild:Compile</Generator>
