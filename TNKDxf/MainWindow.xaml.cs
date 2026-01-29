@@ -10,7 +10,7 @@ namespace TNKDxf
     public partial class MainWindow : Window
     {
  
-        protected Formato _formato;
+      
 
         public MainWindow()
         {

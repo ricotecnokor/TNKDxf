@@ -18,7 +18,6 @@ namespace TNKDxf
     {
         private string _resultado = "Carregando...";
         private string _projeto;
-        protected Formato _formato;
         private object _conteudoSelecionado;
         public bool _processado = false;
         AvaliadorDesenhos _avaliadorDesenhos;

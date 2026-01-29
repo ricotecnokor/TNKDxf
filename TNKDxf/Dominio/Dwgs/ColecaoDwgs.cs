@@ -18,16 +18,6 @@ namespace TNKDxf.Dominio.Dwgs
         }
 
 
-        public ArquivoDwg ObterArquivoDwg(string nome)
-        {
-            return _dwgs.Find(x => x.Nome == nome);
-        }
-
-        public IEnumerable<ArquivoDwg> ObterArquivosErrados()
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<ArquivoItem> ObterArquivos()
         {
             return _dwgs

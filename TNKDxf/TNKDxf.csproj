@@ -128,9 +128,6 @@
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="ViewModel\ArquivoItem.cs" />
     <Compile Include="ViewModel\CampoErroWpf.cs" />
-    <Compile Include="ViewModel\ColetorDeDadosDxf.cs" />
-    <Compile Include="Dominio\Abstracoes\IColetorDeDadosDxf.cs" />
-    <Compile Include="Dominio\Dxfs\ArquivoDxf.cs" />
     <Compile Include="TestesViabilidade\TesteA.cs" />
     <Compile Include="ViewModel\ListViewDxf.cs" />
     <Compile Include="ViewModel\TabViewModel.cs" />
@@ -145,41 +142,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Blocos\Ajustes\AjusteCabecalho.cs" />
-    <Compile Include="Blocos\Atributacao\Atributos.cs" />
-    <Compile Include="Blocos\Atributacao\AtributosCampos.cs" />
-    <Compile Include="Blocos\Atributacao\AtributosLinhaItem.cs" />
-    <Compile Include="Blocos\Atributacao\AtributosLinhaMarca.cs" />
-    <Compile Include="Blocos\Atributacao\AtributosRevisoes.cs" />
-    <Compile Include="Blocos\Atributacao\IAtributos.cs" />
-    <Compile Include="Blocos\Insercoes\IInsercao.cs" />
-    <Compile Include="Blocos\Insercoes\Insercao.cs" />
-    <Compile Include="Blocos\Insercoes\InsercaoCabecalho.cs" />
-    <Compile Include="Blocos\Insercoes\InsercaoConjuntos.cs" />
-    <Compile Include="Blocos\Insercoes\InsercaoFormato.cs" />
-    <Compile Include="Blocos\Insercoes\InsercaoItem.cs" />
-    <Compile Include="Dominio\Colecoes\ColecaoConjuntos.cs" />
-    <Compile Include="Dominio\Coletores\AbsColeta.cs" />
-    <Compile Include="Dominio\Coletores\CamposFormato.cs" />
-    <Compile Include="Dominio\Coletores\ColetaLista.cs" />
-    <Compile Include="Dominio\Coletores\ColetaLmTNK.cs" />
-    <Compile Include="Dominio\Coletores\ColetaRevisoes.cs" />
-    <Compile Include="Dominio\Coletores\ColetorErros.cs" />
-    <Compile Include="Dominio\Coletores\IColeta.cs" />
-    <Compile Include="Dominio\Coletores\IColetaCampos.cs" />
-    <Compile Include="Dominio\Coletores\IColetaErros.cs" />
-    <Compile Include="Dominio\Coletores\IColetaLista.cs" />
-    <Compile Include="Dominio\Coletores\IColetaRevisoes.cs" />
-    <Compile Include="Dominio\Entidades\Encaminhamento.cs" />
-    <Compile Include="Dominio\Listas\CampoExtraido.cs" />
-    <Compile Include="Dominio\Listas\ICamposExtraidos.cs" />
     <Compile Include="Dominio\Listas\IDataExtraido.cs" />
-    <Compile Include="Dominio\Construtores\FormatoDATABuilder.cs" />
     <Compile Include="Dominio\Entidades\ConjuntoLM.cs" />
     <Compile Include="Dominio\Entidades\DxfSingleton.cs" />
     <Compile Include="Dominio\Entidades\Entidade.cs" />
     <Compile Include="Dominio\Entidades\Formatacao.cs" />
-    <Compile Include="Dominio\Entidades\Formato.cs" />
     <Compile Include="Dominio\Entidades\TopicoLM.cs" />
     <Compile Include="Dominio\Enumeracoes\Enumeration.cs" />
     <Compile Include="Dominio\Enumeracoes\FormatoType.cs" />
@@ -188,12 +155,8 @@
     <Compile Include="Dominio\Extensoes\ExtensoesDxf.cs" />
     <Compile Include="Dominio\Extensoes\ExtensoesEntidadesCAD.cs" />
     <Compile Include="Dominio\Listas\IListaExtraida.cs" />
-    <Compile Include="Dominio\Listas\ILmExtraida.cs" />
     <Compile Include="Dominio\Listas\IRevisoesExtraidas.cs" />
     <Compile Include="Dominio\Listas\ListaDeCampos.cs" />
-    <Compile Include="Dominio\Listas\LmExtraida.cs" />
-    <Compile Include="Dominio\Listas\LmExtraidaTKL.cs" />
-    <Compile Include="Dominio\Listas\RevisaoExtraida.cs" />
     <Compile Include="Dominio\ObjetosValor\CampoTexto.cs" />
     <Compile Include="Dominio\ObjetosValor\Codigo.cs" />
     <Compile Include="Dominio\ObjetosValor\Descricao.cs" />
@@ -209,7 +172,6 @@
     <Compile Include="Dominio\ObjetosValor\Ponto2d.cs" />
     <Compile Include="Dominio\ObjetosValor\Quantidade.cs" />
     <Compile Include="Dominio\ObjetosValor\Texto.cs" />
-    <Compile Include="Dominio\Dxfs\ColecaoDxfs.cs" />
     <Compile Include="Infra\CfgEngAPI.cs" />
     <Compile Include="Infra\Dtos\CampoFormatoDOC.cs" />
     <Compile Include="Infra\Dtos\FormatacaoDTO.cs" />
@@ -263,6 +225,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Blocos\" />
+    <Folder Include="Dominio\Construtores\" />
+    <Folder Include="Dominio\Dxfs\" />
     <Folder Include="ViewModel\Abstracoes\" />
   </ItemGroup>
   <ItemGroup>
