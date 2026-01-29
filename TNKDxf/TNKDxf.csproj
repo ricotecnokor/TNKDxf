@@ -137,23 +137,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dominio\Enumeracoes\Enumeration.cs" />
-    <Compile Include="Dominio\Enumeracoes\FormatoType.cs" />
     <Compile Include="Dominio\Extensoes\ExtensionsDouble.cs" />
-    <Compile Include="Dominio\ObjetosValor\CampoTexto.cs" />
     <Compile Include="Dominio\ObjetosValor\Codigo.cs" />
     <Compile Include="Dominio\ObjetosValor\Descricao.cs" />
-    <Compile Include="Dominio\ObjetosValor\Erro.cs" />
-    <Compile Include="Dominio\ObjetosValor\ErroColetado.cs" />
     <Compile Include="Dominio\ObjetosValor\Item.cs" />
-    <Compile Include="Dominio\ObjetosValor\Janela.cs" />
-    <Compile Include="Dominio\ObjetosValor\LimitesGeometricosRetangulo.cs" />
-    <Compile Include="Dominio\ObjetosValor\Linha.cs" />
     <Compile Include="Dominio\ObjetosValor\Material.cs" />
     <Compile Include="Dominio\ObjetosValor\Observacao.cs" />
     <Compile Include="Dominio\ObjetosValor\Peso.cs" />
-    <Compile Include="Dominio\ObjetosValor\Ponto2d.cs" />
     <Compile Include="Dominio\ObjetosValor\Quantidade.cs" />
-    <Compile Include="Dominio\ObjetosValor\Texto.cs" />
     <Compile Include="Infra\CfgEngAPI.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
