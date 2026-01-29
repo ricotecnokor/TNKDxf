@@ -122,7 +122,7 @@ namespace TNKDxf.Infra
 
             var lista = Directory.EnumerateFiles(dir).Where(x => x.EndsWith("dxf")).ToList();
 
-            var nomeCompletoDoArquivo = lista.FirstOrDefault(x => x.Contains(fileName)).Split('\\').Last().Replace(".dxf","");
+            var nomeCompletoDoArquivo = lista.FirstOrDefault(x => x.Contains(fileName)).Split('\\').Last();
             var revisao = nomeCompletoDoArquivo.Split(' ').Last().Replace("rev","");
 
             /////////////////////////
@@ -133,7 +133,7 @@ namespace TNKDxf.Infra
                 baseApi = baseApi.Replace("/api/Dxf", "/api");
             }
 
-            var fileURL = $"{baseApi.TrimEnd('/')}/GetDownloadDxf?Usuario={Uri.EscapeDataString(usuario)}&Arquivo={Uri.EscapeDataString(fileName)}&Revisao={Uri.EscapeDataString(revisao)}";
+            var fileURL = $"{baseApi.TrimEnd('/')}/GetDownloadDxf?Usuario={Uri.EscapeDataString(usuario)}&Arquivo={Uri.EscapeDataString(nomeCompletoDoArquivo)}";
 
             // Use the injected HttpClient instead of creating a new one
             var response = await _http.GetAsync(fileURL);
@@ -168,13 +168,13 @@ namespace TNKDxf.Infra
 
 
 
-            var filePath = Path.Combine(dir, $"{nomeCompletoDoArquivo}.dxf");
+            var filePath = Path.Combine(dir, nomeCompletoDoArquivo);
             if (System.IO.File.Exists(filePath))
             {
                 System.IO.File.Delete(filePath);
             }
 
-            var arquivoSalvamento = Path.Combine(diretorioSalvamento, $"{nomeCompletoDoArquivo}.dxf");
+            var arquivoSalvamento = Path.Combine(diretorioSalvamento, nomeCompletoDoArquivo);
             if (System.IO.File.Exists(arquivoSalvamento))
             {
                 System.IO.File.Delete(arquivoSalvamento);
