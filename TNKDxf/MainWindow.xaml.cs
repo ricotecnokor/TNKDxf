@@ -1,8 +1,5 @@
-﻿using System.Windows;
-using TNKDxf.Dominio.Entidades;
-using TNKDxf.TestesViabilidade;
-using System;
-using System.Linq;
+﻿using System;
+using System.Windows;
 
 namespace TNKDxf
 {
@@ -54,10 +51,10 @@ namespace TNKDxf
             DataContext = viewModel;
         }
 
-        private void btnTeste_Click(object sender, RoutedEventArgs e)
-        {
-            TesteA.SelectSinglePartDrawingForSelectedPartInDocumentManagerOrDrawingList();
-        }
+        //private void btnTeste_Click(object sender, RoutedEventArgs e)
+        //{
+        //    TesteA.SelectSinglePartDrawingForSelectedPartInDocumentManagerOrDrawingList();
+        //}
 
         private void btnEnviar_Click(object sender, RoutedEventArgs e)
         {

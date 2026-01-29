@@ -78,9 +78,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Dynamic-Tekla-Structures-API\Dynamic.Tekla.Structures.API\Dynamic.Tekla.Structures\bin\Debug\Dynamic.Tekla.Structures.API.dll</HintPath>
     </Reference>
-    <Reference Include="netDxf, Version=2023.11.10.0, Culture=neutral, PublicKeyToken=618c63290969e781, processorArchitecture=MSIL">
-      <HintPath>..\packages\netDxf.2023.11.10\lib\net48\netDxf.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -128,7 +125,6 @@
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="ViewModel\ArquivoItem.cs" />
     <Compile Include="ViewModel\CampoErroWpf.cs" />
-    <Compile Include="TestesViabilidade\TesteA.cs" />
     <Compile Include="ViewModel\ListViewDxf.cs" />
     <Compile Include="ViewModel\TabViewModel.cs" />
     <Page Include="Assets\Icons\FlowDrawingIcon.xaml">
@@ -144,16 +140,12 @@
     </Compile>
     <Compile Include="Dominio\Listas\IDataExtraido.cs" />
     <Compile Include="Dominio\Entidades\ConjuntoLM.cs" />
-    <Compile Include="Dominio\Entidades\DxfSingleton.cs" />
     <Compile Include="Dominio\Entidades\Entidade.cs" />
     <Compile Include="Dominio\Entidades\Formatacao.cs" />
     <Compile Include="Dominio\Entidades\TopicoLM.cs" />
     <Compile Include="Dominio\Enumeracoes\Enumeration.cs" />
     <Compile Include="Dominio\Enumeracoes\FormatoType.cs" />
     <Compile Include="Dominio\Extensoes\ExtensionsDouble.cs" />
-    <Compile Include="Dominio\Extensoes\Extensoes.cs" />
-    <Compile Include="Dominio\Extensoes\ExtensoesDxf.cs" />
-    <Compile Include="Dominio\Extensoes\ExtensoesEntidadesCAD.cs" />
     <Compile Include="Dominio\Listas\IListaExtraida.cs" />
     <Compile Include="Dominio\Listas\IRevisoesExtraidas.cs" />
     <Compile Include="Dominio\Listas\ListaDeCampos.cs" />
@@ -226,8 +218,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Blocos\" />
-    <Folder Include="Dominio\Construtores\" />
-    <Folder Include="Dominio\Dxfs\" />
     <Folder Include="ViewModel\Abstracoes\" />
   </ItemGroup>
   <ItemGroup>
