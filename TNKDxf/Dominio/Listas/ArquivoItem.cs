@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace TNKDxf.ViewModel
+namespace TNKDxf.Dominio.Listas
 {
     public class ArquivoItem : INotifyPropertyChanged
     {

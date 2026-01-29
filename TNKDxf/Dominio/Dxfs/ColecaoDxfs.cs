@@ -1,67 +1,32 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using TNKDxf.Dominio.Construtores;
-using TNKDxf.Dominio.Dxfs;
 using TNKDxf.Dominio.Entidades;
-using TNKDxf.Dominio.Extensoes;
-using TNKDxf.Dominio.ObjetosValor;
-using TNKDxf.Infra;
+using TNKDxf.Dominio.Listas;
 
-namespace TNKDxf.Dxfs
+namespace TNKDxf.Dominio.Dxfs
 {
-    public class ColecaoDxfs : IEnumerable<ArquivoDxf>
+    public class ColecaoDxfs
     {
-        
-        private List<ArquivoDxf> _dxfs = new List<ArquivoDxf>();
-        public ColecaoDxfs(string caminho, string projeto)
+        private List<ArquivoDxf> _dwgs = new List<ArquivoDxf>();
+        public ColecaoDxfs(IEnumerable<string> lista, string projeto)
         {
-            DirectoryInfo di = new DirectoryInfo(caminho);
-
-            FileInfo[] arquivos = di.GetFiles("*.dxf");
-
-
-            foreach (FileInfo fi in arquivos)
-            {
-                ArquivoDxf arquivoDxf = new ArquivoDxf(fi.FullName, projeto);
-
-                arquivoDxf.Validar();
-                _dxfs.Add(arquivoDxf);
-            }
+            _dwgs = lista
+                .Select(x => new ArquivoDxf(x, projeto))
+                .ToList();
 
         }
 
-        public bool ContemArquivo(string caminho)
+
+        public IEnumerable<ArquivoItem> ObterArquivos()
         {
-            var dxf = _dxfs.Find(x => x.Nome == caminho);
-            return dxf != null;
+            return _dwgs
+                .Select(x => new ArquivoItem { Nome = x.Nome, Errado = x.TemErro() })
+                .ToList();
         }
 
-        public IEnumerator<ArquivoDxf> GetEnumerator()
+        public int ObterIndice(string nome)
         {
-            return _dxfs.GetEnumerator();
-        }
-
-        public IEnumerable<ArquivoDxf> ObterArquivosErrados()
-        {
-          return  _dxfs.Where(x => x.TemErro());
-        }
-
-        public IEnumerable<ArquivoDxf> ObterArquivosCertos()
-        {
-            return _dxfs.Where(x => !x.TemErro());
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public ArquivoDxf ObterArquivoDxf(string nome)
-        {
-            return _dxfs.Find(x => x.Nome == nome);
+            return _dwgs.FindIndex(x => x.Nome == nome);
         }
     }
 }
