@@ -26,6 +26,8 @@ namespace TNKDxf
 
             string dwgxportParams = "export outputDirectory=\""  + DWGFolder + "\"";
 
+            //string configName = "TNK_DXF";
+            //string dwgxportParams = "export outputDirectory=\"" + DWGFolder + "\" selectionConfig=\"" + configName + "\"";
 
             Process NewProcess = new Process();
 

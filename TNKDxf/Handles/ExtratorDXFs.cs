@@ -171,9 +171,10 @@ namespace TNKDxf.Handles
 
                 TotalEsperado = _desenhos.Count;
 
+
                 if (versao == "2024.0")
                 {
-                    Operation.RunMacro(@"C:\ProgramData\Trimble\Tekla Structures\2024.0\Environments\common\macros\modeling\ExportaDxf.cs");
+                    ExportadoraDxf.Run(PastaSaida);
                     _foramExtraidos = true;
                 }
 
