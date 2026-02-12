@@ -1,5 +1,5 @@
-﻿using Dynamic.Tekla.Structures;
-using TSM = Dynamic.Tekla.Structures.Model;
+﻿using Tekla.Structures;
+using TSM = Tekla.Structures.Model;
 
 namespace TNKDxf.Infra
 {

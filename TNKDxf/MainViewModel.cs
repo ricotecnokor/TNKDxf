@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TNKDxf.Dominio.Dxfs;
-using TNKDxf.Dominio.Entidades;
 using TNKDxf.Dominio.Listas;
 using TNKDxf.Handles;
 using TNKDxf.Infra;

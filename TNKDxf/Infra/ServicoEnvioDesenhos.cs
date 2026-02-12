@@ -1,4 +1,4 @@
-﻿using Dynamic.Tekla.Structures;
+﻿using Tekla.Structures;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using TNKDxf.Handles;
 using static System.Net.WebRequestMethods;
-using TSM = Dynamic.Tekla.Structures.Model;
+using TSM = Tekla.Structures.Model;
 
 namespace TNKDxf.Infra
 {
