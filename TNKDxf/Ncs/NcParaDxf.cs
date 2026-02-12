@@ -1,6 +1,6 @@
-﻿using Dynamic.Tekla.Structures;
-using Dynamic.Tekla.Structures.Drawing;
-using Dynamic.Tekla.Structures.Model;
+﻿using Tekla.Structures;
+using Tekla.Structures.Drawing;
+using Tekla.Structures.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using TSM = Dynamic.Tekla.Structures.Model;
+using TSM = Tekla.Structures.Model;
 
 namespace TNKDxf.Ncs
 {

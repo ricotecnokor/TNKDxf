@@ -1,8 +1,8 @@
-﻿using Dynamic.Tekla.Structures;
+﻿using Tekla.Structures;
 using System.Diagnostics;
 using System.IO;
-using TSM = Dynamic.Tekla.Structures.Model;
-using TSO = Dynamic.Tekla.Structures.Model.Operations;
+using TSM = Tekla.Structures.Model;
+using TSO = Tekla.Structures.Model.Operations;
 
 namespace TNKDxf
 {

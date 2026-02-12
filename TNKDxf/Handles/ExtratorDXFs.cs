@@ -1,11 +1,11 @@
 ﻿using System;
-using Dynamic.Tekla.Structures;
-using Dynamic.Tekla.Structures.Model.Operations;
+using Tekla.Structures;
+using Tekla.Structures.Model.Operations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TSD = Dynamic.Tekla.Structures.Drawing;
-using TSM = Dynamic.Tekla.Structures.Model;
+using TSD = Tekla.Structures.Drawing;
+using TSM = Tekla.Structures.Model;
 
 namespace TNKDxf.Handles
 {

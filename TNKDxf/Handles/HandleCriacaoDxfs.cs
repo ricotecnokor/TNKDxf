@@ -1,8 +1,8 @@
-﻿using Dynamic.Tekla.Structures;
+﻿using Tekla.Structures;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TSM = Dynamic.Tekla.Structures.Model;
+using TSM = Tekla.Structures.Model;
 
 namespace TNKDxf.Handles
 {
