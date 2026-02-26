@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TNKDxf", "TNKDxf\TNKDxf.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00-UI", "00-UI", "{4571D590-6588-4815-A034-A38755092FAF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestTNKDxf", "UnitTestTNKDxf\UnitTestTNKDxf.csproj", "{BFEE09C8-720B-456E-9A2A-753B691DA5DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{0BDAF1F0-3D18-4689-BA19-74C829DA5996}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BDAF1F0-3D18-4689-BA19-74C829DA5996}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BDAF1F0-3D18-4689-BA19-74C829DA5996}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFEE09C8-720B-456E-9A2A-753B691DA5DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFEE09C8-720B-456E-9A2A-753B691DA5DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFEE09C8-720B-456E-9A2A-753B691DA5DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFEE09C8-720B-456E-9A2A-753B691DA5DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

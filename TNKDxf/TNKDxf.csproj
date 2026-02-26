@@ -151,6 +151,10 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Ncs\NcParaDxf.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="TeklaManipulacao\ArquivoRelatorioMultiDesenhos.cs" />
+    <Compile Include="TeklaManipulacao\RelatorioMultiDesenhos.cs" />
+    <Compile Include="TeklaManipulacao\LeitorDesenhoTekla.cs" />
+    <Compile Include="TeklaManipulacao\LeitorRelatorio.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="Dominio\Listas\ArquivoItem.cs" />
     <Compile Include="Dominio\Entidades\CampoErroWpf.cs" />
