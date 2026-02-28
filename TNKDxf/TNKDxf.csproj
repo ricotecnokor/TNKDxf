@@ -276,8 +276,8 @@
     <Resource Include="Assets\Icons\TNKDxf.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\netDxf\netDxf\netDxf\netDxf.csproj">
-      <Project>{f0604d22-1d35-bf0c-57c9-3f84aa2eacf9}</Project>
+    <ProjectReference Include="..\netDxf\netDxf.csproj">
+      <Project>{d90c29a9-611e-e9e1-d3f6-729672f067ee}</Project>
       <Name>netDxf</Name>
     </ProjectReference>
   </ItemGroup>
