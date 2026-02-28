@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TNKDxf.TeklaManipulacao
 {
@@ -10,26 +11,33 @@ namespace TNKDxf.TeklaManipulacao
         private readonly string _nomeModelo = string.Empty;
         private readonly string _numeroProjeto = string.Empty;
         private readonly DateTime _data = DateTime.Now;
+        
+       
 
         private readonly List<PropriedadesDesenho> _propriedadesDesenhos = new List<PropriedadesDesenho>();
 
         public string NomeModelo => _nomeModelo;
 
         public string NumeroProjeto => _numeroProjeto;
-
+        
+       
         public DateTime Data => _data;
 
-        public RelatorioMultiDesenhos(string nomeModelo, string numeroProjeto, string dia, string hora)
+        public RelatorioMultiDesenhos(string line)//string nomeModelo, string numeroProjeto, string dia, string hora)
         {
-            _nomeModelo = nomeModelo;
-            _numeroProjeto = numeroProjeto;
+            
+
+            var linha = line.Split(';');
+
+            _nomeModelo = linha[1].Trim();
+            _numeroProjeto = linha[2].Trim();
             _data = new DateTime(
-                Convert.ToInt32(dia.Split('.')[2]),
-                Convert.ToInt32(dia.Split('.')[1]),
-                Convert.ToInt32(dia.Split('.')[0]),
-                Convert.ToInt32(hora.Split(':')[0]),
-                Convert.ToInt32(hora.Split(':')[1]),
-                Convert.ToInt32(hora.Split(':')[2])
+                Convert.ToInt32(linha[3].Trim().Split('.')[2]),
+                Convert.ToInt32(linha[3].Trim().Split('.')[1]),
+                Convert.ToInt32(linha[3].Trim().Split('.')[0]),
+                Convert.ToInt32(linha[4].Trim().Split(':')[0]),
+                Convert.ToInt32(linha[4].Trim().Split(':')[1]),
+                Convert.ToInt32(linha[4].Trim().Split(':')[2])
             );
         }
 
@@ -43,11 +51,27 @@ namespace TNKDxf.TeklaManipulacao
             return GetEnumerator();
         }
 
-        public void AdicionarPropriedadesDesenho(PropriedadesDesenho propriedades)
+        public void AdicionarPropriedadesDesenho(string line)
         {
-            _propriedadesDesenhos.Add(propriedades);
+          
+            var linha = line.Split(';');
+            _propriedadesDesenhos.Add(new PropriedadesDesenho(
+                                        linha[1].Trim(),
+                                        linha[2].Trim(),
+                                        linha[3].Trim(),
+                                        linha[4].Trim(),
+                                        linha[5].Trim(),
+                                        linha[6].Trim(),
+                                        linha[7].Trim(),
+                                        linha[8].Trim(),
+                                        linha[9].Trim()));
         }
 
+        public PropriedadesDesenho PegaPropriedades(string nomeArquivo)
+        {
+            string nome = nomeArquivo.Split('\\').Last().Split(' ').First();
+            return _propriedadesDesenhos.Find(x => x.NumeroContratada.StartsWith(nome));
+        }
     }
 
     public class PropriedadesDesenho
@@ -60,7 +84,7 @@ namespace TNKDxf.TeklaManipulacao
         private readonly string _subtitulo1Desenho = string.Empty;
         private readonly string _subtitulo2Desenho = string.Empty;
         private readonly string _revisao = string.Empty;
-        private readonly string _revisaoCliente  = string.Empty;
+        private readonly string _revisaoCliente = string.Empty;
 
         public PropriedadesDesenho(string numeroContratada, string numeroCliente, string descricaoProjeto, string areaSubarea, string tituloDesenho, string subtitulo1Desenho, string subtitulo2Desenho, string revisao, string revisaoCliente)
         {

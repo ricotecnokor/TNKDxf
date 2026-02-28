@@ -74,13 +74,44 @@
     <Reference Include="CommonServiceLocator, Version=2.0.2.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.2.0.2\lib\net47\CommonServiceLocator.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=10.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.10.0.3\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=10.0.0.3, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.10.0.3\lib\net462\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=10.0.0.3, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.10.0.3\lib\net462\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=10.0.0.3, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.10.0.3\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=10.0.0.3, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.10.0.3\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -137,6 +168,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BoolToAbrirFecharConverter.cs" />
+    <Compile Include="DependencyInjection.cs" />
     <Compile Include="Dominio\Dxfs\ArquivoDxf.cs" />
     <Compile Include="Dominio\Dxfs\ColecaoDxfs.cs" />
     <Compile Include="ExportadoraDxf.cs" />
@@ -151,10 +183,24 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Ncs\NcParaDxf.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\AdapterDesenho.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\ArcoDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\CirculoDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\CotaConjuntoDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\CotaDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\CotaLinearDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\IAdapterDesenho.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\LinhaDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\MarcaDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\ObjetosDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\PecaDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\PolilinhaDxf.cs" />
+    <Compile Include="TeklaManipulacao\Adapters\TextoDxf.cs" />
     <Compile Include="TeklaManipulacao\ArquivoRelatorioMultiDesenhos.cs" />
+    <Compile Include="TeklaManipulacao\DesenhoSelector.cs" />
+    <Compile Include="TeklaManipulacao\LeitorRelatorioParams.cs" />
     <Compile Include="TeklaManipulacao\RelatorioMultiDesenhos.cs" />
-    <Compile Include="TeklaManipulacao\LeitorDesenhoTekla.cs" />
-    <Compile Include="TeklaManipulacao\LeitorRelatorio.cs" />
+    <Compile Include="TeklaManipulacao\LeitorRlatorioDesenhosTekla.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="Dominio\Listas\ArquivoItem.cs" />
     <Compile Include="Dominio\Entidades\CampoErroWpf.cs" />
@@ -219,7 +265,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Fonts\README.txt" />
   </ItemGroup>
@@ -230,5 +275,18 @@
     <Resource Include="favicon.ico" />
     <Resource Include="Assets\Icons\TNKDxf.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\netDxf\netDxf\netDxf\netDxf.csproj">
+      <Project>{f0604d22-1d35-bf0c-57c9-3f84aa2eacf9}</Project>
+      <Name>netDxf</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets'))" />
+  </Target>
 </Project>

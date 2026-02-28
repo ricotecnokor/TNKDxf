@@ -1391,15 +1391,17 @@ template
 ";
         private readonly string _caminho = string.Empty;  //= @"C:\APP\TNKDxfListaMULTI.rpt";
         const string DIRETORIO = @"C:\ProgramData\TNK\Relatorios";
-        public ArquivoRelatorioMultiDesenhos(string nomeArquivo)
+        private readonly string _template = string.Empty;
+        public ArquivoRelatorioMultiDesenhos(string template)
         {
-
-            if(!Directory.Exists(DIRETORIO)) Directory.CreateDirectory(DIRETORIO);
-            _caminho = Path.Combine(DIRETORIO, nomeArquivo);
+            _template = template;
+            if (!Directory.Exists(DIRETORIO)) Directory.CreateDirectory(DIRETORIO);
+            _caminho = Path.Combine(DIRETORIO, template);
 
         }
 
         public string Caminho => _caminho;
+        public string Template => _template;
 
         public void CriarArquivoRelatorio() 
         {
