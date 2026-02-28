@@ -102,7 +102,46 @@ namespace TNKDxf
             ToggleAbrirCommand = new RelayCommand<ArquivoItem>(ToggleAbrirArquivo);
             EnviarCorretosCommand = new RelayCommand(EnviarArquivosCorretos);
             DownloadArquivoCommand = new RelayCommand<ArquivoItem>(DownloadArquivo);
-            ExtrairCommand = new RelayCommand(async () => await ExtrairArquivosAsync());
+            //ExtrairCommand = new RelayCommand(async () => await ExtrairArquivosAsync());
+
+            coletarArquivos();
+        }
+
+        private void coletarArquivos()
+        {
+           
+
+
+            var extrator = ExtratorDXFs.GetInstance();
+
+            extrator.ColetarArquivos();
+
+            if (!string.IsNullOrWhiteSpace(extrator.PastaSaida) && Directory.Exists(extrator.PastaSaida))
+            {
+                var gerados = Directory.GetFiles(extrator.PastaSaida, "*.dxf").Length;
+                ProgressoAtual = gerados;
+            }
+
+
+
+
+            _colecaoDwgs = new ColecaoDxfs(extrator.Extraidos, _projeto);
+            _listViewDwgs = new ListViewDxf(_colecaoDwgs);
+            var atualizados = _listViewDwgs.CarregaArquivosItem();
+
+            Arquivos.Clear();
+            foreach (var item in atualizados)
+            {
+                var res = _avaliadorDesenhos.ObterResult(item.Nome);
+                if (res != null && res.Success)
+                {
+                    item.PodeBaixar = true;
+                }
+                Arquivos.Add(item);
+            }
+
+            IsExtraindo = false;
+
         }
 
         private async Task ExtrairArquivosAsync()
