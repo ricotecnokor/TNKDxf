@@ -143,15 +143,11 @@ namespace TNKDxf.Handles
 
             TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
-            //TSM.Model model = new TSM.Model();
-            //string modelPath = model.GetInfo().ModelPath;
+           
 
             var dg = dh.GetDrawingSelector().GetSelected();
 
-            //string xsplot = "";
-            //TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
-
-            //var _xsplot = modelPath + xsplot.Replace(".", "");
+            
 
             _desenhos.Clear();
             while (dg.MoveNext())

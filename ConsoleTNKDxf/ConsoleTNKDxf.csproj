@@ -79,9 +79,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Infra\TeklaHandler.cs" />
+    <Compile Include="AdapterDesenho.cs" />
+    <Compile Include="ArquivoRelatorioMultiDesenhos.cs" />
+    <Compile Include="IAdapterDesenho.cs" />
+    <Compile Include="LeitorRlatorioDesenhosTekla.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelatorioMultiDesenhos.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -92,5 +96,6 @@
       <Name>netDxf</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
