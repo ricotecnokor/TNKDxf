@@ -8,7 +8,7 @@ namespace TNKDxf.Dominio.Dxfs
     public class ColecaoDxfs
     {
         private List<ArquivoDxf> _dwgs = new List<ArquivoDxf>();
-        public ColecaoDxfs(IEnumerable<string> lista, string projeto)
+        public ColecaoDxfs(List<string> lista, string projeto)
         {
             _dwgs = lista
                 .Select(x => new ArquivoDxf(x, projeto))

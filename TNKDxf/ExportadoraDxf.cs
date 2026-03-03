@@ -8,8 +8,15 @@ namespace TNKDxf
 {
     public static class ExportadoraDxf
     {
-        public static void Run(string DWGFolder)
+        public static void Run()
         {
+            TSM.Model model = new TSM.Model();
+            string modelPath = model.GetInfo().ModelPath;
+
+            string xsplot = "";
+            TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
+
+            var destino = modelPath + xsplot.Replace(".", "");
 
             TSM.Operations.Operation.DisplayPrompt("Exporting DWG Files.");
 
@@ -24,11 +31,9 @@ namespace TNKDxf
 
             string ApplicationPath = Path.Combine(TSBinaryDir, "Applications\\Tekla\\Drawings\\DwgExport\\" + ApplicationName);
 
-            string dwgxportParams = "export outputDirectory=\""  + DWGFolder + "\"";
+            string dwgxportParams = "export outputDirectory=\""  + destino + "\"";
 
-            //string configName = "TNK_DXF";
-            //string dwgxportParams = "export outputDirectory=\"" + DWGFolder + "\" selectionConfig=\"" + configName + "\"";
-
+          
             Process NewProcess = new Process();
 
 
@@ -41,7 +46,7 @@ namespace TNKDxf
                 try
 
                 {
-
+           
                     NewProcess.StartInfo.Arguments = dwgxportParams;
 
                     NewProcess.Start();
