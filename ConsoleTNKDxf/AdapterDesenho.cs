@@ -85,11 +85,11 @@ namespace ConsoleTNKDxf
             PropriedadesDesenho propriedades = relatorio.PegaPropriedades(nomeArquivo);
 
             dxf = DxfDocument.Load(nomeArquivo);
-            var blocoLista = dxf.Entities.Inserts.FirstOrDefault(x => x.Block.Name.StartsWith("PORTO_SUDESTE_DET_A1"));
+            var blocoLista = dxf.Entities.Inserts.FirstOrDefault(x => x.Block.Name.StartsWith("FORMATO_DET_A1"));
             var linhasHorizontais = blocoLista.Block.Entities.OfType<Line>().Where(x => x.StartPoint.Y == x.EndPoint.Y).ToList();
             var linhaHrizontalMaisAlta = linhasHorizontais.OrderByDescending(x => x.StartPoint.Y).FirstOrDefault();
 
-            string appName = "TeklaExport";
+            string appName = "08478f494deb";
             ApplicationRegistry appReg;
             if (!dxf.ApplicationRegistries.Contains(appName))
             {
@@ -99,8 +99,9 @@ namespace ConsoleTNKDxf
 
                 XData xdata = new XData(appReg);
 
-                string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+                string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
+               
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, userName));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, relatorio.NomeModelo));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, relatorio.NumeroProjeto));
@@ -114,6 +115,7 @@ namespace ConsoleTNKDxf
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.Subtitulo2Desenho));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.Revisao));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.RevisaoCliente));
+
 
                 linhaHrizontalMaisAlta.XData.Add(xdata);
 
