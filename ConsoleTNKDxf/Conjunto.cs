@@ -23,8 +23,10 @@ namespace ConsoleTNKDxf
 
         public List<Peca> Pecas => _itens;
 
-        public Conjunto(TSM.Assembly assy)
+        public Conjunto(TSM.Part part)
         {
+            var assy = part.GetAssembly();
+
             Hashtable doubleProperties = new Hashtable();
             Hashtable stringProterties = new Hashtable();
 
@@ -38,10 +40,10 @@ namespace ConsoleTNKDxf
             _posicao = stringProterties.ContainsKey("ASSEMBLY_POS") ? stringProterties["ASSEMBLY_POS"].ToString() : string.Empty;
             _pesoTotal = doubleProperties.ContainsKey("WEIGTH") && double.TryParse(doubleProperties["WEIGTH"].ToString(), out double result) ? (int)result : 0;
 
-            TSM.Part mainPartConjunto = assy.GetMainPart() as TSM.Part;
-            Peca itemMainPart = new Peca(mainPartConjunto);
+           
+            Peca peca = new Peca(part);
             _quantidade = 1;
-            _itens.Add(itemMainPart);
+            _itens.Add(peca);
             //var pecasSecundarias = assy.GetSecondaries().GetEnumerator();
             //while (pecasSecundarias.MoveNext())
             //{
@@ -53,7 +55,7 @@ namespace ConsoleTNKDxf
             //    }
             //}
            
-            _pesoTotal = itemMainPart.PesoCalculado;
+            _pesoTotal = peca.PesoCalculado;
         }
 
 

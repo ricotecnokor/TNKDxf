@@ -39,8 +39,7 @@ namespace ConsoleTNKDxf
                 return;
             }
 
-            //TSM.Assembly assy = _model.SelectModelObject(assembly.Identifier) as TSM.Assembly;
-
+             
 
             string assemblyPos = assy.ObterPropriedade("ASSEMBLY_POS").ToString();
             if (assemblyPos == string.Empty)
@@ -50,26 +49,16 @@ namespace ConsoleTNKDxf
             }
             
 
-            string posicaoItemPrincipal = assy.ObterPosicaoItemPrincipal();
+            //string posicaoItemPrincipal = assy.ObterPosicaoItemPrincipal();
 
             if (_conjuntos.Any(conjunto => conjunto.Posicao == assemblyPos))
             {
-                //string posicaoPeca = part.ObterPropriedade("PART_POS").ToString();
-                //if (posicaoItemPrincipal == posicaoPeca)
-                //{
-                //    var marcaExistente = _conjuntos.FirstOrDefault(c => c.Posicao == assemblyPos);
-                //    marcaExistente.IncrementarQuantidade();
-                //    marcaExistente.IncrementarPeso();
-                //}
-
                 Conjunto conjuntoExistente = _conjuntos.FirstOrDefault(c => c.Posicao == assemblyPos);
                 conjuntoExistente.AddItem(part);
-
-
                 return;
             }
 
-            var marca = new Conjunto(assy);
+            var marca = new Conjunto(part);
             _conjuntos.Add(marca);
         }
 
