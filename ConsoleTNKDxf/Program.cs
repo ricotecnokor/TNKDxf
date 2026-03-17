@@ -11,7 +11,7 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
-            exportar();
+           // exportar();
 
 
             IAdapterDesenho adapterDesenho = new AdapterDesenho();
@@ -22,7 +22,7 @@ namespace ConsoleTNKDxf
 
             Console.WriteLine(@"Processo concluído com arquivos na pasta .\PlotFiles\Enviar, Pressione qualquer tecla para sair.");
 
-            //Environment.Exit(0);
+            Environment.Exit(0);
 
         }
 

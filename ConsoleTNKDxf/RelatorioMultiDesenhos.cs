@@ -64,7 +64,8 @@ namespace ConsoleTNKDxf
                                         linha[6].Trim(),
                                         linha[7].Trim(),
                                         linha[8].Trim(),
-                                        linha[9].Trim()));
+                                        linha[9].Trim(),
+                                        linha[10].Trim()));
         }
 
         public PropriedadesDesenho PegaPropriedades(string nomeArquivo)
@@ -85,8 +86,9 @@ namespace ConsoleTNKDxf
         private readonly string _subtitulo2Desenho = string.Empty;
         private readonly string _revisao = string.Empty;
         private readonly string _revisaoCliente = string.Empty;
+        private readonly string _escala = string.Empty;
 
-        public PropriedadesDesenho(string numeroContratada, string numeroCliente, string descricaoProjeto, string areaSubarea, string tituloDesenho, string subtitulo1Desenho, string subtitulo2Desenho, string revisao, string revisaoCliente)
+        public PropriedadesDesenho(string numeroContratada, string numeroCliente, string descricaoProjeto, string areaSubarea, string tituloDesenho, string subtitulo1Desenho, string subtitulo2Desenho, string revisao, string revisaoCliente, string escala)
         {
             _numeroContratada = numeroContratada;
             _numeroCliente = numeroCliente;
@@ -97,6 +99,7 @@ namespace ConsoleTNKDxf
             _subtitulo2Desenho = subtitulo2Desenho;
             _revisao = revisao;
             _revisaoCliente = revisaoCliente;
+            _escala = escala;
         }
 
         public string NumeroContratada => _numeroContratada;
@@ -116,5 +119,7 @@ namespace ConsoleTNKDxf
         public string Revisao => _revisao;
 
         public string RevisaoCliente => _revisaoCliente;
+
+        public string Escala => _escala;
     }
 }

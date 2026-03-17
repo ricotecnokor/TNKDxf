@@ -2,10 +2,17 @@
 using netDxf.Entities;
 using netDxf.Tables;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Tekla.Structures;
+using Tekla.Structures.Drawing;
+using Tekla.Structures.DrawingInternal;
+using Tekla.Structures.Model;
+using static Tekla.Structures.Model.ReferenceModel;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -13,15 +20,16 @@ namespace ConsoleTNKDxf
 {
     public class AdapterDesenho : IAdapterDesenho
     {
-
+        TSM.Model _model;
         string _pastaSaida;
-
-
+        List<string> _arquivosExistentes = new List<string>();
+        //List<Desenho> _desenhos = new List<Desenho>();
+        private RelatorioMultiDesenhos _relatorio;
         public AdapterDesenho()
         {
 
-            TSM.Model model = new TSM.Model();
-            string modelPath = model.GetInfo().ModelPath;
+            _model = new TSM.Model();
+            string modelPath = _model.GetInfo().ModelPath;
 
             string xsplot = "";
             TeklaStructuresSettings.GetAdvancedOption("XS_DRAWING_PLOT_FILE_DIRECTORY", ref xsplot);
@@ -32,27 +40,27 @@ namespace ConsoleTNKDxf
 
         public void ColetarArquivos()
         {
-            var arquivosExistentes = new List<string>();
+            _pastaSaida = @"C:\TesteAlexandre";
 
             if (Directory.Exists(_pastaSaida))
             {
-                arquivosExistentes = Directory.GetFiles(_pastaSaida, "*.dxf").ToList();
+                _arquivosExistentes = Directory.GetFiles(_pastaSaida, "*.dxf").ToList();
             }
 
-            if (arquivosExistentes.Count < 1)
+            if (_arquivosExistentes.Count < 1)
             {
                 return;
             }
 
             LeitorRlatorioDesenhosTekla leitor = new LeitorRlatorioDesenhosTekla("multiTemp.rpt");
-            var relatorio = leitor.Ler();
+            _relatorio = leitor.Ler();
 
 
             TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
             var dg = dh.GetDrawingSelector().GetSelected();
 
-
+            
 
             while (dg.MoveNext())
             {
@@ -63,86 +71,117 @@ namespace ConsoleTNKDxf
 
                 if (tipo == typeof(TSD.MultiDrawing))
                 {
-                    var multid = drawing as TSD.MultiDrawing;
-                    var marca = multid.Title1;
-                 
-                    if (arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(marca)))
+
+                    var multiDrawing = drawing as TSD.MultiDrawing;
+
+                   
+                    
+          
+
+                    if (_arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(multiDrawing.Title1)))
                     {
-                        multid.SetUserProperty("TCNM_N_KOCH", marca);
-                        inserirInformacoesDesenho(arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(marca)), relatorio);
-                        Console.WriteLine(@"Desenho {0} processado com sucesso!", marca);
+
+
+                        
+                        var desenho = coletarDesenho(multiDrawing);
+                        string nomeArquivo = _arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(desenho.Title1));
+
+                        var dxf = DxfDocument.Load(nomeArquivo);
+                        XDados xDados = new XDados(dxf, nomeArquivo, desenho, _relatorio);
+                        xDados.InserirInformacoesDesenho();
+
+                        salvarDados(nomeArquivo, dxf);
+                        dxf = null;
+
+
+                    }
+
+                    
+                   
+                }
+            }
+
+
+        }
+
+        
+
+        private Desenho coletarDesenho(TSD.MultiDrawing multiDrawing)
+        {
+
+            var desenho = new Desenho(multiDrawing, _model);
+
+            if (_arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(desenho.Title1)))
+            {
+                HashSet<Identifier> pecasUnicasNoDesenho = obterPecasUnicasDesenho(multiDrawing);
+
+                foreach (Identifier partId in pecasUnicasNoDesenho)
+                {
+                    var modelObj = _model.SelectModelObject(partId);
+
+                    if (modelObj is TSM.Part modelPart)
+                    {
+                        desenho.AddPeca(modelPart);
+                    }
+                }
+
+            }
+
+            return desenho;
+
+        }
+
+
+        
+
+        private HashSet<Identifier> obterPecasUnicasDesenho(MultiDrawing multiDrawing)
+        {
+            // Usamos um HashSet para garantir que cada INSTÂNCIA física (GUID único) 
+            // seja contada apenas uma vez, mesmo que apareça em várias vistas (Frontal, Topo, etc)
+            HashSet<Identifier> pecasUnicasNoDesenho = new HashSet<Identifier>();
+
+            // 1. Acessar as vistas do Multi-drawing
+            var views = multiDrawing.GetSheet().GetAllViews().GetEnumerator();
+            while (views.MoveNext())
+            {
+
+                var view = views.Current as TSD.View;
+                if (view == null) continue;
+
+                // 2. Pegar todas as partes gráficas nesta vista
+                DrawingObjectEnumerator drawingParts = view.GetObjects(new[] { typeof(TSD.Part) });
+                while (drawingParts.MoveNext())
+                {
+                    TSD.Part drwPart = drawingParts.Current as TSD.Part;
+                    if (drwPart != null)
+                    {
+                        pecasUnicasNoDesenho.Add(drwPart.ModelIdentifier);
                     }
                 }
             }
 
-
+            return pecasUnicasNoDesenho;
         }
 
-        private void inserirInformacoesDesenho(string nomeArquivo, RelatorioMultiDesenhos relatorio)
+       
+
+       
+
+        
+        private static void salvarDados(string nomeArquivo, DxfDocument dxf)
         {
-            var dxf = DxfDocument.Load(nomeArquivo);
-
-            PropriedadesDesenho propriedades = relatorio.PegaPropriedades(nomeArquivo);
-
-            dxf = DxfDocument.Load(nomeArquivo);
-            var blocoLista = dxf.Entities.Inserts.FirstOrDefault(x => x.Block.Name.StartsWith("FORMATO_DET_A1"));
-            var linhasHorizontais = blocoLista.Block.Entities.OfType<Line>().Where(x => x.StartPoint.Y == x.EndPoint.Y).ToList();
-            var linhaHrizontalMaisAlta = linhasHorizontais.OrderByDescending(x => x.StartPoint.Y).FirstOrDefault();
-
-            string appName = "08478f494deb";
-            ApplicationRegistry appReg;
-            if (!dxf.ApplicationRegistries.Contains(appName))
+            if (Directory.Exists(nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar")) == false)
             {
-                appReg = new ApplicationRegistry(appName);
-                dxf.ApplicationRegistries.Add(appReg);
-
-
-                XData xdata = new XData(appReg);
-
-                string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-
-               
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, userName));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, relatorio.NomeModelo));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, relatorio.NumeroProjeto));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, relatorio.Data.ToString()));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.NumeroContratada));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.NumeroCliente));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.DescricaoProjeto));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.AreaSubarea));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.TituloDesenho));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.Subtitulo1Desenho));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.Subtitulo2Desenho));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.Revisao));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, propriedades.RevisaoCliente));
-
-
-                linhaHrizontalMaisAlta.XData.Add(xdata);
-
-                var xdataRecuperada = linhaHrizontalMaisAlta.XData[appName];
-
-                if(Directory.Exists(nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar")) == false)
-                {
-                    Directory.CreateDirectory(nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar"));
-                }
-
-                var caminhoSalvar = nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar\\{nomeArquivo.Split('\\').Last()}");
-
-                if(File.Exists(caminhoSalvar)) File.Delete(caminhoSalvar);
-                
-                dxf.Save(caminhoSalvar);
-
-                File.Delete(nomeArquivo);
-            }
-            else
-            {
-                appReg = dxf.ApplicationRegistries[appName];
+                Directory.CreateDirectory(nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar"));
             }
 
+            var caminhoSalvar = nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar\\{nomeArquivo.Split('\\').Last()}");
 
+            if (File.Exists(caminhoSalvar)) File.Delete(caminhoSalvar);
 
+            dxf.Save(caminhoSalvar);
 
+            File.Delete(nomeArquivo);
         }
-
     }
 }
