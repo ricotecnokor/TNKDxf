@@ -40,7 +40,6 @@ namespace ConsoleTNKDxf
 
         public void ColetarArquivos()
         {
-            _pastaSaida = @"C:\TesteAlexandre";
 
             if (Directory.Exists(_pastaSaida))
             {

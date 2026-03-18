@@ -44,13 +44,13 @@ namespace ConsoleTNKDxf
             tempBeam.GetReportProperty("REVISION.LAST_DATE_APPROVED", ref _dataAprovacao);
         }
 
-        public string RevisionMark => _revisionMark;
-        public string Descricao => _descricao;
-        public string CriadoPor => _criadoPor;
-        public string DataCriacao => _dataCriacao;
-        public string ChecadoPor => _checadoPor;
-        public string DataChecado => _dataChecado;
-        public string AprovadoPor => _aprovadoPor;
-        public string DataAprovacao => _dataAprovacao;
+        public string RevisionMark => _revisionMark == null ? string.Empty : _revisionMark;
+        public string Descricao => _descricao == null ? string.Empty : _descricao;
+        public string CriadoPor => _criadoPor == null ? string.Empty : _criadoPor;
+        public string DataCriacao => _dataCriacao == null ? string.Empty : _dataCriacao;
+        public string ChecadoPor => _checadoPor == null ? string.Empty : _checadoPor;
+        public string DataChecado => _dataChecado == null ? string.Empty : _dataChecado;
+        public string AprovadoPor => _aprovadoPor == null ? string.Empty : _aprovadoPor;
+        public string DataAprovacao => _dataAprovacao == null ? string.Empty : _dataAprovacao;
     }
 }

@@ -13,7 +13,7 @@ namespace ConsoleTNKDxf
         Desenho _desenho;
         RelatorioMultiDesenhos _relatorio;
         string _nomeArquivo;
-        //netDxf.Entities.Line _linhaHorizontalMaisBaixa;
+    
         netDxf.Entities.Line _linhaHorizontalMaisAlta;
         netDxf.Entities.Line _linhaVerticalMaisEsquerda;
         netDxf.Entities.Line _linhaVerticalMaisDireita;
@@ -28,7 +28,7 @@ namespace ConsoleTNKDxf
 
             var linhasHorizontais = blocoLista.Block.Entities.OfType<netDxf.Entities.Line>().Where(x => x.StartPoint.Y == x.EndPoint.Y).ToList();
             _linhaHorizontalMaisAlta = linhasHorizontais.OrderByDescending(x => x.StartPoint.Y).FirstOrDefault();
-            //_linhaHorizontalMaisBaixa = linhasHorizontais.OrderBy(x => x.StartPoint.Y).FirstOrDefault();
+            
 
             var linhasVerticais = blocoLista.Block.Entities.OfType<netDxf.Entities.Line>().Where(x => x.StartPoint.X == x.EndPoint.X).ToList();
             _linhaVerticalMaisEsquerda = linhasVerticais.OrderBy(x => x.StartPoint.X).FirstOrDefault();
@@ -48,11 +48,11 @@ namespace ConsoleTNKDxf
 
         private void inserirRevisoes(string appName)
         {
-            int numeroLinha = 0;
-            string appNameLinha = $"{appName}_R{numeroLinha}";
+            //int numeroLinha = 0;
+            //string appNameLinha = $"{appName}_R{numeroLinha}";
             Revisao revisao = _desenho.Revisao;
 
-            appNameLinha = $"{appName}_Revisao";
+            string appNameLinha = $"{appName}_Revisao";
             ApplicationRegistry appReg;
             if (!_dxf.ApplicationRegistries.Contains(appNameLinha))
             {

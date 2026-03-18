@@ -11,7 +11,7 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
-            //exportar();
+            exportar();
 
 
             IAdapterDesenho adapterDesenho = new AdapterDesenho();
