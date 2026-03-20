@@ -25,7 +25,24 @@ namespace ConsoleTNKDxf
             mainPart.GetReportProperty("PART_POS", ref numeroMainPart);
             return numeroMainPart;
         }
+
+        //public static string TeklaSubstring(this string str, int startIndex, int? length = null)
+        //{
+        //    if (!length.HasValue)
+        //    {
+        //        return str.Substring(startIndex);
+        //    }
+
+        //    if(startIndex + length.Value > str.Length)
+        //    {
+        //        return str.Substring(startIndex, str.Length - startIndex);
+        //    }
+
+        //    return str.Substring(startIndex, length.Value);
+
+
+        //}
     }
 
-    
-    }
+
+}

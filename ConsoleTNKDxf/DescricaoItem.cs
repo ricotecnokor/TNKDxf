@@ -18,8 +18,7 @@ namespace ConsoleTNKDxf
         private string _material;
         private string _descricao;
 
-        public string Descricao => _descricao;
-
+      
         public DescricaoItem(TSM.Part pecaChild)
         {
             ArrayList doubleReportProperties = new ArrayList { "HEIGHT", "LENGTH", "WIDTH", "PROFILE.DIAMETER", "PROFILE.PLATE_THICKNESS" };
@@ -250,6 +249,18 @@ namespace ConsoleTNKDxf
             char[] digitos = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Ø' };
             int index = _perfil.IndexOfAny(digitos);
             return index == -1 ? _perfil : _perfil.Substring(0, index);
+        }
+
+        public override string ToString()
+        {
+            return _descricao;
+        }
+
+
+
+        public static implicit operator string(DescricaoItem valor)
+        {
+            return valor?._descricao ?? string.Empty;
         }
     }
 }

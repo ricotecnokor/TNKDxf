@@ -23,8 +23,7 @@ namespace ConsoleTNKDxf
         TSM.Model _model;
         string _pastaSaida;
         List<string> _arquivosExistentes = new List<string>();
-        //List<Desenho> _desenhos = new List<Desenho>();
-        private RelatorioMultiDesenhos _relatorio;
+        //private RelatorioMultiDesenhos _relatorio;
         public AdapterDesenho()
         {
 
@@ -51,15 +50,15 @@ namespace ConsoleTNKDxf
                 return;
             }
 
-            LeitorRlatorioDesenhosTekla leitor = new LeitorRlatorioDesenhosTekla("multiTemp.rpt");
-            _relatorio = leitor.Ler();
+            //LeitorRlatorioDesenhosTekla leitor = new LeitorRlatorioDesenhosTekla("multiTemp.rpt");
+            //_relatorio = leitor.Ler();
 
 
             TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
             var dg = dh.GetDrawingSelector().GetSelected();
 
-            
+
 
             while (dg.MoveNext())
             {
@@ -73,21 +72,20 @@ namespace ConsoleTNKDxf
 
                     var multiDrawing = drawing as TSD.MultiDrawing;
 
-                   
-                    
-          
+
+
+
 
                     if (_arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(multiDrawing.Title1)))
                     {
 
+                        var desenho = new Desenho(multiDrawing, _model);
 
-                        
-                        var desenho = coletarDesenho(multiDrawing);
-                        string nomeArquivo = _arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(desenho.Title1));
-
+                        string nomeArquivo = _arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(multiDrawing.Title1));
                         var dxf = DxfDocument.Load(nomeArquivo);
-                        XDados xDados = new XDados(dxf, nomeArquivo, desenho, _relatorio);
-                        xDados.InserirInformacoesDesenho();
+                        XDadosFormato xDadosFormato = new XDadosFormato(dxf, desenho); //, _relatorio);
+                        xDadosFormato.InserirInformacoes();
+
 
                         salvarDados(nomeArquivo, dxf);
                         dxf = null;
@@ -95,43 +93,42 @@ namespace ConsoleTNKDxf
 
                     }
 
-                    
-                   
+
+
                 }
             }
 
 
         }
 
-        
-
-        private Desenho coletarDesenho(TSD.MultiDrawing multiDrawing)
-        {
-
-            var desenho = new Desenho(multiDrawing, _model);
-
-            if (_arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(desenho.Title1)))
-            {
-                HashSet<Identifier> pecasUnicasNoDesenho = obterPecasUnicasDesenho(multiDrawing);
-
-                foreach (Identifier partId in pecasUnicasNoDesenho)
-                {
-                    var modelObj = _model.SelectModelObject(partId);
-
-                    if (modelObj is TSM.Part modelPart)
-                    {
-                        desenho.AddPeca(modelPart);
-                    }
-                }
-
-            }
-
-            return desenho;
-
-        }
 
 
-        
+        //private Desenho coletarDesenho(TSD.MultiDrawing multiDrawing, string nomeArquivo)
+        //{
+
+
+
+        //    var desenho = new Desenho(multiDrawing, _model, nomeArquivo);
+
+        //    return desenho;
+        //    //HashSet<Identifier> pecasUnicasNoDesenho = obterPecasUnicasDesenho(multiDrawing);
+
+        //    //foreach (Identifier partId in pecasUnicasNoDesenho)
+        //    //{
+        //    //    var modelObj = _model.SelectModelObject(partId);
+
+        //    //    if (modelObj is TSM.Part modelPart)
+        //    //    {
+        //    //        desenho.AddPeca(modelPart);
+        //    //    }
+        //    //}
+
+
+
+        //}
+
+
+
 
         private HashSet<Identifier> obterPecasUnicasDesenho(MultiDrawing multiDrawing)
         {
@@ -162,11 +159,11 @@ namespace ConsoleTNKDxf
             return pecasUnicasNoDesenho;
         }
 
-       
 
-       
 
-        
+
+
+
         private static void salvarDados(string nomeArquivo, DxfDocument dxf)
         {
             if (Directory.Exists(nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar")) == false)
@@ -178,7 +175,13 @@ namespace ConsoleTNKDxf
 
             if (File.Exists(caminhoSalvar)) File.Delete(caminhoSalvar);
 
-            dxf.Save(caminhoSalvar);
+            dxf.Save(caminhoSalvar, true);
+
+            if (File.Exists(caminhoSalvar))
+            {
+                File.Move(caminhoSalvar, caminhoSalvar.Replace(".dxf", ".r3d"));
+                // Opcional: File.Move(origem, destino, true); // Para sobrescrever se o destino existir
+            }
 
             File.Delete(nomeArquivo);
         }

@@ -42,6 +42,10 @@ namespace ConsoleTNKDxf
             tempBeam.GetReportProperty("REVISION.LAST_DATE_CHECKED", ref _dataChecado);
             tempBeam.GetReportProperty("REVISION.LAST_APPROVED_BY", ref _aprovadoPor);
             tempBeam.GetReportProperty("REVISION.LAST_DATE_APPROVED", ref _dataAprovacao);
+
+            _dataCriacao = _dataCriacao == string.Empty ? DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") : Convert.ToDateTime(_dataCriacao).ToString("dd/MM/yyyy HH:mm:ss");
+            _dataChecado = _dataChecado == string.Empty ? DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") : Convert.ToDateTime(_dataChecado).ToString("dd/MM/yyyy HH:mm:ss");
+            _dataAprovacao = _dataAprovacao == string.Empty ? DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss") : Convert.ToDateTime(_dataAprovacao).ToString("dd/MM/yyyy HH:mm:ss");
         }
 
         public string RevisionMark => _revisionMark == null ? string.Empty : _revisionMark;

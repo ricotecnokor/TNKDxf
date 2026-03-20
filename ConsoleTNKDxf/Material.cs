@@ -41,6 +41,18 @@ namespace ConsoleTNKDxf
                   _material.StartsWith("AÇO TELHA MF18") ? "AÇO" :
                   (_material.StartsWith("AÇO-GS") || _material.StartsWith("AÇO GSA4-254")) ? "AÇO" : _material;
         }
+
+        public override string ToString()
+        {
+            return _descricao;
+        }
+
+
+
+        public static implicit operator string(Material valor)
+        {
+            return valor?._descricao ?? string.Empty;
+        }
     }
 }
 

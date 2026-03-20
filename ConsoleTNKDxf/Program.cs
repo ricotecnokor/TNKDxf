@@ -13,7 +13,6 @@ namespace ConsoleTNKDxf
         {
             exportar();
 
-
             IAdapterDesenho adapterDesenho = new AdapterDesenho();
 
             Console.WriteLine("Coletando arquivos...");

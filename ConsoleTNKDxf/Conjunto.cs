@@ -8,7 +8,7 @@ using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf
 {
-    public class Conjunto
+    public class Conjunto : ILinhaLM
     {
         private List<Peca> _itens = new List<Peca>();
         private string _posicao;
@@ -17,11 +17,14 @@ namespace ConsoleTNKDxf
         private string _descricao;
 
         public string Posicao => _posicao;
-        public int Quantidade => _quantidade;
+        public string Quantidade => _quantidade.ToString();
         public string Descricao => _descricao;
+        public string Observacao => string.Empty;   
+        public string Material => string.Empty;
+        public string Peso => PesoTotal.ToString();
         public double PesoTotal => Math.Round(_pesoTotal, 2);
 
-        public List<Peca> Pecas => _itens;
+        public List<ILinhaLM> Pecas => _itens.Cast<ILinhaLM>().ToList();
 
         public Conjunto(TSM.Part part)
         {

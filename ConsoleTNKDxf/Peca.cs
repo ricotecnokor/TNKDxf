@@ -4,7 +4,7 @@ using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf
 {
-    public class Peca
+    public class Peca : ILinhaLM
     {
 
         private int _quantidade;
@@ -16,12 +16,15 @@ namespace ConsoleTNKDxf
 
 
         public string Posicao => _stringProterties["PART_POS"].ToString();
-        public int Quantidade => _quantidade;   
-        public DescricaoItem Descricao => _descricao;
+        public string Quantidade => _quantidade.ToString();   
+        public string Descricao => _descricao;
         public string Observacao => _stringProterties["FINISH"].ToString();
-        public Material Material => _material;
+        public string Material => _material;
+        public string Peso => Math.Round(_peso.PesoTotal, 2).ToString();
+
+
         public double PesoCalculado => _peso.PesoCalculado;
-        public double PesoTotal => Math.Round(_peso.PesoTotal, 2);
+        
 
         public Peca(TSM.Part pecaChild)
         {
