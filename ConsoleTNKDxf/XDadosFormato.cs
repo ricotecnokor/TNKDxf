@@ -48,26 +48,40 @@ namespace ConsoleTNKDxf
 
         private void inserirDadosLM(Line linhaRef)
         {
-            int numeroLinha = 0;
-            inserirConjuntos(ref numeroLinha, linhaRef);
+            int numeroLinhaConjunto = 0;
+            inserirConjuntos(ref numeroLinhaConjunto, linhaRef);
             var elementosFixacao = _desenho.ElementosFixacao;
             if (elementosFixacao.Parafusos.Count > 0)
             {
-                insereLinhas(elementosFixacao.Parafusos, $"{APPNAME}_PF_L_", ref numeroLinha, linhaRef);
-                insereLinhas(elementosFixacao.Porcas, $"{APPNAME}_PC_L_", ref numeroLinha, linhaRef);
-                insereLinhas(elementosFixacao.Arruelas, $"{APPNAME}_AR_L_", ref numeroLinha, linhaRef);
+                numeroLinhaConjunto++;
+                inserirElementosFixacao(elementosFixacao, ref numeroLinhaConjunto, linhaRef);
             }
         }
 
-        private void inserirConjuntos(ref int numeroLinha, Line linhaRef)
+        private void inserirElementosFixacao(ElementosFixacao elementosFixacao, ref int numeroLinhaConjunto, Line linhaRef)
+        {
+            var conjunto = new ConjuntoElementosFixacao();
+            string pefixoFixacao = $"{APPNAME}_F_{++numeroLinhaConjunto}";
+            ApplicationRegistry appReg;
+            appReg = new ApplicationRegistry(pefixoFixacao);
+
+            _dxf.ApplicationRegistries.Add(appReg);
+            XData xdataConjuntoElementosFixacao = new XData(appReg);
+            insereLinhaLM(conjunto, xdataConjuntoElementosFixacao, linhaRef);
+
+            insereLinhas(elementosFixacao.Parafusos, $"{APPNAME}_PF_{numeroLinhaConjunto}_", linhaRef);
+            insereLinhas(elementosFixacao.Porcas, $"{APPNAME}_PC_{numeroLinhaConjunto}_", linhaRef);
+            insereLinhas(elementosFixacao.Arruelas, $"{APPNAME}_AR_{numeroLinhaConjunto}_", linhaRef);
+        }
+
+        private void inserirConjuntos(ref int numeroLinhaConjunto, Line linhaRef)
         {
             foreach (Conjunto conjunto in _desenho.ListaMateriais)
             {
-                var posicaoConjunto = conjunto.Posicao;
-
-                string appNameLinha = $"{APPNAME}_M_{posicaoConjunto}_{++numeroLinha}";
+ 
+                string appNameConjunto = $"{APPNAME}_M_{++numeroLinhaConjunto}";
                 ApplicationRegistry appReg;
-                appReg = new ApplicationRegistry(appNameLinha);
+                appReg = new ApplicationRegistry(appNameConjunto);
 
                 _dxf.ApplicationRegistries.Add(appReg);
                 XData xdataConjunto = new XData(appReg);
@@ -76,28 +90,29 @@ namespace ConsoleTNKDxf
 
                 
 
-                insereLinhas(conjunto.Pecas, $"{APPNAME}_I_{posicaoConjunto}_", ref numeroLinha, linhaRef);
+                insereLinhas(conjunto.Pecas, $"{APPNAME}_I_{numeroLinhaConjunto}_", linhaRef);
             }
 
         }
 
 
-        private void insereLinhas(List<ILinhaLM> linhas, string prefixo, ref int numeroLinha, Line linhaRef)
+        private void insereLinhas(List<ILinhaLM> linhas, string prefixo, Line linhaRef)
         {
+            int numeroLinha = 0;
             foreach (ILinhaLM linha in linhas)
             {
-                var appNameLinha = $"{prefixo}_{++numeroLinha}";
+                var appNameItem = $"{prefixo}{++numeroLinha}";
                 ApplicationRegistry appReg;
-                if (!_dxf.ApplicationRegistries.Contains(appNameLinha))
+                if (!_dxf.ApplicationRegistries.Contains(appNameItem))
                 {
-                    appReg = new ApplicationRegistry(appNameLinha);
+                    appReg = new ApplicationRegistry(appNameItem);
                     _dxf.ApplicationRegistries.Add(appReg);
                     XData xdata = new XData(appReg);
                     insereLinhaLM(linha, xdata, linhaRef);
                 }
                 else
                 {
-                    appReg = _dxf.ApplicationRegistries[appNameLinha];
+                    appReg = _dxf.ApplicationRegistries[appNameItem];
                 }
             }
 

@@ -164,26 +164,22 @@ namespace ConsoleTNKDxf
 
 
 
-        private static void salvarDados(string nomeArquivo, DxfDocument dxf)
+        private static void salvarDados(string nomeArquivoProcessado, DxfDocument dxf)
         {
-            if (Directory.Exists(nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar")) == false)
+            if (Directory.Exists(nomeArquivoProcessado.Replace(nomeArquivoProcessado.Split('\\').Last(), $"Enviar")) == false)
             {
-                Directory.CreateDirectory(nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar"));
+                Directory.CreateDirectory(nomeArquivoProcessado.Replace(nomeArquivoProcessado.Split('\\').Last(), $"Enviar"));
             }
 
-            var caminhoSalvar = nomeArquivo.Replace(nomeArquivo.Split('\\').Last(), $"Enviar\\{nomeArquivo.Split('\\').Last()}");
-
-            if (File.Exists(caminhoSalvar)) File.Delete(caminhoSalvar);
-
+            var caminhoSalvar = nomeArquivoProcessado.Replace(nomeArquivoProcessado.Split('\\').Last(), $"Enviar\\{nomeArquivoProcessado.Split('\\').Last()}");
             dxf.Save(caminhoSalvar, true);
 
-            if (File.Exists(caminhoSalvar))
-            {
-                File.Move(caminhoSalvar, caminhoSalvar.Replace(".dxf", ".r3d"));
-                // Opcional: File.Move(origem, destino, true); // Para sobrescrever se o destino existir
-            }
+            var caminhoSalvarR3D = caminhoSalvar.Replace(".dxf", ".dgt");
+            if (File.Exists(caminhoSalvarR3D)) File.Delete(caminhoSalvarR3D);
+            File.Move(caminhoSalvar, caminhoSalvarR3D);
+            File.Delete(caminhoSalvar);
 
-            File.Delete(nomeArquivo);
+            File.Delete(nomeArquivoProcessado);
         }
     }
 }
