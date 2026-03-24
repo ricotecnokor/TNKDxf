@@ -14,6 +14,8 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
+
             //RespostaModelo resposta = BuscarModeloUso();
             TSM.Model modelTemp = new TSM.Model();
 
@@ -32,6 +34,7 @@ namespace ConsoleTNKDxf
                 //return new RespostaModelo(false, null, );
             }
 
+            
             //if (!resposta.Sucesso)
             //{
             //    Console.WriteLine(resposta.Mensagem);
@@ -43,16 +46,19 @@ namespace ConsoleTNKDxf
             exportar();
 
             IAdapterDesenho adapterDesenho = new AdapterDesenho(modelTemp);
-
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Coletando arquivos...");
 
             var resposta = adapterDesenho.ColetarArquivos();
 
             if (!resposta.Sucesso)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(resposta.Mensagem);
                 return;
             }
+
+            Console.ForegroundColor = ConsoleColor.Blue;
 
             Console.WriteLine(@"Processo concluído com arquivos na pasta .\PlotFiles\Enviar, Pressione qualquer tecla para sair.");
 
