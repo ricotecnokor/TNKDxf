@@ -62,6 +62,8 @@ namespace ConsoleTNKDxf
 
             Console.WriteLine(@"Processo concluído com arquivos na pasta .\PlotFiles\Enviar, Pressione qualquer tecla para sair.");
 
+            Console.ReadKey();
+
             //Environment.Exit(0);
 
         }

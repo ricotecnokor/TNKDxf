@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -44,8 +45,8 @@ namespace ConsoleTNKDxf.Dgts
             Hashtable doubleProperties = new Hashtable();
             ArrayList doubleReportProperties = new ArrayList { "HEIGHT", "WEIGTH" };
             assy.GetDoubleReportProperties(doubleReportProperties, ref doubleProperties);
-            _height = doubleProperties.ContainsKey("HEIGHT") ? double.Parse(doubleProperties["HEIGHT"].ToString()) : 0;
-            _weigth = doubleProperties.ContainsKey("WEIGTH") ? double.Parse(doubleProperties["WEIGTH"].ToString()) : 0;
+            _height = doubleProperties.ContainsKey("HEIGHT") ? double.Parse(doubleProperties["HEIGHT"].ToString(), CultureInfo.InvariantCulture) : 0;
+            _weigth = doubleProperties.ContainsKey("WEIGTH") ? double.Parse(doubleProperties["WEIGTH"].ToString(), CultureInfo.InvariantCulture) : 0;
 
             Hashtable integerProperties = new Hashtable();
             ArrayList integerReportProperties = new ArrayList { "NUMBER", "ASSEMBLY.MODEL_TOTAL" };

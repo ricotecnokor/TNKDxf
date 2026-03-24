@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Globalization;
 using static Tekla.Structures.Filtering.Categories.BoltFilterExpressions;
 using TSM = Tekla.Structures.Model;
 
@@ -40,7 +41,7 @@ namespace ConsoleTNKDxf.Dgts
             ArrayList doubleReportProperties = new ArrayList { "WEIGHT" };
             Hashtable doubleProperties = new Hashtable();
             boltArray.GetDoubleReportProperties(doubleReportProperties, ref doubleProperties);
-            _weight = doubleProperties.ContainsKey("WEIGHT") ? double.Parse(doubleProperties["WEIGHT"].ToString()) : 0.0;
+            _weight = doubleProperties.ContainsKey("WEIGHT") ? double.Parse(doubleProperties["WEIGHT"].ToString(),, CultureInfo.InvariantCulture) : 0.0;
         }
 
         public void IncrementarQuantidade()

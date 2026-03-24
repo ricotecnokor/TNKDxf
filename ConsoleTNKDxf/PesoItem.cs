@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Globalization;
 using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf
@@ -54,7 +55,8 @@ namespace ConsoleTNKDxf
                    _perfil.StartsWith("CH_DE_DI") ? Math.Round(_pesoLiquido, 2) :
                    (_perfil.StartsWith("PORCA") || _perfil.StartsWith("PARAF") || _perfil.StartsWith("ARRUELA") || _perfil.StartsWith("CONTRA PINO")) ? Math.Round(_pesoLiquido, 2) :
                    (_perfil.StartsWith("MÓDULO DE PROTEÇÃO") || _perfil.StartsWith("RABICHO SEGURANÇA") || _perfil.StartsWith("TAMPA 40X 60") || _perfil.StartsWith("FIXADOR BELGO") || _perfil.StartsWith("POSTE SUSPENSO") || _perfil.StartsWith("POSTE COM BASE METÁLICA")) ? Math.Round(_pesoLiquido, 2) :
-                   Math.Round((int)Math.Round(_length, 1) * double.Parse(string.IsNullOrEmpty(_pesoUnitarioComprimento.ToString()) ? "0" : _pesoUnitarioComprimento.ToString()) / 1000, 1);
+                   Math.Round((int)Math.Round(_length, 1) * double.Parse(
+                       string.IsNullOrEmpty(_pesoUnitarioComprimento.ToString()) ? "0" : _pesoUnitarioComprimento.ToString(), CultureInfo.InvariantCulture) / 1000, 1);
 
         }
 
