@@ -87,6 +87,16 @@
     <Compile Include="DescricaoArruela.cs" />
     <Compile Include="DescricaoParafuso.cs" />
     <Compile Include="DescricaoPorca.cs" />
+    <Compile Include="Dgts\ArruelaDgt.cs" />
+    <Compile Include="Dgts\CamposFormatoDgt.cs" />
+    <Compile Include="Dgts\ConjuntoDgt.cs" />
+    <Compile Include="Dgts\DesenhoDgt.cs" />
+    <Compile Include="Dgts\ElementosFixacaoDgt.cs" />
+    <Compile Include="Dgts\ListaMateriaisDtg.cs" />
+    <Compile Include="Dgts\ParafusoDgt.cs" />
+    <Compile Include="Dgts\PecaDgt.cs" />
+    <Compile Include="Dgts\PorcaDgt.cs" />
+    <Compile Include="Dgts\RevisaoDgt.cs" />
     <Compile Include="Extensoes.cs" />
     <Compile Include="Conjunto.cs" />
     <Compile Include="Desenho.cs" />
@@ -105,8 +115,9 @@
     <Compile Include="Porca.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuadroAplicacao.cs" />
+    <Compile Include="QuadroAplicacaoDgt.cs" />
     <Compile Include="RelatorioMultiDesenhos.cs" />
+    <Compile Include="RespostaModelo.cs" />
     <Compile Include="Revisao.cs" />
     <Compile Include="XDadosFormato.cs" />
   </ItemGroup>

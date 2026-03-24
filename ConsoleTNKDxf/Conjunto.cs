@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf
@@ -47,16 +45,7 @@ namespace ConsoleTNKDxf
             Peca peca = new Peca(part);
             _quantidade = 1;
             _itens.Add(peca);
-            //var pecasSecundarias = assy.GetSecondaries().GetEnumerator();
-            //while (pecasSecundarias.MoveNext())
-            //{
-            //    var child = pecasSecundarias.Current;
-            //    if (child is TSM.Part pecaChild)
-            //    {
-            //        Peca item = new Peca(pecaChild);
-            //        _itens.Add(item);
-            //    }
-            //}
+            
            
             _pesoTotal = peca.PesoCalculado;
         }

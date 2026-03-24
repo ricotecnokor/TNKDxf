@@ -15,4 +15,6 @@ namespace ConsoleTNKDxf
         string Material { get; }
         string Peso { get; }
     }
+
+
 }

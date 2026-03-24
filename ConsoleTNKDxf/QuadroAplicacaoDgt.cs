@@ -11,7 +11,7 @@ using Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf
 {
-    public class QuadroAplicacao
+    public class QuadroAplicacaoDgt
     {
         private string _tag;
         private string _desenho;
@@ -23,7 +23,7 @@ namespace ConsoleTNKDxf
         public string DesenhoCliente => _desenhoCliente;
         public string Familia => _familia;
 
-        public QuadroAplicacao(MultiDrawing drawing)
+        public QuadroAplicacaoDgt(MultiDrawing drawing)
         {
             List<string> userProperties = new List<string> { "TCNK_TAG", "TCNK_N_TCNK", "TCNK_N_CLIENTE" };
             Dictionary<string, string> properties = new Dictionary<string, string>();

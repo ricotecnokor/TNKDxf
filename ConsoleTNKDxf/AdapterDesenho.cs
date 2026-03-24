@@ -1,18 +1,10 @@
-﻿using netDxf;
-using netDxf.Entities;
-using netDxf.Tables;
-using System;
-using System.Collections;
+﻿using ConsoleTNKDxf.Dgts;
+using netDxf;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Tekla.Structures;
 using Tekla.Structures.Drawing;
-using Tekla.Structures.DrawingInternal;
-using Tekla.Structures.Model;
-using static Tekla.Structures.Model.ReferenceModel;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -24,10 +16,9 @@ namespace ConsoleTNKDxf
         string _pastaSaida;
         List<string> _arquivosExistentes = new List<string>();
         //private RelatorioMultiDesenhos _relatorio;
-        public AdapterDesenho()
+        public AdapterDesenho(TSM.Model model)
         {
-
-            _model = new TSM.Model();
+            _model = model;
             string modelPath = _model.GetInfo().ModelPath;
 
             string xsplot = "";
@@ -37,17 +28,19 @@ namespace ConsoleTNKDxf
         }
 
 
-        public void ColetarArquivos()
+        public RespostaModelo ColetarArquivos()
         {
 
-            if (Directory.Exists(_pastaSaida))
+            if (!Directory.Exists(_pastaSaida))
             {
-                _arquivosExistentes = Directory.GetFiles(_pastaSaida, "*.dxf").ToList();
+                return new RespostaModelo(false, null, "Pasta de saída não encontrada. Verifique se o caminho está correto.");
             }
+
+            _arquivosExistentes = Directory.GetFiles(_pastaSaida, "*.dxf").ToList();
 
             if (_arquivosExistentes.Count < 1)
             {
-                return;
+                return new RespostaModelo(false, null, "Nenhum arquivo DXF encontrado na pasta de saída. Verifique se os desenhos foram plotados corretamente.");
             }
 
             //LeitorRlatorioDesenhosTekla leitor = new LeitorRlatorioDesenhosTekla("multiTemp.rpt");
@@ -73,30 +66,22 @@ namespace ConsoleTNKDxf
                     var multiDrawing = drawing as TSD.MultiDrawing;
 
 
-
-
-
                     if (_arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(multiDrawing.Title1)))
                     {
-
-                        var desenho = new Desenho(multiDrawing, _model);
-
+                        var desenhoDgt = new DesenhoDgt(multiDrawing, _model);
                         string nomeArquivo = _arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(multiDrawing.Title1));
                         var dxf = DxfDocument.Load(nomeArquivo);
-                        XDadosFormato xDadosFormato = new XDadosFormato(dxf, desenho); //, _relatorio);
+                        XDadosFormato xDadosFormato = new XDadosFormato(dxf, desenhoDgt);
                         xDadosFormato.InserirInformacoes();
-
-
                         salvarDados(nomeArquivo, dxf);
                         dxf = null;
-
-
                     }
-
-
+                    return new RespostaModelo(true, _model, "Processamento concluído com sucesso.");
 
                 }
             }
+
+            return new RespostaModelo(true, null, "Informações coletatas.");
 
 
         }
