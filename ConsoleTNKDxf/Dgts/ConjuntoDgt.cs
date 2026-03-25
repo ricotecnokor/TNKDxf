@@ -45,13 +45,13 @@ namespace ConsoleTNKDxf.Dgts
             Hashtable doubleProperties = new Hashtable();
             ArrayList doubleReportProperties = new ArrayList { "HEIGHT", "WEIGTH" };
             assy.GetDoubleReportProperties(doubleReportProperties, ref doubleProperties);
-            _height = doubleProperties.ContainsKey("HEIGHT") ? double.Parse(doubleProperties["HEIGHT"].ToString(), CultureInfo.InvariantCulture) : 0;
-            _weigth = doubleProperties.ContainsKey("WEIGTH") ? double.Parse(doubleProperties["WEIGTH"].ToString(), CultureInfo.InvariantCulture) : 0;
+            _height = doubleProperties.ContainsKey("HEIGHT") ? doubleProperties["HEIGHT"].ToString().ConverterParaDouble() : 0;
+            _weigth = doubleProperties.ContainsKey("WEIGTH") ? doubleProperties["WEIGTH"].ToString().ConverterParaDouble() : 0;
 
             Hashtable integerProperties = new Hashtable();
             ArrayList integerReportProperties = new ArrayList { "NUMBER", "ASSEMBLY.MODEL_TOTAL" };
             assy.GetIntegerReportProperties(integerReportProperties, ref integerProperties);
-            int number = integerProperties.ContainsKey("NUMBER") ? int.Parse(integerProperties["NUMBER"].ToString()) : 0;
+            int number = integerProperties.ContainsKey("NUMBER") ? int.Parse(integerProperties["NUMBER"].ToString()) : 1;
             int modelTotal = integerProperties.ContainsKey("ASSEMBLY.MODEL_TOTAL") ? int.Parse(integerProperties["ASSEMBLY.MODEL_TOTAL"].ToString()) : 1;
             _quantidade = number * modelTotal;
 

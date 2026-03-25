@@ -28,7 +28,6 @@ namespace ConsoleTNKDxf.Dgts
 
             _quantidade = 1;
 
-
             ArrayList doubleReportProperties = new ArrayList { "NUT.WEIGHT" };
             Hashtable doubleProperties = new Hashtable();
             boltArray.GetDoubleReportProperties(doubleReportProperties, ref doubleProperties);

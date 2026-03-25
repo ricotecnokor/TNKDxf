@@ -1,4 +1,7 @@
-﻿using Tekla.Structures.DrawingInternal;
+﻿using System.Reflection;
+using Tekla.Structures.Drawing;
+using Tekla.Structures.DrawingInternal;
+using Tekla.Structures.Model;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -11,6 +14,7 @@ namespace ConsoleTNKDxf.Dgts
         private ElementosFixacaoDgt _elementosFixacao;
         private RevisaoDgt _revisao;
         private CamposFormatoDgt _camposFormato;
+        private string _listarElementosObra;
 
         public string Title => _camposFormato.Title;
         public string Title1 => _camposFormato.Title1;
@@ -25,11 +29,15 @@ namespace ConsoleTNKDxf.Dgts
         public string Scale3 => _camposFormato.Scale3;
         public string Scale4 => _camposFormato.Scale4;
         public string Scale5 => _camposFormato.Scale5;
+        public string ListarElementosObra => _listarElementosObra;
+
 
         public ListaMateriaisDtg ListaMateriais => _listaMateriais;
         public ElementosFixacaoDgt ElementosFixacao => _elementosFixacao;
         public QuadroAplicacaoDgt QuadroAplicacao => _quadroAplicacao;
         public RevisaoDgt Revisao => _revisao;
+
+        
 
         public DesenhoDgt(TSD.MultiDrawing multiDrawing, TSM.Model model)
         {
@@ -38,6 +46,26 @@ namespace ConsoleTNKDxf.Dgts
             _quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
             _elementosFixacao = new ElementosFixacaoDgt(model, multiDrawing);
             _revisao = new RevisaoDgt(multiDrawing);
+            setListarElementosObra(multiDrawing);
+        }
+
+        private void setListarElementosObra(TSD.MultiDrawing multiDrawing)
+        {
+            //
+            // Acessa o Identifier interno do Drawing via Reflection
+            PropertyInfo propInfo = multiDrawing.GetType().GetProperty("Identifier",
+                                        BindingFlags.Instance | BindingFlags.NonPublic);
+            object value = propInfo.GetValue(multiDrawing, null);
+            Tekla.Structures.Identifier identifier = (Tekla.Structures.Identifier)value;
+
+            // Cria um objeto ModelObject temporário com o mesmo Identifier
+            Beam tempBeam = new Beam();
+            tempBeam.Identifier = identifier;
+
+
+            //string listarElementosObra = string.Empty;
+            tempBeam.GetReportProperty("TCNM_LISTAR_PARAF", ref _listarElementosObra);
+
         }
     }
 }

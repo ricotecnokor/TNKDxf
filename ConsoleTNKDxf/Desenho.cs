@@ -4,7 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Tekla.Structures;
 using Tekla.Structures.Drawing;
+using Tekla.Structures.DrawingInternal;
 using Tekla.Structures.Model;
 using static Tekla.Structures.Model.ReferenceModel;
 using TSD = Tekla.Structures.Drawing;
@@ -24,6 +26,7 @@ namespace ConsoleTNKDxf
         //private string _nomeModelo;
         private DateTime _data;
         //private string _numeroProjeto;
+        private string _listarElementosObra;
 
         public string Title1 => _multiDrawing.Title1;
 
@@ -47,7 +50,6 @@ namespace ConsoleTNKDxf
 
         public Desenho(TSD.MultiDrawing multiDrawing, TSM.Model model)
         {
-            //_nomeArquivo = nomeArquivo;
             _multiDrawing = multiDrawing;
             _model = model;
             _camposFormato = new CamposFormato(multiDrawing);
@@ -55,45 +57,27 @@ namespace ConsoleTNKDxf
             _quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
             _listaMateriais = new ListaMateriais(model, multiDrawing);
             _elementosFixacao = new ElementosFixacao(model, multiDrawing);
-
-            //LeitorRlatorioDesenhosTekla leitor = new LeitorRlatorioDesenhosTekla("multiTemp.rpt");
-            //var relatorio = leitor.Ler();
-            //_momeModelo = relatorio.NomeModelo;
-            //_data = relatorio.Data;
-            //_numeroProjeto = relatorio.NumeroProjeto;
-            //_propriedadesDesenho = relatorio.PegaPropriedades(_nomeArquivo);
+            setListarElementosObra();
         }
 
-        //public void AddPeca(TSM.Part part)
-        //{
-        //    var assy = part.GetAssembly();
-        //    if (assy == null)
-        //    {
-        //        return;
-        //    }
+        private void setListarElementosObra()
+        {
+            //
+            // Acessa o Identifier interno do Drawing via Reflection
+            PropertyInfo propInfo = _multiDrawing.GetType().GetProperty("Identifier",
+                                        BindingFlags.Instance | BindingFlags.NonPublic);
+            object value = propInfo.GetValue(_multiDrawing, null);
+            Tekla.Structures.Identifier identifier = (Tekla.Structures.Identifier)value;
 
-             
+            // Cria um objeto ModelObject temporário com o mesmo Identifier
+            Beam tempBeam = new Beam();
+            tempBeam.Identifier = identifier;
 
-        //    string assemblyPos = assy.ObterPropriedade("ASSEMBLY_POS").ToString();
-        //    if (assemblyPos == string.Empty)
-        //    {
-        //        Console.WriteLine("A posição do conjunto não pode ser nula ou vazia.");
-        //        return;
-        //    }
-            
 
-        //    //string posicaoItemPrincipal = assy.ObterPosicaoItemPrincipal();
+            //string listarElementosObra = string.Empty;
+            tempBeam.GetReportProperty("TCNM_LISTAR_PARAF", ref _listarElementosObra);
 
-        //    if (_listaMateriais.Any(conjunto => conjunto.Posicao == assemblyPos))
-        //    {
-        //        Conjunto conjuntoExistente = _listaMateriais.FirstOrDefault(c => c.Posicao == assemblyPos);
-        //        conjuntoExistente.AddItem(part);
-        //        return;
-        //    }
-
-        //    var marca = new Conjunto(part);
-        //    _listaMateriais.Add(marca);
-        //}
+        }
 
     }
 }

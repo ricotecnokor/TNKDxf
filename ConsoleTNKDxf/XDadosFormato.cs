@@ -423,6 +423,7 @@ namespace ConsoleTNKDxf
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale3));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale4));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale5));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.ListarElementosObra));
 
                 linhaRef.XData.Add(xdata);
 

@@ -26,6 +26,22 @@ namespace ConsoleTNKDxf
             return numeroMainPart;
         }
 
+        public static double ConverterParaDouble(this string valorPeso)
+        {
+            if (valorPeso != string.Empty)
+            {
+                if (valorPeso.Contains(","))
+                {
+                    return double.Parse(valorPeso.Replace(",", "."), System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    return double.Parse(valorPeso, System.Globalization.CultureInfo.InvariantCulture);
+                }
+            }
+            return 0.0;
+        }
+
         //public static string TeklaSubstring(this string str, int startIndex, int? length = null)
         //{
         //    if (!length.HasValue)
