@@ -93,9 +93,9 @@ namespace ConsoleTNKDxf
 
         private void inserirElementosFixacaoDgt(ElementosFixacaoDgt elementosFixacao, ref int numeroLinhaConjunto, Line linhaRef)
         {
-            inserirParafusosDgt(elementosFixacao.Parafusos, $"{APPNAME}_PF_{numeroLinhaConjunto}_", linhaRef);
-            inserirPorcasDgt(elementosFixacao.Porcas, $"{APPNAME}_PC_{numeroLinhaConjunto}_", linhaRef);
-            inserirArruelasDgt(elementosFixacao.Arruelas, $"{APPNAME}_AR_{numeroLinhaConjunto}_", linhaRef);
+           int numeroLinha = inserirParafusosDgt(elementosFixacao.Parafusos, $"{APPNAME}_PF_{numeroLinhaConjunto}_", linhaRef);
+           numeroLinha = inserirPorcasDgt(elementosFixacao.Porcas, $"{APPNAME}_PC_{numeroLinhaConjunto}_", linhaRef, numeroLinha);
+            inserirArruelasDgt(elementosFixacao.Arruelas, $"{APPNAME}_AR_{numeroLinhaConjunto}_", linhaRef, numeroLinha);
         }
 
 
@@ -140,7 +140,7 @@ namespace ConsoleTNKDxf
 
         }
 
-        private void inserirParafusosDgt(List<ParafusoDgt> parafusos, string prefixo, Line linhaRef)
+        private int inserirParafusosDgt(List<ParafusoDgt> parafusos, string prefixo, Line linhaRef)
         {
             int numeroLinha = 0;
             foreach (ParafusoDgt parafuso in parafusos)
@@ -164,11 +164,12 @@ namespace ConsoleTNKDxf
                 }
             }
 
+            return numeroLinha;
+
         }
 
-        private void inserirPorcasDgt(List<PorcaDgt> porcas, string prefixo, Line linhaRef)
+        private int inserirPorcasDgt(List<PorcaDgt> porcas, string prefixo, Line linhaRef, int numeroLinha)
         {
-            int numeroLinha = 0;
             foreach (PorcaDgt porca in porcas)
             {
                 var appNameItem = $"{prefixo}{++numeroLinha}";
@@ -190,11 +191,12 @@ namespace ConsoleTNKDxf
                 }
             }
 
+            return numeroLinha;
         }
 
-        private void inserirArruelasDgt(List<ArruelaDgt> arruelas, string prefixo, Line linhaRef)
+        private void inserirArruelasDgt(List<ArruelaDgt> arruelas, string prefixo, Line linhaRef, int numeroLinha)
         {
-            int numeroLinha = 0;
+
             foreach (ArruelaDgt arruela in arruelas)
             {
                 var appNameItem = $"{prefixo}{++numeroLinha}";
