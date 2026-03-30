@@ -9,7 +9,7 @@ namespace ConsoleTNKDxf
     
         public interface IAdapterDesenho
         {
-            void ColetarArquivos();
+            RespostaModelo ColetarArquivos();
 
 
         }
