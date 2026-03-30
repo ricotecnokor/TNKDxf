@@ -51,7 +51,7 @@ namespace ConsoleTNKDxf
 
             var dg = dh.GetDrawingSelector().GetSelected();
 
-
+            int qtd = dg.GetSize();
 
             while (dg.MoveNext())
             {
@@ -76,17 +76,17 @@ namespace ConsoleTNKDxf
                         salvarDados(nomeArquivo, dxf);
                         dxf = null;
                     }
-                    return new RespostaModelo(true, _model, "Processamento concluído com sucesso.");
+                    
 
                 }
             }
-
             return new RespostaModelo(true, null, "Informações coletatas.");
 
+            return new RespostaModelo(true, _model, "Processamento concluído com sucesso.");
 
         }
 
-
+        
 
         //private Desenho coletarDesenho(TSD.MultiDrawing multiDrawing, string nomeArquivo)
         //{

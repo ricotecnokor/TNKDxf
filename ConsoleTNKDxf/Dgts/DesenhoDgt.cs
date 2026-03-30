@@ -15,7 +15,7 @@ namespace ConsoleTNKDxf.Dgts
         private RevisaoDgt _revisao;
         private CamposFormatoDgt _camposFormato;
         private string _listarElementosObra;
-
+        private string _criarLM;
         public string Title => _camposFormato.Title;
         public string Title1 => _camposFormato.Title1;
         public string Title2 => _camposFormato.Title2;
@@ -30,7 +30,7 @@ namespace ConsoleTNKDxf.Dgts
         public string Scale4 => _camposFormato.Scale4;
         public string Scale5 => _camposFormato.Scale5;
         public string ListarElementosObra => _listarElementosObra;
-
+        public string CriarLM => _criarLM;
 
         public ListaMateriaisDtg ListaMateriais => _listaMateriais;
         public ElementosFixacaoDgt ElementosFixacao => _elementosFixacao;
@@ -65,6 +65,7 @@ namespace ConsoleTNKDxf.Dgts
 
             //string listarElementosObra = string.Empty;
             tempBeam.GetReportProperty("TCNM_LISTAR_PARAF", ref _listarElementosObra);
+            tempBeam.GetReportProperty("TCNM_CRIAR_LM", ref _criarLM);
 
         }
     }

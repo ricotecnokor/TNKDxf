@@ -97,6 +97,7 @@
     <Compile Include="Dgts\PecaDgt.cs" />
     <Compile Include="Dgts\PorcaDgt.cs" />
     <Compile Include="Dgts\RevisaoDgt.cs" />
+    <Compile Include="ExportacaoDxf.cs" />
     <Compile Include="Extensoes.cs" />
     <Compile Include="Conjunto.cs" />
     <Compile Include="Desenho.cs" />

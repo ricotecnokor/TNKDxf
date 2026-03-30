@@ -2,6 +2,7 @@
 using netDxf;
 using netDxf.Entities;
 using netDxf.Tables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,6 +31,10 @@ namespace ConsoleTNKDxf
 
         public RespostaModelo InserirInformacoes()
         {
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Desenho: {_desenhoDgt.Title1}");
+
             var blocoLista = _dxf.Entities.Inserts.FirstOrDefault(x => x.Block.Name.StartsWith("FORMATO_DET_A1"));
 
             if (blocoLista == null)
@@ -46,11 +51,27 @@ namespace ConsoleTNKDxf
             var linhaVerticalMaisEsquerda = linhasVerticais.OrderBy(x => x.StartPoint.X).FirstOrDefault();
             inserirRevisoes(linhaVerticalMaisEsquerda);
 
-            var linhaVerticalMaisDireita = linhasVerticais.OrderByDescending(x => x.StartPoint.X).FirstOrDefault();
-            inserirDadosLM(linhaVerticalMaisDireita);
+            if (_desenhoDgt.CriarLM == "SIM")
+            {
+                var linhaVerticalMaisDireita = linhasVerticais.OrderByDescending(x => x.StartPoint.X).FirstOrDefault();
+                inserirDadosLM(linhaVerticalMaisDireita);
+                Console.WriteLine("Inserida lista de materiais.");
+                Console.ForegroundColor = ConsoleColor.Blue;
+            }
+            else
+            {
+                Console.WriteLine("Sem lista de materiais.");
+                Console.ForegroundColor = ConsoleColor.Blue;
+            }
 
-            var linhaHorizontalMaisBaixa = linhasHorizontais.OrderBy(x => x.StartPoint.Y).FirstOrDefault();
-            inserirDoQuadroAplicacao(linhaHorizontalMaisBaixa);
+
+
+            if (_desenhoDgt.CriarLM == "SIM")
+            {
+                var linhaHorizontalMaisBaixa = linhasHorizontais.OrderBy(x => x.StartPoint.Y).FirstOrDefault();
+                inserirDoQuadroAplicacao(linhaHorizontalMaisBaixa);
+            }
+                
 
             return new RespostaModelo(true, null, "Informações do formato inseridas com sucesso.");
         }
@@ -59,20 +80,27 @@ namespace ConsoleTNKDxf
         {
             int numeroLinhaConjunto = 0;
             inserirConjuntosDgt(ref numeroLinhaConjunto, linhaRef);
-            var elementosFixacao = _desenhoDgt.ElementosFixacao;
-            if (elementosFixacao.Parafusos.Count > 0)
+
+            if(_desenhoDgt.ListarElementosObra == "SIM")
             {
-                numeroLinhaConjunto++;
-                inserirElementosFixacaoDgt(elementosFixacao, ref numeroLinhaConjunto, linhaRef);
+                var elementosFixacao = _desenhoDgt.ElementosFixacao;
+                if (elementosFixacao.Parafusos.Count > 0)
+                {
+                    numeroLinhaConjunto++;
+                    inserirElementosFixacaoDgt(elementosFixacao, ref numeroLinhaConjunto, linhaRef);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Desenho: {_desenhoDgt.Title1}");
+                    Console.WriteLine("Inserida lista de elementos de obra.");
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                }
+            }
+            else
+            {
+               
+                Console.WriteLine("Sem lista de elementos de obra.");
+                Console.ForegroundColor = ConsoleColor.Blue;
             }
 
-            //inserirConjuntos(ref numeroLinhaConjunto, linhaRef);
-            //var elementosFixacao = _desenho.ElementosFixacao;
-            //if (elementosFixacao.Parafusos.Count > 0)
-            //{
-            //    numeroLinhaConjunto++;
-            //    inserirElementosFixacao(elementosFixacao, ref numeroLinhaConjunto, linhaRef);
-            //}
         }
 
         //private void inserirElementosFixacao(ElementosFixacao elementosFixacao, ref int numeroLinhaConjunto, Line linhaRef)
@@ -425,7 +453,6 @@ namespace ConsoleTNKDxf
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale3));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale4));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale5));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.ListarElementosObra));
 
                 linhaRef.XData.Add(xdata);
 
