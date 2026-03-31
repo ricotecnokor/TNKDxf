@@ -29,7 +29,7 @@ namespace ConsoleTNKDxf
         }
 
 
-        public RespostaModelo ColetarArquivos()
+        public RespostaModelo ColetarArquivos(string versaoTsep)
         {
 
             if (!Directory.Exists(_pastaSaida))
@@ -114,14 +114,14 @@ namespace ConsoleTNKDxf
                     string nomeArquivo = _arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(multiDrawing.Title1));
                     var dxf = DxfDocument.Load(nomeArquivo);
                     XDadosFormato xDadosFormato = new XDadosFormato(dxf, desenhoDgt);
-                    xDadosFormato.InserirInformacoes();
+                    xDadosFormato.InserirInformacoes(versaoTsep);
                     Console.WriteLine($"Arquivo dgt de {multiDrawing.Title1} definido.");
 
                     Console.WriteLine($"Salvando arquivo dgt...");
                     salvarDados(nomeArquivo, dxf);
                     Console.WriteLine("Arquivo dgt salvo.");
                     dxf = null;
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Green;
                 }
             }
             return new RespostaModelo(true, null, "Informações coletatas.");

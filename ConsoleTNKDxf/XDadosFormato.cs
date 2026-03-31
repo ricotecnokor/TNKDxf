@@ -10,18 +10,15 @@ namespace ConsoleTNKDxf
 {
     public class XDadosFormato
     {
+    
         private const string APPNAME = "08478f494deb";
         DxfDocument _dxf;
-        //Desenho _desenho;
         DesenhoDgt _desenhoDgt;
 
-        //List<Line> _linhasHorizontais;
-        //List<Line> _linhasVerticais;
 
         public XDadosFormato(DxfDocument dxf, DesenhoDgt desenhoDgt)//, RelatorioMultiDesenhos relatorio)
         {
-            //_desenho = desenho;
-            //_relatorio = relatorio;
+
 
             _desenhoDgt = desenhoDgt;
 
@@ -29,11 +26,8 @@ namespace ConsoleTNKDxf
            
         }
 
-        public RespostaModelo InserirInformacoes()
+        public RespostaModelo InserirInformacoes(string versaoTsep)
         {
-
-            //Console.ForegroundColor = ConsoleColor.Green;
-            //Console.WriteLine($"Desenho: {_desenhoDgt.Title1}");
 
             var blocoLista = _dxf.Entities.Inserts.FirstOrDefault(x => x.Block.Name.StartsWith("FORMATO_DET_A1"));
 
@@ -46,7 +40,7 @@ namespace ConsoleTNKDxf
             var linhasVerticais = blocoLista.Block.Entities.OfType<netDxf.Entities.Line>().Where(x => x.StartPoint.X == x.EndPoint.X).ToList();
 
             var linhaHorizontalMaisAlta = linhasHorizontais.OrderByDescending(x => x.StartPoint.Y).FirstOrDefault();
-            inserirCamposFormatoDgt(linhaHorizontalMaisAlta);
+            inserirCamposFormatoDgt(linhaHorizontalMaisAlta, versaoTsep);
 
             var linhaVerticalMaisEsquerda = linhasVerticais.OrderBy(x => x.StartPoint.X).FirstOrDefault();
             inserirRevisoes(linhaVerticalMaisEsquerda);
@@ -56,12 +50,13 @@ namespace ConsoleTNKDxf
                 var linhaVerticalMaisDireita = linhasVerticais.OrderByDescending(x => x.StartPoint.X).FirstOrDefault();
                 inserirDadosLM(linhaVerticalMaisDireita);
                 Console.WriteLine("Inserida lista de materiais.");
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Green;
             }
             else
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Sem lista de materiais.");
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Green;
             }
 
 
@@ -91,33 +86,17 @@ namespace ConsoleTNKDxf
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"Desenho: {_desenhoDgt.Title1}");
                     Console.WriteLine("Inserida lista de elementos de obra.");
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Green;
                 }
             }
             else
             {
-               
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Sem lista de elementos de obra.");
-                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.ForegroundColor = ConsoleColor.Green;
             }
 
         }
-
-        //private void inserirElementosFixacao(ElementosFixacao elementosFixacao, ref int numeroLinhaConjunto, Line linhaRef)
-        //{
-        //    var conjunto = new ConjuntoElementosFixacao();
-        //    string pefixoFixacao = $"{APPNAME}_F_{++numeroLinhaConjunto}";
-        //    ApplicationRegistry appReg;
-        //    appReg = new ApplicationRegistry(pefixoFixacao);
-
-        //    _dxf.ApplicationRegistries.Add(appReg);
-        //    XData xdataConjuntoElementosFixacao = new XData(appReg);
-        //    insereLinhaLM(conjunto, xdataConjuntoElementosFixacao, linhaRef);
-
-        //    insereLinhas(elementosFixacao.Parafusos, $"{APPNAME}_PF_{numeroLinhaConjunto}_", linhaRef);
-        //    insereLinhas(elementosFixacao.Porcas, $"{APPNAME}_PC_{numeroLinhaConjunto}_", linhaRef);
-        //    insereLinhas(elementosFixacao.Arruelas, $"{APPNAME}_AR_{numeroLinhaConjunto}_", linhaRef);
-        //}
 
         private void inserirElementosFixacaoDgt(ElementosFixacaoDgt elementosFixacao, ref int numeroLinhaConjunto, Line linhaRef)
         {
@@ -127,26 +106,6 @@ namespace ConsoleTNKDxf
         }
 
 
-        //private void inserirConjuntos(ref int numeroLinhaConjunto, Line linhaRef)
-        //{
-        //    foreach (Conjunto conjunto in _desenho.ListaMateriais)
-        //    {
-
-        //        string appNameConjunto = $"{APPNAME}_M_{++numeroLinhaConjunto}";
-        //        ApplicationRegistry appReg;
-        //        appReg = new ApplicationRegistry(appNameConjunto);
-
-        //        _dxf.ApplicationRegistries.Add(appReg);
-        //        XData xdataConjunto = new XData(appReg);
-
-        //        insereLinhaLM(conjunto, xdataConjunto, linhaRef);
-
-
-
-        //        insereLinhas(conjunto.Pecas, $"{APPNAME}_I_{numeroLinhaConjunto}_", linhaRef);
-        //    }
-
-        //}
         private void inserirConjuntosDgt(ref int numeroLinhaConjunto, Line linhaRef)
         {
             foreach (ConjuntoDgt conjunto in _desenhoDgt.ListaMateriais)
@@ -180,10 +139,10 @@ namespace ConsoleTNKDxf
                     appReg = new ApplicationRegistry(appNameItem);
                     _dxf.ApplicationRegistries.Add(appReg);
                     XData xdata = new XData(appReg);
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, parafuso.Name));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, parafuso.Quantidade.ToString()));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, parafuso.NameShort));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, parafuso.Weight.ToString()));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, parafuso.Name == null ? "" : parafuso.Name));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, parafuso.Quantidade == null ? "" : parafuso.Quantidade.ToString()));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, parafuso.NameShort == null ? "" : parafuso.NameShort));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, parafuso.Weight == null ? "" : parafuso.Weight.ToString()));
                     linhaRef.XData.Add(xdata);
                 }
                 else
@@ -207,10 +166,10 @@ namespace ConsoleTNKDxf
                     appReg = new ApplicationRegistry(appNameItem);
                     _dxf.ApplicationRegistries.Add(appReg);
                     XData xdata = new XData(appReg);
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, porca.NutName));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, porca.Quantidade.ToString()));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, porca.BoltStandard));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, porca.NutWeight.ToString()));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, porca.NutName == null ? "" : porca.NutName));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, porca.Quantidade == null ? "" : porca.Quantidade.ToString()));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, porca.BoltStandard == null ? "" : porca.BoltStandard));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, porca.NutWeight == null ? "" : porca.NutWeight.ToString()));
                     linhaRef.XData.Add(xdata);
                 }
                 else
@@ -234,10 +193,10 @@ namespace ConsoleTNKDxf
                     appReg = new ApplicationRegistry(appNameItem);
                     _dxf.ApplicationRegistries.Add(appReg);
                     XData xdata = new XData(appReg);
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, arruela.WasherName));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, arruela.Quantidade.ToString()));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, arruela.BoltStandard));
-                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, arruela.WasherWeight.ToString()));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, arruela.WasherName == null ? "" : arruela.WasherName));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, arruela.Quantidade == null ? "" : arruela.Quantidade.ToString()));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, arruela.BoltStandard == null ? "" : arruela.BoltStandard));
+                    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, arruela.WasherWeight == null ? "" : arruela.WasherWeight.ToString()));
                     linhaRef.XData.Add(xdata);
                 }
                 else
@@ -248,27 +207,7 @@ namespace ConsoleTNKDxf
 
         }
 
-        //private void insereLinhas(List<ILinhaLM> linhas, string prefixo, Line linhaRef)
-        //{
-        //    int numeroLinha = 0;
-        //    foreach (ILinhaLM linha in linhas)
-        //    {
-        //        var appNameItem = $"{prefixo}{++numeroLinha}";
-        //        ApplicationRegistry appReg;
-        //        if (!_dxf.ApplicationRegistries.Contains(appNameItem))
-        //        {
-        //            appReg = new ApplicationRegistry(appNameItem);
-        //            _dxf.ApplicationRegistries.Add(appReg);
-        //            XData xdata = new XData(appReg);
-        //            insereLinhaLM(linha, xdata, linhaRef);
-        //        }
-        //        else
-        //        {
-        //            appReg = _dxf.ApplicationRegistries[appNameItem];
-        //        }
-        //    }
-
-        //}
+      
 
         private void insereListaPecasDgt(List<PecaDgt> linhas, string prefixo, Line linhaRef)
         {
@@ -293,17 +232,7 @@ namespace ConsoleTNKDxf
         }
 
 
-        //private void insereLinhaLM(ILinhaLM linha, XData xdata, Line linhaRef)
-        //{
-        //    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Posicao));
-        //    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Quantidade));
-        //    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Descricao));
-        //    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Observacao));
-        //    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Material));
-        //    xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Peso));
-        //    linhaRef.XData.Add(xdata);
 
-        //}
         private void inserePecaDgt(PecaDgt linha, XData xdata, Line linhaRef)
         {
             xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.PartPos == null ? "" : linha.PartPos));
@@ -390,7 +319,7 @@ namespace ConsoleTNKDxf
         }
        
 
-        private void inserirCamposFormatoDgt(Line linhaRef)
+        private void inserirCamposFormatoDgt(Line linhaRef, string versaoTsep)
         {
 
             ApplicationRegistry appReg;
@@ -418,6 +347,7 @@ namespace ConsoleTNKDxf
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale3 == null ? "" : _desenhoDgt.Scale3));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale4 == null ? "" : _desenhoDgt.Scale4));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale5 == null ? "" : _desenhoDgt.Scale5));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, versaoTsep));
 
                 linhaRef.XData.Add(xdata);
 

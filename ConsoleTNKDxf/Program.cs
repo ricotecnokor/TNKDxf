@@ -8,6 +8,8 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
+            const string VERSAO_TSEP = "1.1.8";
+
             Console.ForegroundColor = ConsoleColor.Red;
 
             //RespostaModelo resposta = BuscarModeloUso();
@@ -36,10 +38,11 @@ namespace ConsoleTNKDxf
             ExportacaoDxf.Exportar();
 
             IAdapterDesenho adapterDesenho = new AdapterDesenho(modelTemp);
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Coletando arquivos...");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine($"Coletando arquivos na versão {VERSAO_TSEP} ...");
+            Console.ForegroundColor = ConsoleColor.Green;
 
-            var resposta = adapterDesenho.ColetarArquivos();
+            var resposta = adapterDesenho.ColetarArquivos(VERSAO_TSEP);
 
             if (!resposta.Sucesso)
             {
@@ -48,9 +51,10 @@ namespace ConsoleTNKDxf
                 return;
             }
 
-            Console.ForegroundColor = ConsoleColor.Blue;
 
-            Console.WriteLine(@"Processo concluído com arquivos na pasta .\PlotFiles\Enviar, Pressione qualquer tecla para sair.");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine($@"Desenhos tipo dgt na versão {VERSAO_TSEP}  criados na pasta .\PlotFiles\Enviar.");
+            Console.WriteLine("Pressione qualquer tecla para sair.");
 
             Console.ReadKey();
 
