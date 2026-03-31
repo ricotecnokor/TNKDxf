@@ -32,8 +32,8 @@ namespace ConsoleTNKDxf
         public RespostaModelo InserirInformacoes()
         {
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Desenho: {_desenhoDgt.Title1}");
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine($"Desenho: {_desenhoDgt.Title1}");
 
             var blocoLista = _dxf.Entities.Inserts.FirstOrDefault(x => x.Block.Name.StartsWith("FORMATO_DET_A1"));
 
@@ -306,33 +306,33 @@ namespace ConsoleTNKDxf
         //}
         private void inserePecaDgt(PecaDgt linha, XData xdata, Line linhaRef)
         {
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.PartPos));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Quantidade.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Finish));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Profile));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.ProfileType));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Material));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Height.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Length.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Width.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.ProfileDiameter.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.ProfilePlateThickness.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.ProfileWeightPerUnitLength.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.WeightNet.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.WeightGross.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.WeightM.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Weight.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.PartPos == null ? "" : linha.PartPos));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Quantidade == null ? "" : linha.Quantidade.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Finish == null ? "" : linha.Finish));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Profile == null ? "" : linha.Profile));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.ProfileType == null ? "" : linha.ProfileType));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Material == null ? "" : linha.Material));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Height == null ? "" : linha.Height.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Length == null ? "" : linha.Length.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Width == null ? "" : linha.Width.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.ProfileDiameter == null ? "" : linha.ProfileDiameter.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.ProfilePlateThickness == null ? "" : linha.ProfilePlateThickness.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.ProfileWeightPerUnitLength == null ? "" : linha.ProfileWeightPerUnitLength.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.WeightNet == null ? "" : linha.WeightNet.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.WeightGross == null ? "" : linha.WeightGross.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.WeightM == null ? "" : linha.WeightM.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, linha.Weight == null ? "" : linha.Weight.ToString()));
             linhaRef.XData.Add(xdata);
 
         }
 
         private void insereConjuntoDgt(ConjuntoDgt conjunto, XData xdata, Line linhaRef)
         {
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.AssemblyPos));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.MainPartName));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.Quantidade.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.Height.ToString()));
-            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.Weigth.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.AssemblyPos == null ? "" : conjunto.AssemblyPos));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.MainPartName == null ? "" : conjunto.MainPartName));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.Quantidade == null ? "" : conjunto.Quantidade.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.Height == null ? "" : conjunto.Height.ToString()));
+            xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.Weigth == null ? "" : conjunto.Weigth.ToString()));
             linhaRef.XData.Add(xdata);
         }
 
@@ -346,10 +346,10 @@ namespace ConsoleTNKDxf
                 appReg = new ApplicationRegistry(appNameLinha);
                 _dxf.ApplicationRegistries.Add(appReg);
                 XData xdata = new XData(appReg);
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Tag));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Desenho));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.DesenhoCliente));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Familia));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Tag == null ? "" : quadro.Tag));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Desenho == null ? "" : quadro.Desenho));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.DesenhoCliente == null ? "" : quadro.DesenhoCliente));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Familia == null ? "" : quadro.Familia));
 
                 linhaRef.XData.Add(xdata);
             }
@@ -371,14 +371,14 @@ namespace ConsoleTNKDxf
                 appReg = new ApplicationRegistry(appNameLinha);
                 _dxf.ApplicationRegistries.Add(appReg);
                 XData xdata = new XData(appReg);
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastMark));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDescription));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastCreatedBy));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateCreated));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastCheckedBy));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateChecked));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastApprovedBy));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateApproved));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastMark == null ? "0" : revisao.RevisionLastMark));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDescription == null ? "" : revisao.RevisionLastDescription));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastCreatedBy == null ? "" : revisao.RevisionLastCreatedBy));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateCreated == null ? "" : revisao.RevisionLastDateCreated));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastCheckedBy == null ? "" : revisao.RevisionLastCheckedBy));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateChecked == null ? "" : revisao.RevisionLastDateChecked));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastApprovedBy == null ? "" : revisao.RevisionLastApprovedBy));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateApproved == null ? "" : revisao.RevisionLastDateApproved));
 
                 linhaRef.XData.Add(xdata);
             }
@@ -388,42 +388,7 @@ namespace ConsoleTNKDxf
             }
 
         }
-        //private void inserirCamposFormato(Line linhaRef)
-        //{
-
-        //    //PropriedadesDesenho propriedades = _desenho.PropriedadesFormato; // _relatorio.PegaPropriedades(_nomeArquivo);
-
-        //    ApplicationRegistry appReg;
-        //    if (!_dxf.ApplicationRegistries.Contains(APPNAME))
-        //    {
-        //        appReg = new ApplicationRegistry(APPNAME);
-        //        _dxf.ApplicationRegistries.Add(appReg);
-
-        //        XData xdata = new XData(appReg);
-
-        //        string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-
-
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, userName));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.NomeModelo));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.NumeroProjeto));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.Data));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.NumeroContratada));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.NumeroCliente));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.DescricaoProjeto));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.RevisaoFormato));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.RevisaoFormatoCliente));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenho.Escala));
-
-
-        //        linhaRef.XData.Add(xdata);
-
-        //    }
-        //    else
-        //    {
-        //        appReg = _dxf.ApplicationRegistries[APPNAME];
-        //    }
-        //}
+       
 
         private void inserirCamposFormatoDgt(Line linhaRef)
         {
@@ -440,19 +405,19 @@ namespace ConsoleTNKDxf
 
 
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, userName));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Title));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Title1));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Title2));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Title3));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.ProjectObject));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.RevisionMark));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.ProjectModel));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.ProjectNumber));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale1));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale2));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale3));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale4));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale5));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Title == null ? "TITLE" : _desenhoDgt.Title));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Title1 == null ? "TITLE1" : _desenhoDgt.Title1));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Title2 == null ? "TITLE2" : _desenhoDgt.Title2));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Title3 == null ? "TITLE3" : _desenhoDgt.Title3));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.ProjectObject == null ? "PROJECT OBJECT" : _desenhoDgt.ProjectObject));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.RevisionMark == null ? "0" : _desenhoDgt.RevisionMark));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.ProjectModel == null ? "MODELO" : _desenhoDgt.ProjectModel));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.ProjectNumber == null ? "NUMERO PROJETO" : _desenhoDgt.ProjectNumber));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale1 == null ? "" : _desenhoDgt.Scale1));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale2 == null ? "" : _desenhoDgt.Scale2));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale3 == null ? "" : _desenhoDgt.Scale3));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale4 == null ? "" : _desenhoDgt.Scale4));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale5 == null ? "" : _desenhoDgt.Scale5));
 
                 linhaRef.XData.Add(xdata);
 
