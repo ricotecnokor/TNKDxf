@@ -45,7 +45,9 @@ namespace ConsoleTNKDxf
             var linhaVerticalMaisEsquerda = linhasVerticais.OrderBy(x => x.StartPoint.X).FirstOrDefault();
             inserirRevisoes(linhaVerticalMaisEsquerda);
 
-            if (_desenhoDgt.CriarLM == "SIM")
+
+
+            if (_desenhoDgt.CriarLM != "NÃO")
             {
                 var linhaVerticalMaisDireita = linhasVerticais.OrderByDescending(x => x.StartPoint.X).FirstOrDefault();
                 inserirDadosLM(linhaVerticalMaisDireita);
@@ -58,10 +60,11 @@ namespace ConsoleTNKDxf
                 Console.WriteLine("Sem lista de materiais.");
                 Console.ForegroundColor = ConsoleColor.Green;
             }
+            
 
 
 
-            if (_desenhoDgt.CriarLM == "SIM")
+            if (_desenhoDgt.CriarLM != "NÃO")
             {
                 var linhaHorizontalMaisBaixa = linhasHorizontais.OrderBy(x => x.StartPoint.Y).FirstOrDefault();
                 inserirDoQuadroAplicacao(linhaHorizontalMaisBaixa);
@@ -76,7 +79,7 @@ namespace ConsoleTNKDxf
             int numeroLinhaConjunto = 0;
             inserirConjuntosDgt(ref numeroLinhaConjunto, linhaRef);
 
-            if(_desenhoDgt.ListarElementosObra == "SIM")
+            if(_desenhoDgt.ListarElementosObra != "NÃO")
             {
                 var elementosFixacao = _desenhoDgt.ElementosFixacao;
                 if (elementosFixacao.Parafusos.Count > 0)

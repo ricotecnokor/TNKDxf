@@ -18,14 +18,6 @@ namespace ConsoleTNKDxf
             return value;
         }
 
-        public static string ObterPosicaoItemPrincipal(this TSM.Assembly assy)
-        {
-            var mainPart = assy.GetMainPart();
-            var numeroMainPart = string.Empty;
-            mainPart.GetReportProperty("PART_POS", ref numeroMainPart);
-            return numeroMainPart;
-        }
-
         public static double ConverterParaDouble(this string valorPeso)
         {
             if (valorPeso != string.Empty)
