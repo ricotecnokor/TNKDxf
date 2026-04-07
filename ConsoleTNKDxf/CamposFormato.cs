@@ -99,14 +99,5 @@ namespace ConsoleTNKDxf
 
         public DateTime Data => _data;
 
-        private void definirData(Beam tempBeam)
-        {
-            
-        }
-
-        private void definirEscala(Beam tempBeam)
-        {
-            
-        }
     }
 }

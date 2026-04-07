@@ -83,7 +83,6 @@
     <Compile Include="ArquivoRelatorioMultiDesenhos.cs" />
     <Compile Include="Arruela.cs" />
     <Compile Include="CamposFormato.cs" />
-    <Compile Include="ConjuntoElementosFixacao.cs" />
     <Compile Include="DescricaoArruela.cs" />
     <Compile Include="DescricaoParafuso.cs" />
     <Compile Include="DescricaoPorca.cs" />
@@ -107,7 +106,6 @@
     <Compile Include="MaterialPorca.cs" />
     <Compile Include="Parafuso.cs" />
     <Compile Include="IAdapterDesenho.cs" />
-    <Compile Include="LeitorRlatorioDesenhosTekla.cs" />
     <Compile Include="ListaMateriais.cs" />
     <Compile Include="Peca.cs" />
     <Compile Include="DescricaoItem.cs" />
