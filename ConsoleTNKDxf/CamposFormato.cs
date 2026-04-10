@@ -43,6 +43,9 @@ namespace ConsoleTNKDxf
             tempBeam.GetReportProperty("PROJECT.MODEL", ref _nomeModelo);
             tempBeam.GetReportProperty("PROJECT.NUMBER", ref _numeroProjeto);
 
+            string currentTemplateFile = string.Empty;
+            tempBeam.GetReportProperty("PADRÃO ARAUCO", ref currentTemplateFile);
+
             //string dia = string.Empty;
             //tempBeam.GetReportProperty("DATE", ref dia);
             //string hora = string.Empty;

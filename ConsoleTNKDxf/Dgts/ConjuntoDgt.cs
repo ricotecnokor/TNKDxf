@@ -53,7 +53,7 @@ namespace ConsoleTNKDxf.Dgts
             assy.GetIntegerReportProperties(integerReportProperties, ref integerProperties);
             int number = integerProperties.ContainsKey("NUMBER") ? int.Parse(integerProperties["NUMBER"].ToString()) : 1;
             int modelTotal = integerProperties.ContainsKey("ASSEMBLY.MODEL_TOTAL") ? int.Parse(integerProperties["ASSEMBLY.MODEL_TOTAL"].ToString()) : 1;
-            _quantidade = number * modelTotal;
+            //_quantidade = number * modelTotal;
 
 
 
@@ -104,10 +104,10 @@ namespace ConsoleTNKDxf.Dgts
                 var existingItem = _itens.First(c => c.PartPos == posicaoPeca);
                 existingItem.IncrementarQuantidade();
 
-                if (existingItem.PartPos == _pecaDgtMaiPart.PartPos)
-                {
-                    _quantidade++;
-                }
+                //if (existingItem.PartPos == _pecaDgtMaiPart.PartPos)
+                //{
+                //    _quantidade++;
+                //}
 
                 return;
             }
