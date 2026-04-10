@@ -16,15 +16,16 @@ namespace ConsoleTNKDxf.Dgts
         private List<PorcaDgt> _porcas = new List<PorcaDgt>();
         private List<ArruelaDgt> _arruelas = new List<ArruelaDgt>();
         private Model _model;
-
+        private string _prefixoConjunto;
         public List<ParafusoDgt> Parafusos => _parafusos.ToList();
         public List<PorcaDgt> Porcas => _porcas.ToList();
         public List<ArruelaDgt> Arruelas => _arruelas.ToList();
 
 
-        public ElementosFixacaoDgt(Model model, MultiDrawing multiDrawing)
+        public ElementosFixacaoDgt(Model model, MultiDrawing multiDrawing, string prefixoConjunto)
         {
             _model = model;
+            _prefixoConjunto = prefixoConjunto;
             coletar(multiDrawing);
         }
 
@@ -72,6 +73,38 @@ namespace ConsoleTNKDxf.Dgts
 
         private void addParafuso(TSM.BoltArray boltArray)
         {
+
+            var pfsAparafusar = boltArray.OtherPartsToBolt.GetEnumerator();
+            bool temPecaAparafusar = false;
+
+            var prefixoPecaAparfusar = boltArray.PartToBeBolted.PartNumber.Prefix;
+            if (prefixoPecaAparfusar.Contains(_prefixoConjunto))
+            {
+                temPecaAparafusar = true;
+            }
+            else
+            {
+                while (pfsAparafusar.MoveNext())
+                {
+                    var pecaAparafusar = pfsAparafusar.Current as TSM.Part;
+                    if (pecaAparafusar != null)
+                    {
+                        if (pecaAparafusar.PartNumber.Prefix.Contains(_prefixoConjunto))
+                        {
+                            temPecaAparafusar = true;
+                            break;
+                        }
+
+
+                    }
+                }
+            }
+
+            if (!temPecaAparafusar)
+            {
+                return;
+            }
+
 
             ArrayList stringReportProperties = new ArrayList { "SITE_WORKSHOP" };
             Hashtable stringProperties = new Hashtable();

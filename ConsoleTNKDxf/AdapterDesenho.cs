@@ -59,6 +59,9 @@ namespace ConsoleTNKDxf
                 var drawing = dg.Current;
                 if (drawing == null) break;
 
+               // LayoutInspector layoutInspector = new LayoutInspector();
+               //bool isDiagrama = layoutInspector.IsDiagramaDrawing(drawing);
+
                 var tipo = drawing.GetType();
 
                 if (tipo == typeof(TSD.MultiDrawing))

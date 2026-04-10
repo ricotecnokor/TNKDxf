@@ -77,9 +77,14 @@ namespace ConsoleTNKDxf
         private void inserirDadosLM(Line linhaRef)
         {
             int numeroLinhaConjunto = 0;
+
+           
+
             inserirConjuntosDgt(ref numeroLinhaConjunto, linhaRef);
 
-            if(_desenhoDgt.ListarElementosObra != "NÃO")
+           
+
+            if (_desenhoDgt.ListarElementosObra != "NÃO")
             {
                 var elementosFixacao = _desenhoDgt.ElementosFixacao;
                 if (elementosFixacao.Parafusos.Count > 0)
@@ -129,6 +134,8 @@ namespace ConsoleTNKDxf
             }
 
         }
+
+       
 
         private int inserirParafusosDgt(List<ParafusoDgt> parafusos, string prefixo, Line linhaRef)
         {

@@ -16,11 +16,14 @@ namespace ConsoleTNKDxf.Dgts
         TSM.Model _model;
         private List<ConjuntoDgt> _conjuntos = new List<ConjuntoDgt>();
         public List<ConjuntoDgt> Conjuntos => _conjuntos;
+        private string _prefixoConjunto;
 
-        public ListaMateriaisDtg(TSM.Model model, TSD.MultiDrawing drawing)
+        public ListaMateriaisDtg(TSM.Model model, TSD.MultiDrawing drawing, string prefixoConjunto)
         {
             _model = model;
+            _prefixoConjunto = prefixoConjunto;
             coletar(drawing);
+           
         }
 
         private void coletar(MultiDrawing multiDrawing)
@@ -80,19 +83,16 @@ namespace ConsoleTNKDxf.Dgts
                 return;
             }
 
-            var mainPart = assy.GetMainPart() as TSM.Part;
-            PecaDgt pecaDgtMaiPart = new PecaDgt(mainPart);
-
             string assemblyPos = assy.ObterPropriedade("ASSEMBLY_POS").ToString();
-           
+
+            if (!assemblyPos.Contains(_prefixoConjunto))
+            {
+                return;
+            }
+
 
 
             var partPos = part.ObterPropriedade("PART_POS").ToString();
-            if (partPos == "18")
-            {
-                var x = 0;
-            }
-
 
             if (assemblyPos == string.Empty)
             {
@@ -102,11 +102,6 @@ namespace ConsoleTNKDxf.Dgts
 
             if (_conjuntos.Any(conjunto => conjunto.AssemblyPos == assemblyPos))
             {
-                if (assemblyPos.Contains("AG"))
-                {
-                    var x = 0;
-                }
-
 
                 ConjuntoDgt conjuntoExistente = _conjuntos.FirstOrDefault(c => c.AssemblyPos == assemblyPos);
                 
@@ -117,9 +112,8 @@ namespace ConsoleTNKDxf.Dgts
 
             //assy.GetSecondaries
 
-
-            var marca = new ConjuntoDgt(part, pecaDgtMaiPart);
-            _conjuntos.Add(marca);
+            var novoConjunto = new ConjuntoDgt(part, new PecaDgt(assy.GetMainPart() as TSM.Part));
+            _conjuntos.Add(novoConjunto);
         }
 
         public IEnumerator<ConjuntoDgt> GetEnumerator()

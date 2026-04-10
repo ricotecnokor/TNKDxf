@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Tekla.Structures.Drawing;
 using Tekla.Structures.DrawingInternal;
 using Tekla.Structures.Model;
@@ -42,9 +43,12 @@ namespace ConsoleTNKDxf.Dgts
         public DesenhoDgt(TSD.MultiDrawing multiDrawing, TSM.Model model)
         {
             _camposFormato = new CamposFormatoDgt(multiDrawing);
-            _listaMateriais = new ListaMateriaisDtg(model, multiDrawing);
+
+            string prefixoConjunto = int.Parse(_camposFormato.Title1.Split('-')[3]).ToString();
+
+            _listaMateriais = new ListaMateriaisDtg(model, multiDrawing, prefixoConjunto);
             _quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
-            _elementosFixacao = new ElementosFixacaoDgt(model, multiDrawing);
+            _elementosFixacao = new ElementosFixacaoDgt(model, multiDrawing, prefixoConjunto);
             _revisao = new RevisaoDgt(multiDrawing);
             setListarElementosObra(multiDrawing);
         }
@@ -66,6 +70,18 @@ namespace ConsoleTNKDxf.Dgts
             //string listarElementosObra = string.Empty;
             tempBeam.GetReportProperty("TCNM_LISTAR_PARAF", ref _listarElementosObra);
             tempBeam.GetReportProperty("TCNM_CRIAR_LM", ref _criarLM);
+
+            bool isDiagrama = false;
+            string currentTemplateFile = string.Empty;
+            if (tempBeam.GetReportProperty("PADRÃO ARAUCO", ref currentTemplateFile))
+            {
+                // Verifica se o nome do arquivo contém o seu DIAGRAMA_LM
+                if (!string.IsNullOrEmpty(currentTemplateFile) &&
+                    currentTemplateFile.IndexOf("DIAGRAMA_LM", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    isDiagrama = true;
+                }
+            }
 
         }
     }
