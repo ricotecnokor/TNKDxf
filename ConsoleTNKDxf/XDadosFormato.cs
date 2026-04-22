@@ -1,4 +1,5 @@
-﻿using ConsoleTNKDxf.Dgts;
+﻿using ConsoleTNKDxf.Abstracoes;
+using ConsoleTNKDxf.Dgts;
 using netDxf;
 using netDxf.Entities;
 using netDxf.Tables;
@@ -8,15 +9,15 @@ using System.Linq;
 
 namespace ConsoleTNKDxf
 {
-    public class XDadosFormato
+    public class XDadosFormato<T> where T : ConjuntoAbstrato
     {
     
         private const string APPNAME = "08478f494deb";
         DxfDocument _dxf;
-        DesenhoDgt _desenhoDgt;
+        DesenhoDgtAbs<T> _desenhoDgt;
 
 
-        public XDadosFormato(DxfDocument dxf, DesenhoDgt desenhoDgt)//, RelatorioMultiDesenhos relatorio)
+        public XDadosFormato(DxfDocument dxf, DesenhoDgtAbs<T> desenhoDgt)//, RelatorioMultiDesenhos relatorio)
         {
 
 
@@ -26,7 +27,7 @@ namespace ConsoleTNKDxf
            
         }
 
-        public RespostaModelo InserirInformacoes(string versaoTsep)
+        public RespostaModelo InserirInformacoes(string versaoTsep, string tipoDesenho)
         {
 
             var blocoLista = _dxf.Entities.Inserts.FirstOrDefault(x => x.Block.Name.StartsWith("FORMATO_DET_A1"));
@@ -40,7 +41,7 @@ namespace ConsoleTNKDxf
             var linhasVerticais = blocoLista.Block.Entities.OfType<netDxf.Entities.Line>().Where(x => x.StartPoint.X == x.EndPoint.X).ToList();
 
             var linhaHorizontalMaisAlta = linhasHorizontais.OrderByDescending(x => x.StartPoint.Y).FirstOrDefault();
-            inserirCamposFormatoDgt(linhaHorizontalMaisAlta, versaoTsep);
+            inserirCamposFormatoDgt(linhaHorizontalMaisAlta, versaoTsep, tipoDesenho);
 
             var linhaVerticalMaisEsquerda = linhasVerticais.OrderBy(x => x.StartPoint.X).FirstOrDefault();
             inserirRevisoes(linhaVerticalMaisEsquerda);
@@ -87,7 +88,7 @@ namespace ConsoleTNKDxf
             if (_desenhoDgt.ListarElementosObra != "NÃO")
             {
                 var elementosFixacao = _desenhoDgt.ElementosFixacao;
-                if (elementosFixacao.Parafusos.Count > 0)
+                if (elementosFixacao != null && elementosFixacao.Parafusos.Count > 0)
                 {
                     numeroLinhaConjunto++;
                     inserirElementosFixacaoDgt(elementosFixacao, ref numeroLinhaConjunto, linhaRef);
@@ -116,7 +117,7 @@ namespace ConsoleTNKDxf
 
         private void inserirConjuntosDgt(ref int numeroLinhaConjunto, Line linhaRef)
         {
-            foreach (ConjuntoDgt conjunto in _desenhoDgt.ListaMateriais)
+            foreach (T conjunto in _desenhoDgt.ColetorMateriais)
             {
 
                 string appNameConjunto = $"{APPNAME}_M_{++numeroLinhaConjunto}";
@@ -126,11 +127,13 @@ namespace ConsoleTNKDxf
                 _dxf.ApplicationRegistries.Add(appReg);
                 XData xdataConjunto = new XData(appReg);
 
-                insereConjuntoDgt(conjunto, xdataConjunto, linhaRef);
+                insereConjuntoDgt(conjunto as ConjuntoAbstrato, xdataConjunto, linhaRef);
 
+                if(conjunto is ConjuntoDetalhadoDgt detalhado)
+                {
+                    insereListaPecasDgt(detalhado.Itens, $"{APPNAME}_I_{numeroLinhaConjunto}_", linhaRef);
+                }
 
-
-                insereListaPecasDgt(conjunto.Itens, $"{APPNAME}_I_{numeroLinhaConjunto}_", linhaRef);
             }
 
         }
@@ -265,7 +268,7 @@ namespace ConsoleTNKDxf
 
         }
 
-        private void insereConjuntoDgt(ConjuntoDgt conjunto, XData xdata, Line linhaRef)
+        private void insereConjuntoDgt(ConjuntoAbstrato conjunto, XData xdata, Line linhaRef)
         {
             xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.AssemblyPos == null ? "" : conjunto.AssemblyPos));
             xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, conjunto.MainPartName == null ? "" : conjunto.MainPartName));
@@ -329,7 +332,7 @@ namespace ConsoleTNKDxf
         }
        
 
-        private void inserirCamposFormatoDgt(Line linhaRef, string versaoTsep)
+        private void inserirCamposFormatoDgt(Line linhaRef, string versaoTsep, string tipoDesenho)
         {
 
             ApplicationRegistry appReg;
@@ -358,6 +361,7 @@ namespace ConsoleTNKDxf
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale4 == null ? "" : _desenhoDgt.Scale4));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _desenhoDgt.Scale5 == null ? "" : _desenhoDgt.Scale5));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, versaoTsep));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, tipoDesenho));
 
                 linhaRef.XData.Add(xdata);
 

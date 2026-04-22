@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Tekla.Structures;
@@ -16,18 +17,20 @@ namespace ConsoleTNKDxf.Dgts
         private List<PorcaDgt> _porcas = new List<PorcaDgt>();
         private List<ArruelaDgt> _arruelas = new List<ArruelaDgt>();
         private Model _model;
-        private string _prefixoConjunto;
+        private List<string> _prefixosConjunto;
         public List<ParafusoDgt> Parafusos => _parafusos.ToList();
         public List<PorcaDgt> Porcas => _porcas.ToList();
         public List<ArruelaDgt> Arruelas => _arruelas.ToList();
 
 
-        public ElementosFixacaoDgt(Model model, MultiDrawing multiDrawing, string prefixoConjunto)
+        public ElementosFixacaoDgt(Model model, MultiDrawing multiDrawing, List<string> prefixosConjunto)
         {
             _model = model;
-            _prefixoConjunto = prefixoConjunto;
+            _prefixosConjunto = prefixosConjunto;
             coletar(multiDrawing);
         }
+
+        
 
         private void coletar(MultiDrawing multiDrawing)
         {
@@ -78,7 +81,7 @@ namespace ConsoleTNKDxf.Dgts
             bool temPecaAparafusar = false;
 
             var prefixoPecaAparfusar = boltArray.PartToBeBolted.PartNumber.Prefix;
-            if (prefixoPecaAparfusar.Contains(_prefixoConjunto))
+            if (contemUmDosPrefixos(prefixoPecaAparfusar))
             {
                 temPecaAparafusar = true;
             }
@@ -89,7 +92,7 @@ namespace ConsoleTNKDxf.Dgts
                     var pecaAparafusar = pfsAparafusar.Current as TSM.Part;
                     if (pecaAparafusar != null)
                     {
-                        if (pecaAparafusar.PartNumber.Prefix.Contains(_prefixoConjunto))
+                        if (contemUmDosPrefixos(pecaAparafusar.PartNumber.Prefix))
                         {
                             temPecaAparafusar = true;
                             break;
@@ -124,6 +127,11 @@ namespace ConsoleTNKDxf.Dgts
             if (boltArray.Washer2) processarArruela(boltArray);
             if (boltArray.Washer3) processarArruela(boltArray);
 
+        }
+
+        private bool contemUmDosPrefixos(string prefixoPecaAparfusar)
+        {
+            return _prefixosConjunto.Any(prefixo => prefixoPecaAparfusar.Contains(prefixo));
         }
 
         private void processarParafuso(BoltArray boltArray)

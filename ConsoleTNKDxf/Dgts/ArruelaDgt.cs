@@ -14,7 +14,7 @@ namespace ConsoleTNKDxf.Dgts
         public string WasherName => _whasherName;
         public string BoltStandard => _boltStandard;
         public string Quantidade => _quantidade.ToString();
-        public string WasherWeight => Math.Round(_washerWeight, 2).ToString();
+        public string WasherWeight => _washerWeight.ToString();
 
         public ArruelaDgt(TSM.BoltArray boltArray)
         {

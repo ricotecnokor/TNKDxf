@@ -109,6 +109,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstracoes\ConjuntoAbstrato.cs" />
     <Compile Include="AdapterDesenho.cs" />
     <Compile Include="ArquivoRelatorioMultiDesenhos.cs" />
     <Compile Include="Arruela.cs" />
@@ -118,14 +119,20 @@
     <Compile Include="DescricaoPorca.cs" />
     <Compile Include="Dgts\ArruelaDgt.cs" />
     <Compile Include="Dgts\CamposFormatoDgt.cs" />
-    <Compile Include="Dgts\ConjuntoDgt.cs" />
-    <Compile Include="Dgts\DesenhoDgt.cs" />
+    <Compile Include="Dgts\ConjuntoDetalhadoDgt.cs" />
+    <Compile Include="Dgts\ConjuntoMontagemDgt.cs" />
+    <Compile Include="Dgts\DesenhoDetalhesDgt.cs" />
+    <Compile Include="Dgts\DesenhoDgtAbs.cs" />
+    <Compile Include="Dgts\DesenhoMontagemDgt.cs" />
     <Compile Include="Dgts\ElementosFixacaoDgt.cs" />
-    <Compile Include="Dgts\ListaMateriaisDtg.cs" />
+    <Compile Include="Dgts\LmAbs.cs" />
+    <Compile Include="Dgts\LmDetalhesDtg.cs" />
+    <Compile Include="Dgts\LmMontagemDgt.cs" />
     <Compile Include="Dgts\ParafusoDgt.cs" />
     <Compile Include="Dgts\PecaDgt.cs" />
     <Compile Include="Dgts\PorcaDgt.cs" />
     <Compile Include="Dgts\RevisaoDgt.cs" />
+    <Compile Include="Dgts\TipoDesenho.cs" />
     <Compile Include="ExportacaoDxf.cs" />
     <Compile Include="Extensoes.cs" />
     <Compile Include="Conjunto.cs" />

@@ -8,7 +8,7 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
-            const string VERSAO_TSEP = "1.11.1";
+            const string VERSAO_TSEP = "1.12.1";
 
             Console.ForegroundColor = ConsoleColor.Red;
 
@@ -37,7 +37,13 @@ namespace ConsoleTNKDxf
 
             ExportacaoDxf.Exportar();
 
+
+
+
             IAdapterDesenho adapterDesenho = new AdapterDesenho(modelTemp);
+
+
+
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine($"Coletando arquivos na versão {VERSAO_TSEP} ...");
             Console.ForegroundColor = ConsoleColor.Green;
