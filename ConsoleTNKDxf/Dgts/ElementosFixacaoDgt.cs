@@ -117,15 +117,27 @@ namespace ConsoleTNKDxf.Dgts
             //if (siteWorkshop == "Site")
             //return;
 
-            processarParafuso(boltArray);
+            int numeroParafusosBoltArray = boltArray.BoltPositions.Count;
 
-            if (boltArray.Nut1) processarPorca(boltArray);
-            if (boltArray.Nut2) processarPorca(boltArray);
+            if(numeroParafusosBoltArray > 1)
+            {
+                bool oi = false;
+            }
+
+            for (int i = 0; i < numeroParafusosBoltArray; i++)
+            {
+                processarParafuso(boltArray);
+
+                if (boltArray.Nut1) processarPorca(boltArray);
+                if (boltArray.Nut2) processarPorca(boltArray);
 
 
-            if (boltArray.Washer1) processarArruela(boltArray);
-            if (boltArray.Washer2) processarArruela(boltArray);
-            if (boltArray.Washer3) processarArruela(boltArray);
+                if (boltArray.Washer1) processarArruela(boltArray);
+                if (boltArray.Washer2) processarArruela(boltArray);
+                if (boltArray.Washer3) processarArruela(boltArray);
+            }
+
+            
 
         }
 

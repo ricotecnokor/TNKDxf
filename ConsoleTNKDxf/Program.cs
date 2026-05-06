@@ -8,7 +8,7 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
-            const string VERSAO_TSEP = "1.12.1";
+            const string VERSAO_TSEP = "1.13.1";
 
             Console.ForegroundColor = ConsoleColor.Red;
 
