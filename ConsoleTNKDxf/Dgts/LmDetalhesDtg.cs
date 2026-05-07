@@ -6,6 +6,7 @@ using System.Linq;
 using Tekla.Structures;
 using Tekla.Structures.Drawing;
 using Tekla.Structures.Model;
+using Tekla.Structures.Model.Operations;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -51,6 +52,7 @@ namespace ConsoleTNKDxf.Dgts
             {
                 conjuntoAvulso.MultiplicaQtdConjuntoPorPeca();
             }
+
         }
 
         private HashSet<Identifier> obterPecasUnicasDesenho(MultiDrawing multiDrawing)
@@ -113,6 +115,9 @@ namespace ConsoleTNKDxf.Dgts
                 
                 
                 conjuntoExistente.AddItem(part, assemblyPos);
+
+
+
                 return;
             }
 

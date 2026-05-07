@@ -1,6 +1,8 @@
-﻿using ConsoleTNKDxf.Dgts;
+﻿using ConsoleTNKDxf.Abstracoes;
+using ConsoleTNKDxf.Dgts;
 using netDxf;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +10,7 @@ using System.Runtime.InteropServices;
 using Tekla.Structures;
 using Tekla.Structures.Drawing;
 using Tekla.Structures.Model;
+using Tekla.Structures.Model.Operations;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -61,6 +64,8 @@ namespace ConsoleTNKDxf
                 var drawing = dg.Current;
                 if (drawing == null) break;
 
+                
+
                 // LayoutInspector layoutInspector = new LayoutInspector();
                 //bool isDiagrama = layoutInspector.IsDiagramaDrawing(drawing);
 
@@ -70,6 +75,8 @@ namespace ConsoleTNKDxf
                 {
 
                     var multiDrawing = drawing as TSD.MultiDrawing;
+
+                    
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"Processando o desenho {multiDrawing.Title1}...");
@@ -138,39 +145,49 @@ namespace ConsoleTNKDxf
                         Console.WriteLine("Não lista elementos da obra");
                     }
 
-
+                  
                     switch (tipoIdentificado)
                     {
                         case "MONTAGEM":
                             {
-                                Console.WriteLine($"Processando desenho de montagem...");
-                                processarMontagem(versaoTsep, multiDrawing, dxf);
+                                ConsoleAnimation.RunWithSpinner(
+                                    $"Processando desenho de montagem...",
+                                    () => processarMontagem(versaoTsep, multiDrawing, dxf)
+                                );
                                 Console.WriteLine("Desenho de montagem processado.");
                             }
                             break;
                         case "DETALHE":
                             {
-                                Console.WriteLine($"Processando desenho de detalhes...");
-                                processarDetalhe(versaoTsep, multiDrawing, dxf);
+                                ConsoleAnimation.RunWithSpinner(
+                                    $"Processando desenho de detalhes...",
+                                    () => processarDetalhe(versaoTsep, multiDrawing, dxf)
+                                );
                                 Console.WriteLine("Desenho de detalhes processado.");
+
                             }
                             break;
                         default:
                             {
-                                Console.WriteLine($"Processando desenho de detalhes...");
-                                processarDetalhe(versaoTsep, multiDrawing, dxf);
+                                ConsoleAnimation.RunWithSpinner(
+                                    $"Processando desenho de detalhes...",
+                                    () => processarDetalhe(versaoTsep, multiDrawing, dxf)
+                                );
                                 Console.WriteLine("Desenho de detalhes processado.");
                             }
                             break;
                     }
 
 
-
+                   
 
 
                     Console.WriteLine($"Salvando arquivo dgt...");
                     salvarDados(nomeArquivo, dxf);
                     Console.WriteLine("Arquivo dgt salvo.");
+
+                    
+
                     dxf = null;
                     Console.ForegroundColor = ConsoleColor.Green;
                 }
@@ -186,24 +203,18 @@ namespace ConsoleTNKDxf
             var camposFormato = new CamposFormatoDgt(multiDrawing);
             string prefixoConjunto = int.Parse(camposFormato.Title1.Split('-')[3]).ToString();
             var coletorLm = new LmDetalhesDtg(_model, prefixoConjunto);
-            Console.WriteLine($"Definindo desenho...");
             var desenhoDgt = new DesenhoDetalhesDgt(multiDrawing, _model, camposFormato, coletorLm);
-            Console.WriteLine($"Preparando arquivo dgt...");
             var xDadosFormato = new XDadosFormato<ConjuntoDetalhadoDgt>(dxf, desenhoDgt);
             xDadosFormato.InserirInformacoes(versaoTsep, "DETALHE");
-            Console.WriteLine($"Arquivo dgt de {multiDrawing.Title1} definido.");
         }
 
         private void processarMontagem(string versaoTsep, MultiDrawing multiDrawing, DxfDocument dxf)
         {
             var camposFormato = new CamposFormatoDgt(multiDrawing);
             var coletorLm = new LmMontagemDgt(_model);
-            Console.WriteLine($"Definindo desenho...");
             var desenhoDgt = new DesenhoMontagemDgt(multiDrawing, _model, camposFormato, coletorLm);
-            Console.WriteLine($"Preparando arquivo dgt...");
             var xDadosFormato = new XDadosFormato<ConjuntoMontagemDgt>(dxf, desenhoDgt);
             xDadosFormato.InserirInformacoes(versaoTsep, "MONTAGEM");
-            Console.WriteLine($"Arquivo dgt de {multiDrawing.Title1} definido.");
         }
 
 

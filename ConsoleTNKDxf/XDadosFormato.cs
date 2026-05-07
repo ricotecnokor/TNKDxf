@@ -52,13 +52,11 @@ namespace ConsoleTNKDxf
             {
                 var linhaVerticalMaisDireita = linhasVerticais.OrderByDescending(x => x.StartPoint.X).FirstOrDefault();
                 inserirDadosLM(linhaVerticalMaisDireita);
-                Console.WriteLine("Inserida lista de materiais.");
                 Console.ForegroundColor = ConsoleColor.Green;
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Sem lista de materiais.");
                 Console.ForegroundColor = ConsoleColor.Green;
             }
             
