@@ -1,5 +1,6 @@
 ﻿using ConsoleTNKDxf.Abstracoes;
 using ConsoleTNKDxf.Dgts;
+using ConsoleTNKDxf.EstruturaDxf;
 using netDxf;
 using System;
 using System.Collections;
@@ -198,14 +199,171 @@ namespace ConsoleTNKDxf
 
         }
 
+
+
         private void processarDetalhe(string versaoTsep, MultiDrawing multiDrawing, DxfDocument dxf)
         {
+            string json = criarJson(dxf, multiDrawing);
+
+
             var camposFormato = new CamposFormatoDgt(multiDrawing);
             string prefixoConjunto = int.Parse(camposFormato.Title1.Split('-')[3]).ToString();
             var coletorLm = new LmDetalhesDtg(_model, prefixoConjunto);
             var desenhoDgt = new DesenhoDetalhesDgt(multiDrawing, _model, camposFormato, coletorLm);
             var xDadosFormato = new XDadosFormato<ConjuntoDetalhadoDgt>(dxf, desenhoDgt);
             xDadosFormato.InserirInformacoes(versaoTsep, "DETALHE");
+        }
+
+        private string criarJson(DxfDocument dxf, MultiDrawing multiDrawing)
+        {
+            var viewsNoFormato = new List<TSD.View>();
+            var views = multiDrawing.GetSheet().GetAllViews().GetEnumerator();
+
+            while (views.MoveNext())
+            {
+                var view = views.Current as TSD.View;
+                if (view != null)
+                {
+                    // Obtém a bounding box da view
+                    var minPoint = view.Origin;
+                    var maxPoint = new Tekla.Structures.Geometry3d.Point(minPoint.X + view.Width, minPoint.Y + view.Height);
+
+                    if(minPoint.X > 0.0 && minPoint.Y > 0.0 && maxPoint.X < 840.0 && maxPoint.Y < 594.0)
+                    {
+                        if(!viewsNoFormato.Any(v => v.Name == view.Name))
+                        {
+                            viewsNoFormato.Add(view);
+                        }
+                    }
+
+                }
+            }
+
+            var vistas = new List<Vista>();
+
+            foreach (var view in viewsNoFormato)
+            {
+                var vista = new Vista();
+                coletarLinhasView(view, vista);
+                coletarCotas(view, vista);
+                coletarMarcas(view, vista);
+                coletarPecas(view, vista);
+
+                vistas.Add(vista);
+            }
+
+            return string.Empty;
+        }
+
+        private void coletarCotas(TSD.View view, Vista vista)
+        {
+            var cotasL = view.GetObjects(new[] { typeof(TSD.StraightDimension) });
+            while (cotasL.MoveNext())
+            {
+                var cotaTekla = cotasL.Current as TSD.StraightDimension;
+                if (cotaTekla != null)
+                {
+                    var p1 = new Ponto2D(cotaTekla.StartPoint.X, cotaTekla.StartPoint.Y);
+                    var p2 = new Ponto2D(cotaTekla.EndPoint.X, cotaTekla.EndPoint.Y);
+                    vista.AddCota(new Cota(p1, p2, cotaTekla.Distance));
+                }
+            }
+
+            var cotasSet = view.GetObjects(new[] { typeof(TSD.StraightDimensionSet) });
+            while (cotasSet.MoveNext())
+            {
+                var cotaConjunto = cotasSet.Current as TSD.StraightDimensionSet;
+                if(cotaConjunto != null)
+                {
+                    // Um StraightDimensionSet contém uma lista de dimensoes individuais.
+                    // Se quiser iterar também, você pode usar cotaConjunto.GetObjects() analogamente se for para adicionar como estruturas simples. Opcional mas comum se necessário.
+                }
+            }
+        }
+
+        private void coletarLinhasView(TSD.View view, Vista vista)
+        {
+
+
+            var lines = view.GetObjects(new[] { typeof(TSD.Line) });
+            while (lines.MoveNext())
+            {
+                var linhaTekla = lines.Current as TSD.Line;
+                if (linhaTekla != null)
+                {
+                    var p1 = new Ponto2D(linhaTekla.StartPoint.X, linhaTekla.StartPoint.Y);
+                    var p2 = new Ponto2D(linhaTekla.EndPoint.X, linhaTekla.EndPoint.Y);
+                    vista.AddLinha(new Linha(p1, p2));
+                }
+            }
+        }
+
+        private void coletarMarcas(TSD.View view, Vista vista)
+        {
+            var marcas = view.GetObjects(new[] { typeof(TSD.Mark) });
+            while (marcas.MoveNext())
+            {
+                var marcaTekla = marcas.Current as TSD.Mark;
+                if (marcaTekla != null)
+                {
+                    var marca = new Marca();
+                    var formas = marcaTekla.GetRelatedObjects();
+
+                    while (formas.MoveNext())
+                    {
+                        var forma = formas.Current;
+                        if (forma is TSD.LeaderLine leaderLine)
+                        {
+                            var p1 = new Ponto2D(leaderLine.StartPoint.X, leaderLine.StartPoint.Y);
+                            var p2 = new Ponto2D(leaderLine.EndPoint.X, leaderLine.EndPoint.Y);
+                            marca.AddLinhaLider(new Linha(p1, p2));
+                        }
+                    }
+
+                    vista.AddMarca(marca);
+                }
+            }
+        }
+
+        private void coletarPecas(TSD.View view, Vista vista)
+        {
+            var pecas = view.GetObjects(new[] { typeof(TSD.Part) });
+            while (pecas.MoveNext())
+            {
+                var partView = pecas.Current as TSD.Part;
+                if (partView != null)
+                {
+                    var pc = new PecaTekla();
+                    var partViewObjetos = partView.GetRelatedObjects();
+
+                    while (partViewObjetos.MoveNext())
+                    {
+                        var partViewObjeto = partViewObjetos.Current;
+
+                        if (partViewObjeto is TSD.Line linhaPeca)
+                        {
+                            var p1 = new Ponto2D(linhaPeca.StartPoint.X, linhaPeca.StartPoint.Y);
+                            var p2 = new Ponto2D(linhaPeca.EndPoint.X, linhaPeca.EndPoint.Y);
+                            pc.AddLinha(new Linha(p1, p2));
+                        }
+                        else if (partViewObjeto is TSD.Polyline polyPeca)
+                        {
+                            var pontos = new List<Ponto2D>();
+                            foreach (Tekla.Structures.Geometry3d.Point p in polyPeca.Points)
+                            {
+                                pontos.Add(new Ponto2D(p.X, p.Y));
+                            }
+
+                            for (int i = 0; i < pontos.Count - 1; i++)
+                            {
+                                pc.AddLinha(new Linha(pontos[i], pontos[i + 1]));
+                            }
+                        }
+                    }
+
+                    vista.AddPeca(pc);
+                }
+            }
         }
 
         private void processarMontagem(string versaoTsep, MultiDrawing multiDrawing, DxfDocument dxf)

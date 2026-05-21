@@ -35,9 +35,9 @@ namespace ConsoleTNKDxf
                 return;
             }
 
-            ExportacaoDxf.Exportar();
+            //ExportacaoDxf.Exportar();
 
-
+            //ExportacaoDxf.ExportarProgramaticamente();
 
 
             IAdapterDesenho adapterDesenho = new AdapterDesenho(modelTemp);
