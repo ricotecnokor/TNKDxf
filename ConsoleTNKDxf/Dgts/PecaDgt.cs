@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Globalization;
+using Tekla.Structures;
 using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf.Dgts
@@ -27,6 +28,9 @@ namespace ConsoleTNKDxf.Dgts
 
         private int _quantidade;
 
+        Identifier _identifier;
+
+        public Identifier Identificador => _identifier;
         public string PartPos => _partPos;
         public string Finish => _finish;
         public string Profile => _profile;
@@ -44,8 +48,11 @@ namespace ConsoleTNKDxf.Dgts
         public double Weight => _weight;
         public int Quantidade => _quantidade;
 
+
         public PecaDgt(TSM.Part pecaChild)
         {
+            _identifier = pecaChild.Identifier;
+
             Hashtable doubleProperties = new Hashtable();
             Hashtable stringProterties = new Hashtable();
             ArrayList doubleReportProperties = new ArrayList { "HEIGHT", "LENGTH", "WIDTH", "PROFILE.DIAMETER", "PROFILE.PLATE_THICKNESS", "PROFILE.WEIGHT_PER_UNIT_LENGTH", "WEIGHT_NET", "WEIGHT_GROSS", "WEIGHT_M", "WEIGTH" };

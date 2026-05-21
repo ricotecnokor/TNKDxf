@@ -1,9 +1,12 @@
-﻿using System;
+﻿using ConsoleTNKDxf.Abstracoes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Tekla.Structures;
 using Tekla.Structures.Drawing;
+using Tekla.Structures.Model;
+using Tekla.Structures.Model.Operations;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -11,22 +14,26 @@ namespace ConsoleTNKDxf.Dgts
 {
    
 
-    public class ListaMateriaisDtg : IEnumerable<ConjuntoDgt>
+    public class LmDetalhesDtg : LmAbs<ConjuntoDetalhadoDgt>
     {
-        TSM.Model _model;
-        private List<ConjuntoDgt> _conjuntos = new List<ConjuntoDgt>();
-        public List<ConjuntoDgt> Conjuntos => _conjuntos;
         private string _prefixoConjunto;
-
-        public ListaMateriaisDtg(TSM.Model model, TSD.MultiDrawing drawing, string prefixoConjunto)
+        public LmDetalhesDtg(Model model, string prefixoConjunto) : base(model)
         {
-            _model = model;
             _prefixoConjunto = prefixoConjunto;
-            coletar(drawing);
-           
         }
 
-        private void coletar(MultiDrawing multiDrawing)
+        //TSM.Model _model;
+        //private List<ConjuntoDetalhadoDgt> _conjuntos = new List<ConjuntoDetalhadoDgt>();
+        //public List<ConjuntoDetalhadoDgt> Conjuntos => _conjuntos;
+        //private string _prefixoConjunto;
+
+        //public LmDetalhesDtg(TSM.Model model, string prefixoConjunto)
+        //{
+        //    _model = model;
+        //    _prefixoConjunto = prefixoConjunto;
+        //}
+
+        public override void Coletar(MultiDrawing multiDrawing)
         {
             HashSet<Identifier> pecasUnicasNoDesenho = obterPecasUnicasDesenho(multiDrawing);
 
@@ -45,6 +52,7 @@ namespace ConsoleTNKDxf.Dgts
             {
                 conjuntoAvulso.MultiplicaQtdConjuntoPorPeca();
             }
+
         }
 
         private HashSet<Identifier> obterPecasUnicasDesenho(MultiDrawing multiDrawing)
@@ -103,27 +111,22 @@ namespace ConsoleTNKDxf.Dgts
             if (_conjuntos.Any(conjunto => conjunto.AssemblyPos == assemblyPos))
             {
 
-                ConjuntoDgt conjuntoExistente = _conjuntos.FirstOrDefault(c => c.AssemblyPos == assemblyPos);
+                ConjuntoDetalhadoDgt conjuntoExistente = _conjuntos.FirstOrDefault(c => c.AssemblyPos == assemblyPos);
                 
                 
                 conjuntoExistente.AddItem(part, assemblyPos);
+
+
+
                 return;
             }
 
             //assy.GetSecondaries
 
-            var novoConjunto = new ConjuntoDgt(part, new PecaDgt(assy.GetMainPart() as TSM.Part));
+            var novoConjunto = new ConjuntoDetalhadoDgt(part, new PecaDgt(assy.GetMainPart() as TSM.Part));
             _conjuntos.Add(novoConjunto);
         }
 
-        public IEnumerator<ConjuntoDgt> GetEnumerator()
-        {
-            return _conjuntos.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        
     }
 }

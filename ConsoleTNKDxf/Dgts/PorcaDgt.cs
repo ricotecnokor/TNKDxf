@@ -14,7 +14,7 @@ namespace ConsoleTNKDxf.Dgts
         public string NutName => _nutName;
         public string BoltStandard => _boltStandard;
         public string Quantidade => _quantidade.ToString();
-        public string NutWeight => Math.Round(_nutWeight, 2).ToString();
+        public string NutWeight => _nutWeight.ToString();
 
         public PorcaDgt(TSM.BoltArray boltArray)
         {

@@ -1,37 +1,24 @@
-﻿using System;
+﻿using ConsoleTNKDxf.Abstracoes;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using Tekla.Structures.Drawing;
-using Tekla.Structures.Model;
 using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf.Dgts
 {
-    public class ConjuntoDgt
+    public class ConjuntoDetalhadoDgt : ConjuntoAbstrato
     {
         private List<PecaDgt> _itens = new List<PecaDgt>();
-        private double _height;
-        private double _weigth;
-        private string _assemblyPos;
-        private string _mainPartName;
-        private int _quantidade;
+        
 
         public List<PecaDgt> Itens => _itens;
 
-        public string AssemblyPos => _assemblyPos;
-        public string MainPartName => _mainPartName;
-        public int Quantidade => _quantidade;
-        public double Height => _height;
-        public double Weigth => _weigth;
+
 
         private readonly PecaDgt _pecaDgtMaiPart;
 
 
-        public ConjuntoDgt(TSM.Part part, PecaDgt pecaDgtMaiPart)
+        public ConjuntoDetalhadoDgt(TSM.Part part, PecaDgt pecaDgtMaiPart)
         {
             var assy = part.GetAssembly();
             _pecaDgtMaiPart = pecaDgtMaiPart;
@@ -53,9 +40,7 @@ namespace ConsoleTNKDxf.Dgts
             assy.GetIntegerReportProperties(integerReportProperties, ref integerProperties);
             int number = integerProperties.ContainsKey("NUMBER") ? int.Parse(integerProperties["NUMBER"].ToString()) : 1;
             int modelTotal = integerProperties.ContainsKey("ASSEMBLY.MODEL_TOTAL") ? int.Parse(integerProperties["ASSEMBLY.MODEL_TOTAL"].ToString()) : 1;
-            //_quantidade = number * modelTotal;
-
-
+   
 
             int qtdModel = 0;
             part.GetReportProperty("ASSEMBLY.MODEL_TOTAL", ref qtdModel);
