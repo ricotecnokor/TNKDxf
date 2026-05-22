@@ -1,16 +1,11 @@
-﻿using ConsoleTNKDxf.Abstracoes;
-using ConsoleTNKDxf.Dgts;
+﻿using ConsoleTNKDxf.Dgts;
 using netDxf;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Tekla.Structures;
 using Tekla.Structures.Drawing;
-using Tekla.Structures.Model;
-using Tekla.Structures.Model.Operations;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -64,158 +59,119 @@ namespace ConsoleTNKDxf
                 var drawing = dg.Current;
                 if (drawing == null) break;
 
-                
+
 
                 // LayoutInspector layoutInspector = new LayoutInspector();
                 //bool isDiagrama = layoutInspector.IsDiagramaDrawing(drawing);
 
-                var tipo = drawing.GetType();
 
-                if (tipo == typeof(TSD.MultiDrawing))
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Identificando tipo de desenho...");
+                var processador = AbsProcessador.ObterTipo(_model, drawing);
+
+                if (processador.ToString() == "")
                 {
-
-                    var multiDrawing = drawing as TSD.MultiDrawing;
-
-                    
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"Processando o desenho {multiDrawing.Title1}...");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Tipo do desenho {drawing.Title1} não foi identificado!");
                     Console.ForegroundColor = ConsoleColor.Green;
-
-
-                    if (!_arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(multiDrawing.Title1)))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Arquivo para desenho {multiDrawing.Title1} não encontrado. Verifique se o desenho foi plotado corretamente.");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        continue;
-                    }
-
-                    if (multiDrawing.GetSheet() == null)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Desenho {multiDrawing.Title1} não possui folha associada. Verifique o desenho.");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        continue;
-                    }
-
-                    if (multiDrawing.GetSheet().GetAllViews().GetSize() < 1)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Desenho {multiDrawing.Title1} não possui vistas associadas. Verifique o desenho.");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        continue;
-                    }
-
-                    if (multiDrawing.GetSheet().GetAllViews().GetEnumerator().MoveNext() == false)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Desenho {multiDrawing.Title1} não possui vistas associadas. Verifique o desenho.");
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        continue;
-                    }
-
-
-
-                    string nomeArquivo = _arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(multiDrawing.Title1));
-                    var dxf = DxfDocument.Load(nomeArquivo);
-
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Identificando tipo de desenho...");
-                    TipoDesenho tipoDesenho = new TipoDesenho(multiDrawing);
-
-                    string tipoIdentificado = tipoDesenho.Tipo != null ? tipoDesenho.Tipo : "DETALHE";
-                    Console.WriteLine("Tipo de desenho identificado: " + tipoIdentificado);
-
-                    if (tipoDesenho.CriarLM == "SIM")
-                    {
-                        Console.WriteLine("Cria LM para o desenho");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Não cria LM para o desenho");
-                    }
-
-                    if (tipoDesenho.ListarElementosObra == "SIM")
-                    {
-                        Console.WriteLine("Lista elementos da obra");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Não lista elementos da obra");
-                    }
-
-                  
-                    switch (tipoIdentificado)
-                    {
-                        case "MONTAGEM":
-                            {
-                                ConsoleAnimation.RunWithSpinner(
-                                    $"Processando desenho de montagem...",
-                                    () => processarMontagem(versaoTsep, multiDrawing, dxf)
-                                );
-                                Console.WriteLine("Desenho de montagem processado.");
-                            }
-                            break;
-                        case "DETALHE":
-                            {
-                                ConsoleAnimation.RunWithSpinner(
-                                    $"Processando desenho de detalhes...",
-                                    () => processarDetalhe(versaoTsep, multiDrawing, dxf)
-                                );
-                                Console.WriteLine("Desenho de detalhes processado.");
-
-                            }
-                            break;
-                        default:
-                            {
-                                ConsoleAnimation.RunWithSpinner(
-                                    $"Processando desenho de detalhes...",
-                                    () => processarDetalhe(versaoTsep, multiDrawing, dxf)
-                                );
-                                Console.WriteLine("Desenho de detalhes processado.");
-                            }
-                            break;
-                    }
-
-
-                   
-
-
-                    Console.WriteLine($"Salvando arquivo dgt...");
-                    salvarDados(nomeArquivo, dxf);
-                    Console.WriteLine("Arquivo dgt salvo.");
-
-                    
-
-                    dxf = null;
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    continue;
                 }
+
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Tipo de desenho identificado: " + processador);
+                Console.ForegroundColor = ConsoleColor.Green;
+
+
+
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Processando o desenho {drawing.Title1}...");
+                Console.ForegroundColor = ConsoleColor.Green;
+
+
+                if (!_arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(drawing.Title1)))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Arquivo para desenho {drawing.Title1} não encontrado. Verifique se o desenho foi plotado corretamente.");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    continue;
+                }
+
+                if (drawing.GetSheet() == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Desenho {drawing.Title1} não possui folha associada. Verifique o desenho.");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    continue;
+                }
+
+                if (drawing.GetSheet().GetAllViews().GetSize() < 1)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Desenho {drawing.Title1} não possui vistas associadas. Verifique o desenho.");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    continue;
+                }
+
+                if (drawing.GetSheet().GetAllViews().GetEnumerator().MoveNext() == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Desenho {drawing.Title1} não possui vistas associadas. Verifique o desenho.");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    continue;
+                }
+
+
+                if (processador.CriarLM == "SIM")
+                {
+                    Console.WriteLine("Cria LM para o desenho");
+                }
+                else
+                {
+                    Console.WriteLine("Não cria LM para o desenho");
+                }
+
+                if (processador.ListarElementosObra == "SIM")
+                {
+                    Console.WriteLine("Lista elementos da obra");
+                }
+                else
+                {
+                    Console.WriteLine("Não lista elementos da obra");
+                }
+
+
+                string nomeArquivo = _arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(drawing.Title1));
+                var dxf = DxfDocument.Load(nomeArquivo);
+
+                ConsoleAnimation.RunWithSpinner(
+                                 $"Processando desenho de {processador.Tipo}...",
+                                 () => processador.Processar(versaoTsep, dxf)
+                             );
+                Console.WriteLine("Desenho de montagem processado.");
+
+              
+                Console.WriteLine($"Salvando arquivo dgt...");
+                salvarDados(nomeArquivo, dxf);
+                Console.WriteLine("Arquivo dgt salvo.");
+
+
+
+                dxf = null;
+                Console.ForegroundColor = ConsoleColor.Green;
             }
+        
             return new RespostaModelo(true, null, "Informações coletatas.");
 
             //return new RespostaModelo(true, _model, "Processamento concluído com sucesso.");
 
         }
 
-        private void processarDetalhe(string versaoTsep, MultiDrawing multiDrawing, DxfDocument dxf)
-        {
-            var camposFormato = new CamposFormatoDgt(multiDrawing);
-            string prefixoConjunto = int.Parse(camposFormato.Title1.Split('-')[3]).ToString();
-            var coletorLm = new LmDetalhesDtg(_model, prefixoConjunto);
-            var desenhoDgt = new DesenhoDetalhesDgt(multiDrawing, _model, camposFormato, coletorLm);
-            var xDadosFormato = new XDadosFormato<ConjuntoDetalhadoDgt>(dxf, desenhoDgt);
-            xDadosFormato.InserirInformacoes(versaoTsep, "DETALHE");
-        }
+        
 
-        private void processarMontagem(string versaoTsep, MultiDrawing multiDrawing, DxfDocument dxf)
-        {
-            var camposFormato = new CamposFormatoDgt(multiDrawing);
-            var coletorLm = new LmMontagemDgt(_model);
-            var desenhoDgt = new DesenhoMontagemDgt(multiDrawing, _model, camposFormato, coletorLm);
-            var xDadosFormato = new XDadosFormato<ConjuntoMontagemDgt>(dxf, desenhoDgt);
-            xDadosFormato.InserirInformacoes(versaoTsep, "MONTAGEM");
-        }
+       
 
 
 

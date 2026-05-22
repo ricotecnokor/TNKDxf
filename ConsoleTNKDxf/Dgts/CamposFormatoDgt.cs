@@ -37,7 +37,7 @@ namespace ConsoleTNKDxf.Dgts
         public string Scale4 => _scale4;
         public string Scale5 => _scale5;
 
-        public CamposFormatoDgt(MultiDrawing drawing)
+        public CamposFormatoDgt(Drawing drawing)
         {
 
             PropertyInfo propInfo = drawing.GetType().GetProperty("Identifier",

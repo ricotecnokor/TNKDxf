@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Tekla.Structures;
+﻿using System.Collections.Generic;
 using Tekla.Structures.Drawing;
-using Tekla.Structures.DrawingInternal;
-using Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf
 {
@@ -23,7 +15,7 @@ namespace ConsoleTNKDxf
         public string DesenhoCliente => _desenhoCliente;
         public string Familia => _familia;
 
-        public QuadroAplicacaoDgt(MultiDrawing drawing)
+        public QuadroAplicacaoDgt(Drawing drawing)
         {
             List<string> userProperties = new List<string> { "TCNK_TAG", "TCNK_N_TCNK", "TCNK_N_CLIENTE" };
             Dictionary<string, string> properties = new Dictionary<string, string>();

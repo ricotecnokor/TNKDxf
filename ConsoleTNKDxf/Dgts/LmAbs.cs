@@ -33,7 +33,7 @@ namespace ConsoleTNKDxf.Dgts
             return prefixos;
         }
 
-        public abstract void Coletar(MultiDrawing multiDrawing);
+        public abstract void Coletar(Drawing multiDrawing);
 
         public IEnumerator<T> GetEnumerator()
         {

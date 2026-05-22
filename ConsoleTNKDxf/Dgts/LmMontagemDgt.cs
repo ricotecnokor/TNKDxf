@@ -20,7 +20,7 @@ namespace ConsoleTNKDxf.Dgts
         {
         }
 
-        public override void Coletar(MultiDrawing multiDrawing)
+        public override void Coletar(Drawing multiDrawing)
         {
             HashSet<Identifier> pecasUnicasNoDesenho = obterPecasUnicasDesenho(multiDrawing);
 
@@ -41,7 +41,7 @@ namespace ConsoleTNKDxf.Dgts
             //}
         }
 
-        private HashSet<Identifier> obterPecasUnicasDesenho(MultiDrawing multiDrawing)
+        private HashSet<Identifier> obterPecasUnicasDesenho(Drawing multiDrawing)
         {
             HashSet<Identifier> pecasUnicasNoDesenho = new HashSet<Identifier>();
 

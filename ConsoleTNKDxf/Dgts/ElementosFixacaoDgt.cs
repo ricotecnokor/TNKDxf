@@ -23,7 +23,7 @@ namespace ConsoleTNKDxf.Dgts
         public List<ArruelaDgt> Arruelas => _arruelas.ToList();
 
 
-        public ElementosFixacaoDgt(Model model, MultiDrawing multiDrawing, List<string> prefixosConjunto)
+        public ElementosFixacaoDgt(Model model, Drawing multiDrawing, List<string> prefixosConjunto)
         {
             _model = model;
             _prefixosConjunto = prefixosConjunto;
@@ -32,7 +32,7 @@ namespace ConsoleTNKDxf.Dgts
 
         
 
-        private void coletar(MultiDrawing multiDrawing)
+        private void coletar(Drawing multiDrawing)
         {
             HashSet<Identifier> parafsUnicosNoDesenho = obterPafusosUnicosDesenho(multiDrawing);
 
@@ -48,7 +48,7 @@ namespace ConsoleTNKDxf.Dgts
             }
         }
 
-        private HashSet<Identifier> obterPafusosUnicosDesenho(MultiDrawing multiDrawing)
+        private HashSet<Identifier> obterPafusosUnicosDesenho(Drawing multiDrawing)
         {
             HashSet<Identifier> parafusosUnicosDesenho = new HashSet<Identifier>();
 

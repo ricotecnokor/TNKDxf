@@ -119,6 +119,7 @@
     <Compile Include="DescricaoArruela.cs" />
     <Compile Include="DescricaoParafuso.cs" />
     <Compile Include="DescricaoPorca.cs" />
+    <Compile Include="Dgts\ProcessoTekla\AbsProcessador.cs" />
     <Compile Include="Dgts\ArruelaDgt.cs" />
     <Compile Include="Dgts\CamposFormatoDgt.cs" />
     <Compile Include="Dgts\ConjuntoDetalhadoDgt.cs" />
@@ -133,8 +134,9 @@
     <Compile Include="Dgts\ParafusoDgt.cs" />
     <Compile Include="Dgts\PecaDgt.cs" />
     <Compile Include="Dgts\PorcaDgt.cs" />
+    <Compile Include="Dgts\ProcessoTekla\ProcessarMontagem.cs" />
     <Compile Include="Dgts\RevisaoDgt.cs" />
-    <Compile Include="Dgts\TipoDesenho.cs" />
+    <Compile Include="Dgts\ProcessoTekla\ProcessadorDetalhamento.cs" />
     <Compile Include="ExportacaoDxf.cs" />
     <Compile Include="Extensoes.cs" />
     <Compile Include="Conjunto.cs" />

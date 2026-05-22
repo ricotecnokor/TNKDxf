@@ -50,6 +50,7 @@ namespace ConsoleTNKDxf
 
             var resposta = adapterDesenho.ColetarArquivos(VERSAO_TSEP);
 
+            
             if (!resposta.Sucesso)
             {
                 Console.ForegroundColor = ConsoleColor.Red;

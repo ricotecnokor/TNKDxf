@@ -42,7 +42,7 @@ namespace ConsoleTNKDxf.Dgts
         public QuadroAplicacaoDgt QuadroAplicacao => _quadroAplicacao;
         public RevisaoDgt Revisao => _revisao;
 
-        public DesenhoDgtAbs(TSD.MultiDrawing multiDrawing, TSM.Model model, CamposFormatoDgt camposFormatoDgt, LmAbs<T> coletorLm)
+        public DesenhoDgtAbs(TSD.Drawing multiDrawing, TSM.Model model, CamposFormatoDgt camposFormatoDgt, LmAbs<T> coletorLm)
         {
             _camposFormato = camposFormatoDgt;
 
@@ -62,7 +62,7 @@ namespace ConsoleTNKDxf.Dgts
 
         }
 
-        protected void setListarElementosObra(TSD.MultiDrawing multiDrawing)
+        protected void setListarElementosObra(TSD.Drawing multiDrawing)
         {
             //
             // Acessa o Identifier interno do Drawing via Reflection
