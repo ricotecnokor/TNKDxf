@@ -49,9 +49,6 @@ namespace ConsoleTNKDxf.Dgts
 
             _quantidade = number * qtdModel;
 
-
-
-
             PecaDgt peca = new PecaDgt(part);
             
             _itens.Add(peca);
@@ -77,28 +74,32 @@ namespace ConsoleTNKDxf.Dgts
         //    tempBeam.GetReportProperty("REVISION.LAST_APPROVED_BY", ref _revisionLastApprovedBy);
         //    tempBeam.GetReportProperty("REVISION.LAST_DATE_APPROVED", ref _revisionLastDateApproved);
         //}
-            
-        
 
-        public void AddItem(TSM.Part part, string assemblyPos)
+
+
+        public void AddItem(TSM.Part part, TSM.Assembly assembly)
         {
             string posicaoPeca = part.ObterPropriedade("PART_POS").ToString();
 
-            if (_itens.Any(c => c.PartPos == posicaoPeca))
+            //if (_itens.Any(c => c.PartPos == posicaoPeca))
+            //{
+            //    var existingItem = _itens.First(c => c.PartPos == posicaoPeca);
+            //    existingItem.IncrementarQuantidade();
+
+            //    //if (existingItem.PartPos == _pecaDgtMaiPart.PartPos)
+            //    //{
+            //    //    _quantidade++;
+            //    //}
+
+            //    return;
+            //}
+
+            if (!_itens.Any(c => c.PartPos == posicaoPeca))
             {
-                var existingItem = _itens.First(c => c.PartPos == posicaoPeca);
-                existingItem.IncrementarQuantidade();
-
-                //if (existingItem.PartPos == _pecaDgtMaiPart.PartPos)
-                //{
-                //    _quantidade++;
-                //}
-
-                return;
+                PecaDgt item = new PecaDgt(part);
+                _itens.Add(item);
             }
-
-            PecaDgt item = new PecaDgt(part);
-            _itens.Add(item);
+               
         }
 
         public void AddItemExistente(string posicaoPeca)
@@ -110,13 +111,13 @@ namespace ConsoleTNKDxf.Dgts
             }
         }
 
-        public void MultiplicaQtdConjuntoPorPeca()
+        public void MultiplicaQtdConjuntoPorPeca(int quantidadeConjuntos)
         {
             //var itemAvulso = _itens.FirstOrDefault();
             //itemAvulso.MultiplicaQtdConjuntoPorPeca(_quantidade);
             foreach (var item in _itens)
             {
-                item.MultiplicaQtdConjuntoPorPeca(_quantidade);
+                item.MultiplicaQtdConjuntoPorPeca(quantidadeConjuntos);
             }
         }
     }

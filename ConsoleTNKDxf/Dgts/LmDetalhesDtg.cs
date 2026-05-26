@@ -47,11 +47,22 @@ namespace ConsoleTNKDxf.Dgts
                 }
             }
 
-            
-            foreach (var conjuntoAvulso in _conjuntos)
-            {
-                conjuntoAvulso.MultiplicaQtdConjuntoPorPeca();
-            }
+
+            var teste = _conjuntos;
+
+            //foreach (var conjuntoAvulso in _conjuntos)
+            //{
+            //    if (conjuntoAvulso.AssemblyPos == "00724AK")
+            //    {
+
+
+            //        bool teste = true;
+
+
+            //    }
+
+            //    conjuntoAvulso.MultiplicaQtdConjuntoPorPeca(conjuntoAvulso.Quantidade);
+            //}
 
         }
 
@@ -85,13 +96,20 @@ namespace ConsoleTNKDxf.Dgts
 
         public void addPeca(TSM.Part part)
         {
-            var assy = part.GetAssembly();
+            TSM.Assembly assy = part.GetAssembly();
             if (assy == null)
             {
                 return;
             }
 
+           
+            
+
             string assemblyPos = assy.ObterPropriedade("ASSEMBLY_POS").ToString();
+
+
+
+          
 
             if (!assemblyPos.Contains(_prefixoConjunto))
             {
@@ -101,6 +119,19 @@ namespace ConsoleTNKDxf.Dgts
 
 
             var partPos = part.ObterPropriedade("PART_POS").ToString();
+
+
+            //if (assemblyPos == "00724AK")
+            //{
+
+
+            //    PecaDgt pecaTeste = new PecaDgt(part);
+
+  
+            //}
+
+
+
 
             if (assemblyPos == string.Empty)
             {
@@ -114,7 +145,7 @@ namespace ConsoleTNKDxf.Dgts
                 ConjuntoDetalhadoDgt conjuntoExistente = _conjuntos.FirstOrDefault(c => c.AssemblyPos == assemblyPos);
                 
                 
-                conjuntoExistente.AddItem(part, assemblyPos);
+                conjuntoExistente.AddItem(part, assy);
 
 
 
@@ -128,5 +159,6 @@ namespace ConsoleTNKDxf.Dgts
         }
 
         
+
     }
 }
