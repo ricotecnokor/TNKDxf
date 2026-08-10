@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -6,24 +7,36 @@ namespace ConsoleTNKDxf
 {
     internal class Program
     {
+        [DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll")]
+        private static extern bool AttachConsole(int dwProcessId);
+
+        private const int ATTACH_PARENT_PROCESS = -1;
+
         static void Main(string[] args)
         {
+            if (!AttachConsole(ATTACH_PARENT_PROCESS))
+                AllocConsole();
+
             const string VERSAO_TSEP = "1.14.1";
 
             Console.ForegroundColor = ConsoleColor.Red;
 
             //RespostaModelo resposta = BuscarModeloUso();
             TSM.Model modelTemp = new TSM.Model();
+            bool conectado = modelTemp.GetConnectionStatus();
+            Console.WriteLine($"ConnectionStatus: {conectado}");
 
-
-            if(!modelTemp.GetConnectionStatus())
+            if (!conectado)
             {
                 Console.WriteLine("Não foi possível conectar ao modelo.");
                 return;
             }
 
             string nomeModel = modelTemp.GetInfo().ModelName;
-
+            Console.WriteLine($"Modelo conectado: {nomeModel}");
 
             TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
@@ -36,9 +49,6 @@ namespace ConsoleTNKDxf
             }
 
             ExportacaoDxf.Exportar();
-
-
-
 
             IAdapterDesenho adapterDesenho = new AdapterDesenho(modelTemp);
 
