@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -7,18 +6,8 @@ namespace ConsoleTNKDxf
 {
     internal class Program
     {
-        [DllImport("kernel32.dll")]
-        private static extern bool AllocConsole();
-
-        [DllImport("kernel32.dll")]
-        private static extern bool AttachConsole(int dwProcessId);
-
-        private const int ATTACH_PARENT_PROCESS = -1;
-
         static void Main(string[] args)
         {
-            if (!AttachConsole(ATTACH_PARENT_PROCESS))
-                AllocConsole();
 
             const string VERSAO_TSEP = "1.14.1";
 
