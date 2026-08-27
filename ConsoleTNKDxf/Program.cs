@@ -8,8 +8,9 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
+            ExportacaoDxf.Exportar();
 
-            const string VERSAO_TSEP = "1.14.1";
+            const string VERSAO_TSEP = "1.15.1";
 
             Console.ForegroundColor = ConsoleColor.Red;
 
@@ -37,7 +38,7 @@ namespace ConsoleTNKDxf
                 return;
             }
 
-            ExportacaoDxf.Exportar();
+            //ExportacaoDxf.Exportar();
 
             IAdapterDesenho adapterDesenho = new AdapterDesenho(modelTemp);
 

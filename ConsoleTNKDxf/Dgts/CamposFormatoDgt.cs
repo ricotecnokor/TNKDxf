@@ -22,6 +22,7 @@ namespace ConsoleTNKDxf.Dgts
         private string _scale3;
         private string _scale4;
         private string _scale5;
+        private string _name;
 
         public string Title => _title;
         public string Title1 => _title1;
@@ -36,6 +37,7 @@ namespace ConsoleTNKDxf.Dgts
         public string Scale3 => _scale3;
         public string Scale4 => _scale4;
         public string Scale5 => _scale5;
+        public string Name => _name;
 
         public CamposFormatoDgt(Drawing drawing)
         {
@@ -61,6 +63,7 @@ namespace ConsoleTNKDxf.Dgts
             tempBeam.GetReportProperty("SCALE3", ref _scale3);
             tempBeam.GetReportProperty("SCALE4", ref _scale4);
             tempBeam.GetReportProperty("SCALE5", ref _scale5);
+            tempBeam.GetReportProperty("NAME", ref _name);
 
 
         }

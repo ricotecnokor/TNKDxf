@@ -26,7 +26,7 @@ namespace ConsoleTNKDxf.Dgts
             _nutName = stringProperties.ContainsKey("NUT.NAME") ? stringProperties["NUT.NAME"].ToString() : string.Empty;
             _boltStandard = stringProperties.ContainsKey("BOLT_STANDARD") ? stringProperties["BOLT_STANDARD"].ToString() : string.Empty;
 
-            _quantidade = 1;
+            _quantidade = boltArray.BoltPositions.Count;
 
             ArrayList doubleReportProperties = new ArrayList { "NUT.WEIGHT" };
             Hashtable doubleProperties = new Hashtable();
@@ -34,9 +34,6 @@ namespace ConsoleTNKDxf.Dgts
             _nutWeight = doubleProperties.ContainsKey("NUT.WEIGHT") ? Convert.ToDouble(doubleProperties["NUT.WEIGHT"]) : 0.0;
         }
 
-        public void IncrementarQuantidade()
-        {
-            _quantidade++;
-        }
+        
     }
 }

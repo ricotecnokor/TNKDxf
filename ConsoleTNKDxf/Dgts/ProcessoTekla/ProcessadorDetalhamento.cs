@@ -1,4 +1,6 @@
 ﻿using netDxf;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Tekla.Structures.Drawing;
 using Tekla.Structures.Model;
@@ -47,13 +49,23 @@ namespace ConsoleTNKDxf.Dgts
             var camposFormato = new CamposFormatoDgt(_multiDrawing);
             string prefixoConjunto = int.Parse(camposFormato.Title1.Split('-')[3]).ToString();
             var coletorLm = new LmDetalhesDtg(_model, prefixoConjunto);
-            var desenhoDgt = new DesenhoDetalhesDgt(_multiDrawing, _model, camposFormato, coletorLm);
-            var xDadosFormato = new XDadosFormato<ConjuntoDetalhadoDgt>(dxf, desenhoDgt);
+            coletorLm.Coletar(_multiDrawing);
+            //var desenhoDgt = new DesenhoDetalhesDgt(_multiDrawing, _model, camposFormato, coletorLm);
+            setListarElementosObra(_multiDrawing);
+            var elementosFixacao = new ElementosFixacaoDgt(_model);
+            elementosFixacao.Coletar(_multiDrawing, new List<string> { int.Parse(camposFormato.Title1.Split('-')[3]).ToString() }, coletorLm);
+
+
+            var quadroAplicacao = new QuadroAplicacaoDgt(_multiDrawing);
+            var xDadosFormato = new XDadosFormato<ConjuntoDetalhadoDgt>(dxf, _criarLM, _listarElementosObra, camposFormato, elementosFixacao, coletorLm, quadroAplicacao);
+
+            
+
             xDadosFormato.InserirInformacoes(versaoTsep, _tipo);
         }
 
         
 
-        
+
     }
 }

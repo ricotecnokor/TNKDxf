@@ -1,5 +1,6 @@
 ﻿using ConsoleTNKDxf.Dgts.ProcessoTekla;
 using netDxf;
+using System;
 using System.Reflection;
 using Tekla.Structures.Drawing;
 using Tekla.Structures.Model;
@@ -75,6 +76,40 @@ namespace ConsoleTNKDxf.Dgts
         public static explicit operator string(AbsProcessador valor)
         {
             return valor?._tipo ?? string.Empty;
+        }
+
+        protected void setListarElementosObra(TSD.Drawing multiDrawing)
+        {
+            //
+            // Acessa o Identifier interno do Drawing via Reflection
+            PropertyInfo propInfo = multiDrawing.GetType().GetProperty("Identifier",
+                                        BindingFlags.Instance | BindingFlags.NonPublic);
+            object value = propInfo.GetValue(multiDrawing, null);
+            Tekla.Structures.Identifier identifier = (Tekla.Structures.Identifier)value;
+
+            // Cria um objeto ModelObject temporário com o mesmo Identifier
+            Beam tempBeam = new Beam();
+            tempBeam.Identifier = identifier;
+
+
+            //string listarElementosObra = string.Empty;
+            tempBeam.GetReportProperty("TCNM_LISTAR_PARAF", ref _listarElementosObra);
+            tempBeam.GetReportProperty("TCNM_CRIAR_LM", ref _criarLM);
+
+
+
+            bool isDiagrama = false;
+            string currentTemplateFile = string.Empty;
+            if (tempBeam.GetReportProperty("PADRÃO ARAUCO", ref currentTemplateFile))
+            {
+                // Verifica se o nome do arquivo contém o seu DIAGRAMA_LM
+                if (!string.IsNullOrEmpty(currentTemplateFile) &&
+                    currentTemplateFile.IndexOf("DIAGRAMA_LM", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    isDiagrama = true;
+                }
+            }
+
         }
     }
 }

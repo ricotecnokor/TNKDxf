@@ -123,6 +123,7 @@
     <Compile Include="DescricaoArruela.cs" />
     <Compile Include="DescricaoParafuso.cs" />
     <Compile Include="DescricaoPorca.cs" />
+    <Compile Include="Dgts\FixacaoDgt.cs" />
     <Compile Include="Dgts\ProcessoTekla\AbsProcessador.cs" />
     <Compile Include="Dgts\ArruelaDgt.cs" />
     <Compile Include="Dgts\CamposFormatoDgt.cs" />

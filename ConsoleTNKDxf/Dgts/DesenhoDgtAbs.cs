@@ -35,32 +35,32 @@ namespace ConsoleTNKDxf.Dgts
         public string ListarElementosObra => _listarElementosObra;
         public string CriarLM => _criarLM;
 
-        public LmAbs<T> ColetorMateriais => _coletorLM;
+        //public LmAbs<T> ColetorMateriais => _coletorLM;
 
 
-        public ElementosFixacaoDgt ElementosFixacao => _elementosFixacao;
-        public QuadroAplicacaoDgt QuadroAplicacao => _quadroAplicacao;
-        public RevisaoDgt Revisao => _revisao;
+        //public ElementosFixacaoDgt ElementosFixacao => _elementosFixacao;
+        //public QuadroAplicacaoDgt QuadroAplicacao => _quadroAplicacao;
+        //public RevisaoDgt Revisao => _revisao;
 
-        public DesenhoDgtAbs(TSD.Drawing multiDrawing, TSM.Model model, CamposFormatoDgt camposFormatoDgt, LmAbs<T> coletorLm)
-        {
-            _camposFormato = camposFormatoDgt;
+        //public DesenhoDgtAbs(TSD.Drawing multiDrawing, TSM.Model model, CamposFormatoDgt camposFormatoDgt, LmAbs<T> coletorLm)
+        //{
+        //    _camposFormato = camposFormatoDgt;
 
-            _coletorLM = coletorLm;
-
-
+        //    //_coletorLM = coletorLm;
 
 
-            _coletorLM.Coletar(multiDrawing);
 
-            _quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
+
+        //    //_coletorLM.Coletar(multiDrawing);
+
+        //    //_quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
            
 
 
 
-            _revisao = new RevisaoDgt(multiDrawing);
+        //    //_revisao = new RevisaoDgt(multiDrawing);
 
-        }
+        //}
 
         protected void setListarElementosObra(TSD.Drawing multiDrawing)
         {

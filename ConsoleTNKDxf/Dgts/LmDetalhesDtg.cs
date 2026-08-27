@@ -22,6 +22,8 @@ namespace ConsoleTNKDxf.Dgts
             _prefixoConjunto = prefixoConjunto;
         }
 
+        
+
         //TSM.Model _model;
         //private List<ConjuntoDetalhadoDgt> _conjuntos = new List<ConjuntoDetalhadoDgt>();
         //public List<ConjuntoDetalhadoDgt> Conjuntos => _conjuntos;
@@ -158,7 +160,31 @@ namespace ConsoleTNKDxf.Dgts
             _conjuntos.Add(novoConjunto);
         }
 
-        
+        internal bool ContemPeca(string partPos)
+        {
+            return _conjuntos.Any(conjunto => conjunto.Itens.Any(peca => peca.PartPos == partPos));
+        }
 
+        internal void Ligar(FixacaoDgt fixacao, string tipoFixacao)
+        {
+
+           var marcaConjunto = fixacao.Parafuso.PecaChega.MarcaMontagem;
+
+            ConjuntoDetalhadoDgt conjunto = (ConjuntoDetalhadoDgt)_conjuntos.FirstOrDefault(c => c.AssemblyPos == marcaConjunto);
+
+            List<FixacaoDgt> fixacaoList = tipoFixacao == "BOLT_TYPE_WORKSHOP" ? conjunto.FixacaoFabrica : conjunto.FixacaoObra;
+            if (!fixacaoList.Contains(fixacao))
+            {
+                //fixacao.IncrementarQuantidadeLigacoes();
+                fixacaoList.Add(fixacao);
+                return;
+            }
+            else
+            {
+                var fixacaoExistente = fixacaoList.FirstOrDefault(f => f.Equals(fixacao));
+                //fixacaoExistente.IncrementarQuantidadeLigacoes();
+            }
+            return;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using netDxf;
+using System.Collections.Generic;
 using Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -18,8 +19,13 @@ namespace ConsoleTNKDxf.Dgts.ProcessoTekla
         {
             var camposFormato = new CamposFormatoDgt(_gaDrawing);
             var coletorLm = new LmMontagemDgt(_model);
-            var desenhoDgt = new DesenhoMontagemDgt(_gaDrawing, _model, camposFormato, coletorLm);
-            var xDadosFormato = new XDadosFormato<ConjuntoMontagemDgt>(dxf, desenhoDgt);
+            coletorLm.Coletar(_gaDrawing);
+            //var desenhoDgt = new DesenhoMontagemDgt(_gaDrawing, _model, camposFormato, coletorLm);
+            setListarElementosObra(_gaDrawing);
+            var elementosFixacao = new ElementosFixacaoDgt(_model);
+            elementosFixacao.Coletar(_gaDrawing, new List<string> { int.Parse(camposFormato.Title1.Split('-')[3]).ToString() }, coletorLm);
+            var quadroAplicacao = new QuadroAplicacaoDgt(_gaDrawing);
+            var xDadosFormato = new XDadosFormato<ConjuntoMontagemDgt>(dxf, _criarLM, _listarElementosObra, camposFormato, elementosFixacao, coletorLm, quadroAplicacao);
             xDadosFormato.InserirInformacoes(versaoTsep, _tipo);
         }
     }
