@@ -20,33 +20,9 @@ namespace ConsoleTNKDxf.Dgts
             _multiDrawing = _drawing as MultiDrawing;
         }
 
-     
-       
-
-        //public ProcessadorDetalhamento(TSM.Model model):(model) 
-        //{
-           
-
-            
-        //        _tipo = "DETALHE";
-            
-
-        //    PropertyInfo propInfo = draw.GetType().GetProperty("Identifier",
-        //                                BindingFlags.Instance | BindingFlags.NonPublic);
-        //    object value = propInfo.GetValue(draw, null);
-        //    Tekla.Structures.Identifier identifier = (Tekla.Structures.Identifier)value;
-
-        //    Beam tempBeam = new Beam();
-        //    tempBeam.Identifier = identifier;
-
-        //    tempBeam.GetReportProperty("TCNM_LISTAR_PARAF", ref _listarElementosObra);
-        //    tempBeam.GetReportProperty("TCNM_CRIAR_LM", ref _criarLM);
-        //}
-
-
         public override void Processar(string versaoTsep, DxfDocument dxf)
         {
-            var camposFormato = new CamposFormatoDgt(_multiDrawing);
+            var camposFormato = new CamposDesenhoINP(_multiDrawing);
             string prefixoConjunto = int.Parse(camposFormato.Title1.Split('-')[3]).ToString();
             var coletorLm = new LmDetalhesDtg(_model, prefixoConjunto);
             coletorLm.Coletar(_multiDrawing);
@@ -56,8 +32,7 @@ namespace ConsoleTNKDxf.Dgts
             elementosFixacao.Coletar(_multiDrawing, new List<string> { int.Parse(camposFormato.Title1.Split('-')[3]).ToString() }, coletorLm);
 
 
-            var quadroAplicacao = new QuadroAplicacaoDgt(_multiDrawing);
-            var xDadosFormato = new XDadosFormato<ConjuntoDetalhadoDgt>(dxf, _criarLM, _listarElementosObra, camposFormato, elementosFixacao, coletorLm, quadroAplicacao);
+            var xDadosFormato = new XDadosFormato<ConjuntoDetalhadoDgt>(dxf, _criarLM, _listarElementosObra, camposFormato, elementosFixacao, coletorLm);
 
             
 

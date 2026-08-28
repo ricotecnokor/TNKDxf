@@ -16,13 +16,12 @@ namespace ConsoleTNKDxf
         DxfDocument _dxf;
         //DesenhoDgtAbs<T> _desenhoDgt;
         string _criarLM, _listarElementosObra;
-        CamposFormatoDgt _camposFormato;
+        CamposDesenhoINP _camposFormatoTemplate;
 
         ElementosFixacaoDgt _elementosFixacaoDgt;
-        QuadroAplicacaoDgt _quadroAplicacao;
 
 
-        public XDadosFormato(DxfDocument dxf, string criarLM, string listarElementosObra, CamposFormatoDgt camposFormato, ElementosFixacaoDgt elementosFixacaoDgt, LmAbs<T> coletorLM, QuadroAplicacaoDgt quadroAplicacao)//, DesenhoDgtAbs<T> desenhoDgt)//, RelatorioMultiDesenhos relatorio)
+        public XDadosFormato(DxfDocument dxf, string criarLM, string listarElementosObra, CamposDesenhoINP camposFormato, ElementosFixacaoDgt elementosFixacaoDgt, LmAbs<T> coletorLM)//, DesenhoDgtAbs<T> desenhoDgt)//, RelatorioMultiDesenhos relatorio)
         {
 
 
@@ -31,9 +30,8 @@ namespace ConsoleTNKDxf
             _dxf = dxf;
             _criarLM = criarLM;
             _listarElementosObra = listarElementosObra;
-            _camposFormato = camposFormato;
+            _camposFormatoTemplate = camposFormato;
             _elementosFixacaoDgt = elementosFixacaoDgt;
-            _quadroAplicacao = quadroAplicacao;
             _coletorLM = coletorLM;
         }
 
@@ -76,7 +74,7 @@ namespace ConsoleTNKDxf
             if (_criarLM != "NÃO")
             {
                 var linhaHorizontalMaisBaixa = linhasHorizontais.OrderBy(x => x.StartPoint.Y).FirstOrDefault();
-                inserirDoQuadroAplicacao(linhaHorizontalMaisBaixa);
+                inserirDoQuadroAplicacao(linhaHorizontalMaisBaixa, _camposFormatoTemplate);
             }
                 
 
@@ -100,7 +98,7 @@ namespace ConsoleTNKDxf
                     numeroLinhaConjunto++;
                     inserirElementosObraDgt(_elementosFixacaoDgt, ref numeroLinhaConjunto, linhaRef);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"Desenho: {_camposFormato.Title1}");
+                    Console.WriteLine($"Desenho: {_camposFormatoTemplate.Title1}");
                     Console.WriteLine("Inserida lista de elementos de obra.");
                     Console.ForegroundColor = ConsoleColor.Green;
                 }
@@ -410,9 +408,8 @@ namespace ConsoleTNKDxf
             linhaRef.XData.Add(xdata);
         }
 
-        private void inserirDoQuadroAplicacao(Line linhaRef)
+        private void inserirDoQuadroAplicacao(Line linhaRef, CamposDesenhoINP camposFormato)
         {
-            QuadroAplicacaoDgt quadro = _quadroAplicacao;
             string appNameLinha = $"{APPNAME}_QA";
             ApplicationRegistry appReg;
             if (!_dxf.ApplicationRegistries.Contains(appNameLinha))
@@ -420,10 +417,11 @@ namespace ConsoleTNKDxf
                 appReg = new ApplicationRegistry(appNameLinha);
                 _dxf.ApplicationRegistries.Add(appReg);
                 XData xdata = new XData(appReg);
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Tag == null ? "" : quadro.Tag));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Desenho == null ? "" : quadro.Desenho));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.DesenhoCliente == null ? "" : quadro.DesenhoCliente));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, quadro.Familia == null ? "" : quadro.Familia));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, camposFormato.TagQA == null ? "" : camposFormato.TagQA));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, camposFormato.QtdQA == 0 ? "" : camposFormato.QtdQA.ToString()));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, camposFormato.DesenhoQA == null ? "" : camposFormato.DesenhoQA));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, camposFormato.DesenhoClienteQA == null ? "" : camposFormato.DesenhoClienteQA));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, camposFormato.FamiliaQA == 0 ? "" : camposFormato.FamiliaQA.ToString()));
 
                 linhaRef.XData.Add(xdata);
             }
@@ -433,35 +431,7 @@ namespace ConsoleTNKDxf
             }
         }
 
-        //private void inserirRevisoes(Line linhaRef)
-        //{
-
-        //    RevisaoDgt revisao = _desenhoDgt.Revisao;
-
-        //    string appNameLinha = $"{APPNAME}_Revisao";
-        //    ApplicationRegistry appReg;
-        //    if (!_dxf.ApplicationRegistries.Contains(appNameLinha))
-        //    {
-        //        appReg = new ApplicationRegistry(appNameLinha);
-        //        _dxf.ApplicationRegistries.Add(appReg);
-        //        XData xdata = new XData(appReg);
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastMark == null ? "0" : revisao.RevisionLastMark));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDescription == null ? "" : revisao.RevisionLastDescription));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastCreatedBy == null ? "" : revisao.RevisionLastCreatedBy));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateCreated == null ? "" : revisao.RevisionLastDateCreated));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastCheckedBy == null ? "" : revisao.RevisionLastCheckedBy));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateChecked == null ? "" : revisao.RevisionLastDateChecked));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastApprovedBy == null ? "" : revisao.RevisionLastApprovedBy));
-        //        xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, revisao.RevisionLastDateApproved == null ? "" : revisao.RevisionLastDateApproved));
-
-        //        linhaRef.XData.Add(xdata);
-        //    }
-        //    else
-        //    {
-        //        appReg = _dxf.ApplicationRegistries[APPNAME];
-        //    }
-
-        //}
+        
        
 
         private void inserirCamposFormatoDgt(Line linhaRef, string versaoTsep, string tipoDesenho)
@@ -479,23 +449,22 @@ namespace ConsoleTNKDxf
 
 
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, userName));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Title == null ? "TITLE" : _camposFormato.Title));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Title1 == null ? "TITLE1" : _camposFormato.Title1));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Title2 == null ? "TITLE2" : _camposFormato.Title2));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Title3 == null ? "TITLE3" : _camposFormato.Title3));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.ProjectObject == null ? "PROJECT OBJECT" : _camposFormato.ProjectObject));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.RevisionMark == null ? "0" : _camposFormato.RevisionMark));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.ProjectModel == null ? "MODELO" : _camposFormato.ProjectModel));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.ProjectNumber == null ? "NUMERO PROJETO" : _camposFormato.ProjectNumber));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Scale1 == null ? "" : _camposFormato.Scale1));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Scale2 == null ? "" : _camposFormato.Scale2));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Scale3 == null ? "" : _camposFormato.Scale3));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Scale4 == null ? "" : _camposFormato.Scale4));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Scale5 == null ? "" : _camposFormato.Scale5));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Title == null ? "TITLE" : _camposFormatoTemplate.Title));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Title1 == null ? "TITLE1" : _camposFormatoTemplate.Title1));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Title2 == null ? "TITLE2" : _camposFormatoTemplate.Title2));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Title3 == null ? "TITLE3" : _camposFormatoTemplate.Title3));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.ProjectObject == null ? "PROJECT OBJECT" : _camposFormatoTemplate.ProjectObject));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.RevisionMark == null ? "0" : _camposFormatoTemplate.RevisionMark));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.ProjectModel == null ? "MODELO" : _camposFormatoTemplate.ProjectModel));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.ProjectNumber == null ? "NUMERO PROJETO" : _camposFormatoTemplate.ProjectNumber));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Scale1 == null ? "" : _camposFormatoTemplate.Scale1));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Scale2 == null ? "" : _camposFormatoTemplate.Scale2));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Scale3 == null ? "" : _camposFormatoTemplate.Scale3));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Scale4 == null ? "" : _camposFormatoTemplate.Scale4));
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Scale5 == null ? "" : _camposFormatoTemplate.Scale5));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, versaoTsep));
                 xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, tipoDesenho));
-                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormato.Name == null ? "NAME" : _camposFormato.Name));
-
+                xdata.XDataRecord.Add(new XDataRecord(XDataCode.String, _camposFormatoTemplate.Name == null ? "NAME" : _camposFormatoTemplate.Name));
                 linhaRef.XData.Add(xdata);
 
             }

@@ -20,7 +20,7 @@ namespace ConsoleTNKDxf
         TSD.MultiDrawing _multiDrawing;
         private CamposFormato _camposFormato;
         private Revisao _revisao;
-        private QuadroAplicacaoDgt _quadroAplicacao;
+        // QuadroAplicacaoDgt _quadroAplicacao;
         private ListaMateriais _listaMateriais;
         private ElementosFixacao _elementosFixacao;
         //private string _nomeModelo;
@@ -33,7 +33,7 @@ namespace ConsoleTNKDxf
         public Revisao QuadroRevisao => _revisao;
         public string RevisaoFormato => _camposFormato.Revisao;
         public string RevisaoFormatoCliente => _camposFormato.RevisaoCliente;
-        public QuadroAplicacaoDgt QuadroAplicacao => _quadroAplicacao;
+        //public QuadroAplicacaoDgt QuadroAplicacao => _quadroAplicacao;
         //public PropriedadesDesenho PropriedadesFormato => ;
 
         public ListaMateriais ListaMateriais => _listaMateriais;
@@ -54,7 +54,7 @@ namespace ConsoleTNKDxf
             _model = model;
             _camposFormato = new CamposFormato(multiDrawing);
             _revisao = new Revisao(multiDrawing);
-            _quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
+            //_quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
             _listaMateriais = new ListaMateriais(model, multiDrawing);
             _elementosFixacao = new ElementosFixacao(model, multiDrawing);
             setListarElementosObra();

@@ -17,15 +17,14 @@ namespace ConsoleTNKDxf.Dgts.ProcessoTekla
 
         public override void Processar(string versaoTsep, DxfDocument dxf)
         {
-            var camposFormato = new CamposFormatoDgt(_gaDrawing);
+            var camposFormato = new CamposDesenhoINP(_gaDrawing);
             var coletorLm = new LmMontagemDgt(_model);
             coletorLm.Coletar(_gaDrawing);
             //var desenhoDgt = new DesenhoMontagemDgt(_gaDrawing, _model, camposFormato, coletorLm);
             setListarElementosObra(_gaDrawing);
             var elementosFixacao = new ElementosFixacaoDgt(_model);
             elementosFixacao.Coletar(_gaDrawing, new List<string> { int.Parse(camposFormato.Title1.Split('-')[3]).ToString() }, coletorLm);
-            var quadroAplicacao = new QuadroAplicacaoDgt(_gaDrawing);
-            var xDadosFormato = new XDadosFormato<ConjuntoMontagemDgt>(dxf, _criarLM, _listarElementosObra, camposFormato, elementosFixacao, coletorLm, quadroAplicacao);
+            var xDadosFormato = new XDadosFormato<ConjuntoMontagemDgt>(dxf, _criarLM, _listarElementosObra, camposFormato, elementosFixacao, coletorLm);
             xDadosFormato.InserirInformacoes(versaoTsep, _tipo);
         }
     }

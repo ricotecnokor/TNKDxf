@@ -17,7 +17,6 @@ namespace ConsoleTNKDxf.Dgts
         protected string _criarLM;
         protected Drawing _drawing;
 
-
         public string Tipo => _tipo;
         public string ListarElementosObra => _listarElementosObra;
         public string CriarLM => _criarLM;
@@ -51,6 +50,8 @@ namespace ConsoleTNKDxf.Dgts
             tempBeam.GetReportProperty("TCNM_LISTAR_PARAF", ref listarElementosObra);
             tempBeam.GetReportProperty("TCNM_CRIAR_LM", ref criarLM);
 
+            
+            
 
             var tipo = drawing.GetType();
 
@@ -112,4 +113,21 @@ namespace ConsoleTNKDxf.Dgts
 
         }
     }
+
+    //public class DadosQuadroAplicacao
+    //{
+    //    public string TagEquipamento { get; set; }
+    //    public string DesenhoTcnk { get; set; }
+    //    public string DesenhoCliente { get; set; }
+    //    public string Familia { get; set; }
+    //    public string Quantidade { get; set; }
+    //    public DadosQuadroAplicacao(string tagEquipamento, string desenhoTcnk, string desenhoCliente, string familia, string quantidade)
+    //    {
+    //        TagEquipamento = tagEquipamento;
+    //        DesenhoTcnk = desenhoTcnk;
+    //        DesenhoCliente = desenhoCliente;
+    //        Familia = familia;
+    //        Quantidade = quantidade;
+    //    }
+    //}
 }

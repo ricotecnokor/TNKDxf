@@ -11,10 +11,10 @@ namespace ConsoleTNKDxf.Dgts
     {
         protected LmAbs<T> _coletorLM;
 
-        protected QuadroAplicacaoDgt _quadroAplicacao;
+        //protected QuadroAplicacaoDgt _quadroAplicacao;
         protected ElementosFixacaoDgt _elementosFixacao;
         protected RevisaoDgt _revisao;
-        protected CamposFormatoDgt _camposFormato;
+        protected CamposDesenhoINP _camposFormato;
         protected string _listarElementosObra;
         protected string _criarLM;
 

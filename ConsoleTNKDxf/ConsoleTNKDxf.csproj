@@ -126,7 +126,7 @@
     <Compile Include="Dgts\FixacaoDgt.cs" />
     <Compile Include="Dgts\ProcessoTekla\AbsProcessador.cs" />
     <Compile Include="Dgts\ArruelaDgt.cs" />
-    <Compile Include="Dgts\CamposFormatoDgt.cs" />
+    <Compile Include="Dgts\CamposDesenhoINP.cs" />
     <Compile Include="Dgts\ConjuntoDetalhadoDgt.cs" />
     <Compile Include="Dgts\ConjuntoMontagemDgt.cs" />
     <Compile Include="Dgts\DesenhoDetalhesDgt.cs" />
@@ -161,7 +161,6 @@
     <Compile Include="Porca.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuadroAplicacaoDgt.cs" />
     <Compile Include="RelatorioMultiDesenhos.cs" />
     <Compile Include="RespostaModelo.cs" />
     <Compile Include="Revisao.cs" />
