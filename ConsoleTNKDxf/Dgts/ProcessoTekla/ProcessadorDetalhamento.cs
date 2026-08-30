@@ -1,4 +1,4 @@
-﻿using netDxf;
+using netDxf;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -26,7 +26,6 @@ namespace ConsoleTNKDxf.Dgts
             string prefixoConjunto = int.Parse(camposFormato.Title1.Split('-')[3]).ToString();
             var coletorLm = new LmDetalhesDtg(_model, prefixoConjunto);
             coletorLm.Coletar(_multiDrawing);
-            //var desenhoDgt = new DesenhoDetalhesDgt(_multiDrawing, _model, camposFormato, coletorLm);
             setListarElementosObra(_multiDrawing);
             var elementosFixacao = new ElementosFixacaoDgt(_model);
             elementosFixacao.Coletar(_multiDrawing, new List<string> { int.Parse(camposFormato.Title1.Split('-')[3]).ToString() }, coletorLm);

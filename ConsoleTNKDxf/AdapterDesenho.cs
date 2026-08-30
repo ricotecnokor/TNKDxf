@@ -1,11 +1,10 @@
-﻿using ConsoleTNKDxf.Dgts;
+using ConsoleTNKDxf.Dgts;
 using netDxf;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Tekla.Structures;
-using Tekla.Structures.Drawing;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
@@ -16,7 +15,7 @@ namespace ConsoleTNKDxf
         TSM.Model _model;
         string _pastaSaida;
         List<string> _arquivosExistentes = new List<string>();
-        //private RelatorioMultiDesenhos _relatorio;
+
         public AdapterDesenho(TSM.Model model)
         {
             _model = model;
@@ -28,10 +27,8 @@ namespace ConsoleTNKDxf
             _pastaSaida = modelPath + xsplot.Replace(".", "");
         }
 
-
         public RespostaModelo ColetarArquivos(string versaoTsep)
         {
-
             if (!Directory.Exists(_pastaSaida))
             {
                 return new RespostaModelo(false, null, "Pasta de saída não encontrada. Verifique se o caminho está correto.");
@@ -44,27 +41,14 @@ namespace ConsoleTNKDxf
                 return new RespostaModelo(false, null, "Nenhum arquivo DXF encontrado na pasta de saída. Verifique se os desenhos foram plotados corretamente.");
             }
 
-            //LeitorRlatorioDesenhosTekla leitor = new LeitorRlatorioDesenhosTekla("multiTemp.rpt");
-            //_relatorio = leitor.Ler();
-
-
             TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
             var dg = dh.GetDrawingSelector().GetSelected();
-
-            int qtd = dg.GetSize();
 
             while (dg.MoveNext())
             {
                 var drawing = dg.Current;
                 if (drawing == null) break;
-
-
-
-                // LayoutInspector layoutInspector = new LayoutInspector();
-                //bool isDiagrama = layoutInspector.IsDiagramaDrawing(drawing);
-
-
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Identificando tipo de desenho...");
@@ -78,18 +62,13 @@ namespace ConsoleTNKDxf
                     continue;
                 }
 
-
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Tipo de desenho identificado: " + processador);
                 Console.ForegroundColor = ConsoleColor.Green;
 
-
-
-
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine($"Processando o desenho {drawing.Title1}...");
                 Console.ForegroundColor = ConsoleColor.Green;
-
 
                 if (!_arquivosExistentes.Any(a => a.Split('\\').Last().StartsWith(drawing.Title1)))
                 {
@@ -123,7 +102,6 @@ namespace ConsoleTNKDxf
                     continue;
                 }
 
-
                 if (processador.CriarLM == "SIM")
                 {
                     Console.WriteLine("Cria LM para o desenho");
@@ -142,7 +120,6 @@ namespace ConsoleTNKDxf
                     Console.WriteLine("Não lista elementos da obra");
                 }
 
-
                 string nomeArquivo = _arquivosExistentes.First(a => a.Split('\\').Last().StartsWith(drawing.Title1));
                 var dxf = DxfDocument.Load(nomeArquivo);
 
@@ -152,91 +129,16 @@ namespace ConsoleTNKDxf
                              );
                 Console.WriteLine("Desenho de montagem processado.");
 
-              
                 Console.WriteLine($"Salvando arquivo dgt...");
                 salvarDados(nomeArquivo, dxf);
                 Console.WriteLine("Arquivo dgt salvo.");
 
-
-
                 dxf = null;
                 Console.ForegroundColor = ConsoleColor.Green;
             }
-        
+
             return new RespostaModelo(true, null, "Informações coletatas.");
-
-            //return new RespostaModelo(true, _model, "Processamento concluído com sucesso.");
-
         }
-
-        
-
-       
-
-
-
-
-
-        //private Desenho coletarDesenho(TSD.MultiDrawing multiDrawing, string nomeArquivo)
-        //{
-
-
-
-        //    var desenho = new Desenho(multiDrawing, _model, nomeArquivo);
-
-        //    return desenho;
-        //    //HashSet<Identifier> pecasUnicasNoDesenho = obterPecasUnicasDesenho(multiDrawing);
-
-        //    //foreach (Identifier partId in pecasUnicasNoDesenho)
-        //    //{
-        //    //    var modelObj = _model.SelectModelObject(partId);
-
-        //    //    if (modelObj is TSM.Part modelPart)
-        //    //    {
-        //    //        desenho.AddPeca(modelPart);
-        //    //    }
-        //    //}
-
-
-
-        //}
-
-
-
-
-        private HashSet<Identifier> obterPecasUnicasDesenho(MultiDrawing multiDrawing)
-        {
-            // Usamos um HashSet para garantir que cada INSTÂNCIA física (GUID único) 
-            // seja contada apenas uma vez, mesmo que apareça em várias vistas (Frontal, Topo, etc)
-            HashSet<Identifier> pecasUnicasNoDesenho = new HashSet<Identifier>();
-
-            // 1. Acessar as vistas do Multi-drawing
-            var views = multiDrawing.GetSheet().GetAllViews().GetEnumerator();
-            while (views.MoveNext())
-            {
-
-                var view = views.Current as TSD.View;
-                if (view == null) continue;
-
-                // 2. Pegar todas as partes gráficas nesta vista
-                DrawingObjectEnumerator drawingParts = view.GetObjects(new[] { typeof(TSD.Part) });
-                while (drawingParts.MoveNext())
-                {
-                    TSD.Part drwPart = drawingParts.Current as TSD.Part;
-                    if (drwPart != null)
-                    {
-                        pecasUnicasNoDesenho.Add(drwPart.ModelIdentifier);
-                    }
-                }
-            }
-
-            return pecasUnicasNoDesenho;
-        }
-
-
-
-
-
 
         private static void salvarDados(string nomeArquivoProcessado, DxfDocument dxf)
         {
