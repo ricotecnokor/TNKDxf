@@ -1,0 +1,12 @@
+flowchart LR
+    subgraph Tekla
+        M["Modelo<br/>TSM.BoltArray"]
+        D["Desenho<br/>TSD.Bolt"]
+    end
+    D -->|"ModelIdentifier (GUID)"| EF["ElementosFixacaoDgt"]
+    EF -->|"SelectModelObject"| M
+    M -->|"GetString/DoubleReportProperties"| FX["FixacaoDgt + ParafusoDgt + PorcaDgt + ArruelaDgt"]
+    FX -->|"WORKSHOP/SITE"| CL["Listas<br/>(FixacaoFabrica / FixacaoObra)"]
+    CL --> XD["XDadosFormato"]
+    XD -->|"XData sobre linhas do FORMATO_DET_A1"| DXF["DXF enriquecido"]
+    DXF -->|"rename"| DGT["arquivo .dgt"]

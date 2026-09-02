@@ -1,0 +1,17 @@
+flowchart TD
+    subgraph Detalhe["ProcessadorDetalhamento"]
+        D1["LmDetalhesDtg.Coletar()"] --> D2["ElementosFixacaoDgt.Coletar(drawing, prefixos, lm)"]
+        D2 --> D3["addFixacoes(boltArray)"]
+        D3 --> D4{"lm.ContemPeca(PecaChega.Posicao)?"}
+        D4 -->|"não"| D5["descarta fixação"]
+        D4 -->|"sim"| D6["lm.Ligar(fixacao, tipo)"]
+        D6 --> D7["anexa ao ConjuntoDetalhadoDgt<br/>FixacaoFabrica ou FixacaoObra"]
+    end
+
+    subgraph Montagem["ProcessarMontagem"]
+        M1["LmMontagemDgt.Coletar()"] --> M2["ElementosFixacaoDgt.Coletar(drawing, prefixos, lm)"]
+        M2 --> M3["addParafuso(boltArray, prefixos)"]
+        M3 --> M4{"Montagem?"}
+        M4 -->|"WORKSHOP"| M5["_fixacaoFabrica"]
+        M4 -->|"SITE"| M6["_fixacaoObra"]
+    end
