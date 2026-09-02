@@ -170,6 +170,9 @@ namespace ConsoleTNKDxf.Dgts
 
            var marcaConjunto = fixacao.Parafuso.PecaChega.MarcaMontagem;
 
+            if (!_conjuntos.Any(c => c.AssemblyPos == marcaConjunto))
+                return;
+
             ConjuntoDetalhadoDgt conjunto = (ConjuntoDetalhadoDgt)_conjuntos.FirstOrDefault(c => c.AssemblyPos == marcaConjunto);
 
             List<FixacaoDgt> fixacaoList = tipoFixacao == "BOLT_TYPE_WORKSHOP" ? conjunto.FixacaoFabrica : conjunto.FixacaoObra;
