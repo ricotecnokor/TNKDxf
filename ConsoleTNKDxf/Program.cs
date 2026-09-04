@@ -8,11 +8,21 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            var wifi = ServicoWifi.VerificarEConectar();
+            Console.ForegroundColor = wifi.Conectado ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.WriteLine(wifi.Mensagem);
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            bool conectou = TesteConexao.Testar(out string mensagemConexao);
+            Console.ForegroundColor = conectou ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.WriteLine(mensagemConexao);
+            Console.ForegroundColor = ConsoleColor.Red;
+
             ExportacaoDxf.Exportar();
 
             const string VERSAO_TSEP = "1.16.1";
-
-            Console.ForegroundColor = ConsoleColor.Red;
 
             TSM.Model modelTemp = new TSM.Model();
             bool conectado = modelTemp.GetConnectionStatus();

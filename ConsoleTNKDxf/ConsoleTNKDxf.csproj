@@ -13,6 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>true</IsWebBootstrapper>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <PublishUrl>C:\APP\ExtraiDgt\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -71,6 +72,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -144,6 +146,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RespostaModelo.cs" />
+    <Compile Include="ServicoWifi.cs" />
+    <Compile Include="TesteConexao.cs" />
     <Compile Include="XDadosFormato.cs" />
   </ItemGroup>
   <ItemGroup>
