@@ -13,6 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>true</IsWebBootstrapper>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <PublishUrl>C:\APP\ExtraiDgt\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -33,7 +34,8 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -43,7 +45,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -69,6 +72,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -76,62 +80,52 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tekla.Application.Library, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Application.Library.dll</HintPath>
+    <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
     </Reference>
-    <Reference Include="Tekla.Structures, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+    <Reference Include="Tekla.Application.Library, Version=2024.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.dll</HintPath>
+      <HintPath>C:\Program Files\Tekla Structures\2026.0\bin\Tekla.Application.Library.dll</HintPath>
     </Reference>
-    <Reference Include="Tekla.Structures.Analysis, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+    <Reference Include="Tekla.Structures, Version=2024.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Analysis.dll</HintPath>
+      <HintPath>C:\Program Files\Tekla Structures\2026.0\bin\Net48Runtime\Tekla.Structures.dll</HintPath>
     </Reference>
-    <Reference Include="Tekla.Structures.Catalogs, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+    <Reference Include="Tekla.Structures.Catalogs, Version=2024.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Catalogs.dll</HintPath>
+      <HintPath>C:\Program Files\Tekla Structures\2026.0\bin\Tekla.Structures.Catalogs.dll</HintPath>
     </Reference>
-    <Reference Include="Tekla.Structures.Datatype, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+    <Reference Include="Tekla.Structures.Datatype, Version=2024.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Datatype.dll</HintPath>
+      <HintPath>C:\Program Files\Tekla Structures\2026.0\bin\Tekla.Structures.Datatype.dll</HintPath>
     </Reference>
-    <Reference Include="Tekla.Structures.Dialog, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+    <Reference Include="Tekla.Structures.Dialog, Version=2024.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Dialog.dll</HintPath>
+      <HintPath>C:\Program Files\Tekla Structures\2026.0\bin\Tekla.Structures.Dialog.dll</HintPath>
     </Reference>
-    <Reference Include="Tekla.Structures.Drawing, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+    <Reference Include="Tekla.Structures.Drawing, Version=2024.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Drawing.dll</HintPath>
+      <HintPath>C:\Program Files\Tekla Structures\2026.0\bin\Tekla.Structures.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="Tekla.Structures.Model, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+    <Reference Include="Tekla.Structures.Model, Version=2024.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Model.dll</HintPath>
+      <HintPath>C:\Program Files\Tekla Structures\2026.0\bin\Tekla.Structures.Model.dll</HintPath>
     </Reference>
-    <Reference Include="Tekla.Structures.Plugins, Version=2022.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
+    <Reference Include="Tekla.Structures.Plugins, Version=2024.0.0.0, Culture=neutral, PublicKeyToken=2f04dbe497b71114, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files\Tekla Structures\2024.0\bin\Tekla.Structures.Plugins.dll</HintPath>
+      <HintPath>C:\Program Files\Tekla Structures\2026.0\bin\Net48Runtime\Tekla.Structures.Plugins.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstracoes\ConjuntoAbstrato.cs" />
     <Compile Include="AdapterDesenho.cs" />
-    <Compile Include="ArquivoRelatorioMultiDesenhos.cs" />
-    <Compile Include="Arruela.cs" />
-    <Compile Include="CamposFormato.cs" />
     <Compile Include="ConsoleAnimation.cs" />
-    <Compile Include="DescricaoArruela.cs" />
-    <Compile Include="DescricaoParafuso.cs" />
-    <Compile Include="DescricaoPorca.cs" />
     <Compile Include="Dgts\FixacaoDgt.cs" />
     <Compile Include="Dgts\ProcessoTekla\AbsProcessador.cs" />
     <Compile Include="Dgts\ArruelaDgt.cs" />
     <Compile Include="Dgts\CamposDesenhoINP.cs" />
     <Compile Include="Dgts\ConjuntoDetalhadoDgt.cs" />
     <Compile Include="Dgts\ConjuntoMontagemDgt.cs" />
-    <Compile Include="Dgts\DesenhoDetalhesDgt.cs" />
-    <Compile Include="Dgts\DesenhoDgtAbs.cs" />
-    <Compile Include="Dgts\DesenhoMontagemDgt.cs" />
     <Compile Include="Dgts\ElementosFixacaoDgt.cs" />
     <Compile Include="Dgts\LmAbs.cs" />
     <Compile Include="Dgts\LmDetalhesDtg.cs" />
@@ -140,30 +134,20 @@
     <Compile Include="Dgts\PecaDgt.cs" />
     <Compile Include="Dgts\PorcaDgt.cs" />
     <Compile Include="Dgts\ProcessoTekla\ProcessarMontagem.cs" />
-    <Compile Include="Dgts\RevisaoDgt.cs" />
     <Compile Include="Dgts\ProcessoTekla\ProcessadorDetalhamento.cs" />
     <Compile Include="ExportacaoDxf.cs" />
     <Compile Include="Extensoes.cs" />
-    <Compile Include="Conjunto.cs" />
-    <Compile Include="Desenho.cs" />
-    <Compile Include="ElementosFixacao.cs" />
     <Compile Include="ILinhaLM.cs" />
-    <Compile Include="LayoutInspector.cs" />
-    <Compile Include="MaterialArruela.cs" />
-    <Compile Include="MaterialPorca.cs" />
-    <Compile Include="Parafuso.cs" />
     <Compile Include="IAdapterDesenho.cs" />
-    <Compile Include="ListaMateriais.cs" />
     <Compile Include="Peca.cs" />
     <Compile Include="DescricaoItem.cs" />
     <Compile Include="Material.cs" />
     <Compile Include="PesoItem.cs" />
-    <Compile Include="Porca.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RelatorioMultiDesenhos.cs" />
     <Compile Include="RespostaModelo.cs" />
-    <Compile Include="Revisao.cs" />
+    <Compile Include="ServicoWifi.cs" />
+    <Compile Include="TesteConexao.cs" />
     <Compile Include="XDadosFormato.cs" />
   </ItemGroup>
   <ItemGroup>

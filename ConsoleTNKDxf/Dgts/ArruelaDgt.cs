@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using TSM = Tekla.Structures.Model;
 
@@ -18,7 +18,6 @@ namespace ConsoleTNKDxf.Dgts
 
         public ArruelaDgt(TSM.BoltArray boltArray)
         {
-            string name = string.Empty;
             ArrayList stringReportProperties = new ArrayList { "WASHER.NAME", "BOLT_STANDARD" };
             Hashtable stringProperties = new Hashtable();
             boltArray.GetStringReportProperties(stringReportProperties, ref stringProperties);
@@ -30,12 +29,6 @@ namespace ConsoleTNKDxf.Dgts
             Hashtable doubleProperties = new Hashtable();
             boltArray.GetDoubleReportProperties(doubleReportProperties, ref doubleProperties);
             _washerWeight = doubleProperties.ContainsKey("WASHER.WEIGHT") ? Convert.ToDouble(doubleProperties["WASHER.WEIGHT"]) : 0;
-
-        }
-
-        public void IncrementarQuantidade()
-        {
-            _quantidade++;
         }
     }
 }

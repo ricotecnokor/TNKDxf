@@ -1,39 +1,22 @@
-﻿using ConsoleTNKDxf.Abstracoes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Tekla.Structures;
 using Tekla.Structures.Drawing;
 using Tekla.Structures.Model;
-using Tekla.Structures.Model.Operations;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf.Dgts
 {
-   
-
     public class LmDetalhesDtg : LmAbs<ConjuntoDetalhadoDgt>
     {
         private string _prefixoConjunto;
+
         public LmDetalhesDtg(Model model, string prefixoConjunto) : base(model)
         {
             _prefixoConjunto = prefixoConjunto;
         }
-
-        
-
-        //TSM.Model _model;
-        //private List<ConjuntoDetalhadoDgt> _conjuntos = new List<ConjuntoDetalhadoDgt>();
-        //public List<ConjuntoDetalhadoDgt> Conjuntos => _conjuntos;
-        //private string _prefixoConjunto;
-
-        //public LmDetalhesDtg(TSM.Model model, string prefixoConjunto)
-        //{
-        //    _model = model;
-        //    _prefixoConjunto = prefixoConjunto;
-        //}
 
         public override void Coletar(Drawing multiDrawing)
         {
@@ -48,24 +31,6 @@ namespace ConsoleTNKDxf.Dgts
                     addPeca(modelPart);
                 }
             }
-
-
-            var teste = _conjuntos;
-
-            //foreach (var conjuntoAvulso in _conjuntos)
-            //{
-            //    if (conjuntoAvulso.AssemblyPos == "00724AK")
-            //    {
-
-
-            //        bool teste = true;
-
-
-            //    }
-
-            //    conjuntoAvulso.MultiplicaQtdConjuntoPorPeca(conjuntoAvulso.Quantidade);
-            //}
-
         }
 
         private HashSet<Identifier> obterPecasUnicasDesenho(Drawing multiDrawing)
@@ -75,11 +40,9 @@ namespace ConsoleTNKDxf.Dgts
             var views = multiDrawing.GetSheet().GetAllViews().GetEnumerator();
             while (views.MoveNext())
             {
-
                 var view = views.Current as TSD.View;
                 if (view == null) continue;
 
-                // 2. Pegar todas as partes gráficas nesta vista
                 DrawingObjectEnumerator drawingParts = view.GetObjects(new[] { typeof(TSD.Part) });
                 while (drawingParts.MoveNext())
                 {
@@ -94,8 +57,6 @@ namespace ConsoleTNKDxf.Dgts
             return pecasUnicasNoDesenho;
         }
 
-       
-
         public void addPeca(TSM.Part part)
         {
             TSM.Assembly assy = part.GetAssembly();
@@ -104,36 +65,12 @@ namespace ConsoleTNKDxf.Dgts
                 return;
             }
 
-           
-            
-
             string assemblyPos = assy.ObterPropriedade("ASSEMBLY_POS").ToString();
-
-
-
-          
 
             if (!assemblyPos.Contains(_prefixoConjunto))
             {
                 return;
             }
-
-
-
-            var partPos = part.ObterPropriedade("PART_POS").ToString();
-
-
-            //if (assemblyPos == "00724AK")
-            //{
-
-
-            //    PecaDgt pecaTeste = new PecaDgt(part);
-
-  
-            //}
-
-
-
 
             if (assemblyPos == string.Empty)
             {
@@ -143,20 +80,14 @@ namespace ConsoleTNKDxf.Dgts
 
             if (_conjuntos.Any(conjunto => conjunto.AssemblyPos == assemblyPos))
             {
-
                 ConjuntoDetalhadoDgt conjuntoExistente = _conjuntos.FirstOrDefault(c => c.AssemblyPos == assemblyPos);
-                
-                
+
                 conjuntoExistente.AddItem(part, assy);
-
-
 
                 return;
             }
 
-            //assy.GetSecondaries
-
-            var novoConjunto = new ConjuntoDetalhadoDgt(part, new PecaDgt(assy.GetMainPart() as TSM.Part));
+            var novoConjunto = new ConjuntoDetalhadoDgt(part);
             _conjuntos.Add(novoConjunto);
         }
 
@@ -167,8 +98,7 @@ namespace ConsoleTNKDxf.Dgts
 
         internal void Ligar(FixacaoDgt fixacao, string tipoFixacao)
         {
-
-           var marcaConjunto = fixacao.Parafuso.PecaChega.MarcaMontagem;
+            var marcaConjunto = fixacao.Parafuso.PecaChega.MarcaMontagem;
 
             if (!_conjuntos.Any(c => c.AssemblyPos == marcaConjunto))
                 return;
@@ -178,16 +108,8 @@ namespace ConsoleTNKDxf.Dgts
             List<FixacaoDgt> fixacaoList = tipoFixacao == "BOLT_TYPE_WORKSHOP" ? conjunto.FixacaoFabrica : conjunto.FixacaoObra;
             if (!fixacaoList.Contains(fixacao))
             {
-                //fixacao.IncrementarQuantidadeLigacoes();
                 fixacaoList.Add(fixacao);
-                return;
             }
-            else
-            {
-                var fixacaoExistente = fixacaoList.FirstOrDefault(f => f.Equals(fixacao));
-                //fixacaoExistente.IncrementarQuantidadeLigacoes();
-            }
-            return;
         }
     }
 }

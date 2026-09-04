@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using TSM = Tekla.Structures.Model;
 
@@ -18,8 +18,6 @@ namespace ConsoleTNKDxf.Dgts
 
         public PorcaDgt(TSM.BoltArray boltArray)
         {
-
-            string name = string.Empty;
             ArrayList stringReportProperties = new ArrayList { "NUT.NAME", "BOLT_STANDARD" };
             Hashtable stringProperties = new Hashtable();
             boltArray.GetStringReportProperties(stringReportProperties, ref stringProperties);
@@ -33,7 +31,5 @@ namespace ConsoleTNKDxf.Dgts
             boltArray.GetDoubleReportProperties(doubleReportProperties, ref doubleProperties);
             _nutWeight = doubleProperties.ContainsKey("NUT.WEIGHT") ? Convert.ToDouble(doubleProperties["NUT.WEIGHT"]) : 0.0;
         }
-
-        
     }
 }

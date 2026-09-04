@@ -1,4 +1,4 @@
-﻿using TSM = Tekla.Structures.Model;
+using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf
 {
@@ -33,24 +33,5 @@ namespace ConsoleTNKDxf
             }
             return 0.0;
         }
-
-        public static string TeklaSubstring(this string str, int startIndex, int? length = null)
-        {
-            if (!length.HasValue)
-            {
-                return str.Substring(startIndex);
-            }
-
-            if (startIndex + length.Value > str.Length)
-            {
-                return str.Substring(startIndex, str.Length - startIndex);
-            }
-
-            return str.Substring(startIndex, length.Value);
-
-
-        }
     }
-
-
 }
