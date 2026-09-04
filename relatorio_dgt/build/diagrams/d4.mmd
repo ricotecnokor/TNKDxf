@@ -1,0 +1,4 @@
+flowchart LR
+    B["BoltArray.BoltType"] --> M{"Montagem?"}
+    M -->|"BOLT_TYPE_WORKSHOP"| W["FixacaoFabrica"]
+    M -->|"BOLT_TYPE_SITE"| S["FixacaoObra"]

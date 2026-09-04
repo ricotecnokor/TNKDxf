@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8" />
+<title>Relatório — Fluxo lógico da extração de parafusos do Tekla e inclusão no DGT</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm; }
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1f2328;
+    font-size: 12.5px;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 100%;
+  }
+  h1 { font-size: 22px; border-bottom: 3px solid #1f6feb; padding-bottom: 6px; margin-top: 0; }
+  h2 { font-size: 16px; margin-top: 1.6em; border-bottom: 1px solid #d0d7de; padding-bottom: 3px; color: #0b3d91; }
+  h3 { font-size: 13.5px; margin-top: 1.3em; color: #17508c; }
+  h4 { font-size: 12.5px; margin-top: 1.1em; }
+  a { color: #1f6feb; text-decoration: none; }
+  code {
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 11px;
+    background: #f3f4f6;
+    padding: 1px 4px;
+    border-radius: 4px;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+  th, td { border: 1px solid #d0d7de; padding: 5px 8px; text-align: left; vertical-align: top; }
+  th { background: #eef1f5; }
+  blockquote { border-left: 4px solid #d0d7de; margin: 10px 0; padding: 2px 12px; color: #57606a; background: #fafbfc; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 1.4em 0; }
+  figure.diagram {
+    margin: 16px auto;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  figure.diagram img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    padding: 6px;
+    background: #fff;
+  }
+  ul, ol { padding-left: 22px; }
+  li { margin: 2px 0; }
+</style>
+</head>
+<body>
+<h1>Relatório — Fluxo lógico da extração de parafusos do Tekla e inclusão no DGT</h1>
+<blockquote>
+<p><strong>Projeto:</strong> <code>TNKDxf</code> (solução <code>TNKDxf.sln</code>)
+<strong>Escopo:</strong> entender como os parafusos (e porcas/arruelas) são lidos do modelo/desenho Tekla e gravados no ficheiro <code>.dgt</code>.
+<strong>Base:</strong> inspeção do código-fonte em <code>ConsoleTNKDxf</code> (fluxo atual) e <code>TNKDxf</code> (aplicação WPF, sem tratamento de parafusos).</p>
+</blockquote>
+<hr>
+<h2>1. Conceito essencial: o que é o &quot;DGT&quot; aqui</h2>
+<p>O <code>.dgt</code> <strong>não é</strong> um formato binário proprietário no código. Ele é, na prática:</p>
+<ol>
+<li>Um <strong>DXF</strong> que o Tekla já plotou (exportado via <code>Dwg.exe</code> → pasta de plot).</li>
+<li>Esse DXF é <strong>aberto</strong> (<code>DxfDocument.Load</code>), e nele são <strong>anexados XData</strong> (extended entity data) do AutoCad/DXF sobre linhas de referência do bloco de formato.</li>
+<li>O DXF é <strong>salvo e renomeado</strong> de <code>.dxf</code> para <code>.dgt</code>.</li>
+</ol>
+<p>Ou seja, <strong>o &quot;DGT&quot; é um DXF enriquecido com XData</strong> que transporta a lista de materiais e as fixações (parafusos/porcas/arruelas). A chave de aplicação (APPNAME) usada é <code>08478f494deb</code>.</p>
+<pre><code>Tekla (modelo + desenho)
+      │  exporta DXF (plot)
+      ▼
+arquivo .dxf (formato FORMATO_DET_A1)
+      │  DxfDocument.Load + XData anexado
+      ▼
+arquivo .dxf &quot;enriquecido&quot;
+      │  rename .dxf → .dgt
+      ▼
+arquivo .dgt
+</code></pre>
+<hr>
+<h2>2. Mapa dos ficheiros relevantes</h2>
+<table>
+<thead>
+<tr>
+<th>Ficheiro</th>
+<th>Papel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ConsoleTNKDxf/Program.cs</code></td>
+<td>Ponto de entrada; conecta ao modelo e chama a exportação.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/ExportacaoDxf.cs</code></td>
+<td>Dispara o export DXF do Tekla (<code>Dwg.exe</code>).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/AdapterDesenho.cs</code></td>
+<td>Orquestra o processamento de cada desenho selecionado.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/ProcessoTekla/AbsProcessador.cs</code></td>
+<td>Fábrica que decide o tipo de desenho (montagem vs. detalhe).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/ProcessoTekla/ProcessadorDetalhamento.cs</code></td>
+<td>Processa desenhos de detalhe (parte).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/ProcessoTekla/ProcessarMontagem.cs</code></td>
+<td>Processa desenhos de montagem (GA).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/ElementosFixacaoDgt.cs</code></td>
+<td><strong>Núcleo da extração de parafusos</strong> (desenho → <code>BoltArray</code>).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/FixacaoDgt.cs</code></td>
+<td>Agrega parafuso + porca + arruela de um <code>BoltArray</code>.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/ParafusoDgt.cs</code></td>
+<td>Lê os atributos do parafuso do <code>BoltArray</code>.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/PorcaDgt.cs</code></td>
+<td>Lê os atributos da porca do <code>BoltArray</code>.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/ArruelaDgt.cs</code></td>
+<td>Lê os atributos da arruela do <code>BoltArray</code>.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/LmDetalhesDtg.cs</code></td>
+<td>Coletor da lista de materiais de detalhe + <code>Ligar(...)</code> fixações ao conjunto.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/LmMontagemDgt.cs</code></td>
+<td>Coletor da lista de materiais de montagem.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/LmAbs.cs</code></td>
+<td>Base abstrata dos coletores de LM.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/ConjuntoDetalhadoDgt.cs</code> / <code>ConjuntoMontagemDgt.cs</code></td>
+<td>Representam um conjunto/marca na LM.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Abstracoes/ConjuntoAbstrato.cs</code></td>
+<td>Base dos conjuntos; guarda <code>FixacaoFabrica</code>/<code>FixacaoObra</code>.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Dgts/CamposDesenhoINP.cs</code></td>
+<td>Lê os campos de título do desenho (TITLE, TITLE1…).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/XDadosFormato.cs</code></td>
+<td><strong>Núcleo da escrita no DGT</strong> (grava XData).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Peca.cs</code></td>
+<td>Modelo interno de peça (PART_POS, ASSEMBLY_POS, FINISH).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Extensoes.cs</code></td>
+<td>Helpers (<code>ObterPropriedade</code>, <code>ConverterParaDouble</code>, <code>TeklaSubstring</code>).</td>
+</tr>
+</tbody></table>
+<h3>Fluxo &quot;legado&quot; (não usado no caminho DGT atual)</h3>
+<table>
+<thead>
+<tr>
+<th>Ficheiro</th>
+<th>Papel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ConsoleTNKDxf/ElementosFixacao.cs</code></td>
+<td>Versão antiga da coleta (gera <code>Parafuso</code>/<code>Porca</code>/<code>Arruela</code>).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Parafuso.cs</code>, <code>Porca.cs</code>, <code>Arruela.cs</code></td>
+<td>Modelos legados (implementam <code>ILinhaLM</code>).</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/DescricaoParafuso.cs</code>, <code>DescricaoPorca.cs</code>, <code>DescricaoArruela.cs</code></td>
+<td>Descrições legadas com regras de texto.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/MaterialPorca.cs</code>, <code>MaterialArruela.cs</code></td>
+<td>Materiais legados por <code>BOLT_STANDARD</code>.</td>
+</tr>
+<tr>
+<td><code>ConsoleTNKDxf/Desenho.cs</code>, <code>ListaMateriais.cs</code>, <code>Conjunto.cs</code></td>
+<td>Caminho antigo de coleta (lista de materiais + fixações).</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Visão geral do fluxo de ponta a ponta</h2>
+<figure class="diagram">
+  <img src="diagrams/d1.svg" alt="Diagrama 1" />
+</figure><h3>Diagrama de sequência (resumo)</h3>
+<figure class="diagram">
+  <img src="diagrams/d2.svg" alt="Diagrama 2" />
+</figure><hr>
+<h2>4. Extração dos parafusos (o coração do fluxo)</h2>
+<h3>4.1 Como o parafuso é localizado no desenho</h3>
+<p>O objeto no <strong>desenho</strong> é um <code>TSD.Bolt</code> (<code>Tekla.Structures.Drawing.Bolt</code>). O código não lê os atributos desse objeto gráfico; ele usa apenas o seu <strong><code>ModelIdentifier</code></strong> (GUID) para chegar ao objeto do <strong>modelo</strong>, que é o <code>TSM.BoltArray</code> (<code>Tekla.Structures.Model.BoltArray</code>).</p>
+<pre><code>view (TSD.View)
+  └─ GetObjects(typeof(TSD.Bolt))
+       └─ TSD.Bolt.ModelIdentifier  ──(HashSet dedup)──▶  _model.SelectModelObject(id)
+                                                             └─ TSM.BoltArray
+</code></pre>
+<pre><code class="language-csharp">// ElementosFixacaoDgt.obterBoltArraysUnicosDesenho()
+var views = multiDrawing.GetSheet().GetAllViews().GetEnumerator();
+while (views.MoveNext())
+{
+    var view = views.Current as TSD.View;
+    DrawingObjectEnumerator drawingBolts = view.GetObjects(new[] { typeof(TSD.Bolt) });
+    while (drawingBolts.MoveNext())
+    {
+        TSD.Bolt drwBolt = drawingBolts.Current as TSD.Bolt;
+        boltArraysUnicosDesenho.Add(drwBolt.ModelIdentifier); // HashSet → deduplica por GUID
+    }
+}
+</code></pre>
+<p><strong>Por que <code>HashSet&lt;Identifier&gt;</code>?</strong> Para garantir que cada <code>BoltArray</code> seja contado uma única vez, mesmo que o mesmo parafuso apareça em várias vistas (frontal, topo, etc.).</p>
+<h3>4.2 Do <code>Identifier</code> ao <code>BoltArray</code></h3>
+<pre><code class="language-csharp">foreach (Identifier modelId in boltArraysUnicosDesenho)
+{
+    var modelObj = _model.SelectModelObject(modelId);
+    if (modelObj is TSM.BoltArray modelBoltArray)
+    {
+        addFixacoes(modelBoltArray);        // caminho de DETALHE
+        // ou addParafuso(modelBoltArray, ...) // caminho de MONTAGEM
+    }
+}
+</code></pre>
+<h3>4.3 Montagem do objeto <code>FixacaoDgt</code></h3>
+<p>Para cada <code>BoltArray</code> é criado um <code>FixacaoDgt</code>, que agrega:</p>
+<figure class="diagram">
+  <img src="diagrams/d3.svg" alt="Diagrama 3" />
+</figure><pre><code class="language-csharp">// FixacaoDgt(FixacaoDgt.cs)
+_montagem          = boltArray.BoltType.ToString();   // BOLT_TYPE_WORKSHOP | BOLT_TYPE_SITE
+_numeroParafusos   = boltArray.BoltPositions.Count;
+_parafuso          = new ParafusoDgt(boltArray, boltArray.PartToBeBolted);
+incluirPorcasArruelas(boltArray);
+_numeroArruelas    = _numeroArruelas * _numeroParafusos;
+_numeroPorcas      = _numeroPorcas   * _numeroParafusos;
+</code></pre>
+<p>A leitura dos atributos é sempre feita por <strong>propriedades de relatório do Tekla</strong> (<code>GetStringReportProperties</code>, <code>GetDoubleReportProperties</code>), e não por propriedades diretas da API.</p>
+<h3>4.4 Atributos lidos de cada <code>BoltArray</code></h3>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Propriedade de relatório</th>
+<th>Usada como</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Parafuso</strong></td>
+<td><code>NAME</code></td>
+<td>identificação/posição (primeiros 4 chars na versão legada)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>NAME_SHORT</code></td>
+<td>material/descrição curta</td>
+</tr>
+<tr>
+<td></td>
+<td><code>PROFILE</code></td>
+<td>perfil/descrição</td>
+</tr>
+<tr>
+<td></td>
+<td><code>SITE_WORKSHOP</code></td>
+<td>classificação obra/fábrica (string)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>WEIGHT</code></td>
+<td>peso unitário</td>
+</tr>
+<tr>
+<td></td>
+<td><code>BoltPositions.Count</code></td>
+<td>quantidade de parafusos do grupo</td>
+</tr>
+<tr>
+<td><strong>Porca</strong></td>
+<td><code>NUT.NAME</code></td>
+<td>identificação da porca</td>
+</tr>
+<tr>
+<td></td>
+<td><code>BOLT_STANDARD</code></td>
+<td>norma do parafuso</td>
+</tr>
+<tr>
+<td></td>
+<td><code>NUT.WEIGHT</code></td>
+<td>peso da porca</td>
+</tr>
+<tr>
+<td></td>
+<td><code>BoltPositions.Count</code></td>
+<td>quantidade</td>
+</tr>
+<tr>
+<td><strong>Arruela</strong></td>
+<td><code>WASHER.NAME</code></td>
+<td>identificação da arruela</td>
+</tr>
+<tr>
+<td></td>
+<td><code>BOLT_STANDARD</code></td>
+<td>norma do parafuso</td>
+</tr>
+<tr>
+<td></td>
+<td><code>WASHER.WEIGHT</code></td>
+<td>peso da arruela</td>
+</tr>
+<tr>
+<td></td>
+<td><code>BoltPositions.Count</code></td>
+<td>quantidade</td>
+</tr>
+</tbody></table>
+<p><strong>Peças ligadas pelo parafuso</strong> (via <code>ParafusoDgt</code>):</p>
+<ul>
+<li><code>PecaChega</code> = <code>boltArray.PartToBeBolted</code> (peça principal que recebe o furo/parafuso).</li>
+<li><code>PecaRecebe</code> = <code>boltArray.PartToBoltTo</code> (peça aparafusada).</li>
+<li><code>Peca</code> lê <code>PART_POS</code> → <code>Posicao</code> e <code>ASSEMBLY_POS</code> → <code>MarcaMontagem</code>.</li>
+</ul>
+<p><strong>Porcas e arruelas presentes</strong> (flags do <code>BoltArray</code>):</p>
+<pre><code class="language-csharp">if (boltArray.Nut1) processarPorca(boltArray);
+if (boltArray.Nut2) processarPorca(boltArray);
+if (boltArray.Washer1) processarArruela(boltArray);
+if (boltArray.Washer2) processarArruela(boltArray);
+if (boltArray.Washer3) processarArruela(boltArray);
+</code></pre>
+<h3>4.5 Classificação: fábrica (workshop) vs. obra (site)</h3>
+<p>Há <strong>duas</strong> grandezas distintas com nomes parecidos — atenção:</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Origem</th>
+<th>Valores</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>FixacaoDgt.Montagem</code></td>
+<td><code>boltArray.BoltType.ToString()</code></td>
+<td><code>BOLT_TYPE_WORKSHOP</code> / <code>BOLT_TYPE_SITE</code></td>
+</tr>
+<tr>
+<td><code>ParafusoDgt.Montagem</code></td>
+<td>propriedade <code>SITE_WORKSHOP</code></td>
+<td>string do template (ex.: &quot;Site&quot;/&quot;Workshop&quot;)</td>
+</tr>
+</tbody></table>
+<p>A <strong>classificação para as listas</strong> usa <code>FixacaoDgt.Montagem</code> (o <code>BoltType</code>):</p>
+<figure class="diagram">
+  <img src="diagrams/d4.svg" alt="Diagrama 4" />
+</figure><h3>4.6 Dois caminhos de coleta (detalhe vs. montagem)</h3>
+<figure class="diagram">
+  <img src="diagrams/d5.svg" alt="Diagrama 5" />
+</figure><p><strong>Detalhe (parte):</strong> a fixação só é aceite se a peça &quot;chega&quot; pertencer a um conjunto já coletado na lista de materiais (<code>lm.ContemPeca</code>), e depois é <strong>ligada</strong> ao conjunto certo via <code>lm.Ligar(...)</code>, usando <code>fixacao.Parafuso.PecaChega.MarcaMontagem</code> (= <code>ASSEMBLY_POS</code>) para achar o <code>ConjuntoDetalhadoDgt</code>.</p>
+<p><strong>Montagem (GA):</strong> as fixações não são ligadas a um conjunto específico; vão para listas globais <code>_fixacaoFabrica</code> / <code>_fixacaoObra</code>.</p>
+<hr>
+<h2>5. Escrita no DGT (<code>XDadosFormato</code>)</h2>
+<h3>5.1 Onde os dados são gravados</h3>
+<p>O código localiza o bloco de formato <code>FORMATO_DET_A1</code> e usa as suas <strong>linhas</strong> como âncora para o XData:</p>
+<pre><code class="language-csharp">var blocoLista = _dxf.Entities.Inserts.FirstOrDefault(x =&gt; x.Block.Name.StartsWith(&quot;FORMATO_DET_A1&quot;));
+var linhasHorizontais = blocoLista.Block.Entities.OfType&lt;Line&gt;().Where(l =&gt; l.StartPoint.Y == l.EndPoint.Y).ToList();
+var linhasVerticais   = blocoLista.Block.Entities.OfType&lt;Line&gt;().Where(l =&gt; l.StartPoint.X == l.EndPoint.X).ToList();
+
+linhaHorizontalMaisAlta   = linhasHorizontais.OrderByDescending(l =&gt; l.StartPoint.Y).First(); // campos de título
+linhaVerticalMaisDireita  = linhasVerticais.OrderByDescending(l =&gt; l.StartPoint.X).First();   // lista de materiais
+linhaHorizontalMaisBaixa  = linhasHorizontais.OrderBy(l =&gt; l.StartPoint.Y).First();           // quadro de aplicação
+</code></pre>
+<h3>5.2 Estrutura do XData (chaves / ApplicationRegistry)</h3>
+<p>APPNAME base = <code>08478f494deb</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Prefixo</th>
+<th>Conteúdo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>08478f494deb</code></td>
+<td>Campos de formato (título, projeto, escalas, versão TSEP, tipo de desenho).</td>
+</tr>
+<tr>
+<td><code>08478f494deb_M_{n}</code></td>
+<td>Cada conjunto/marca da lista de materiais.</td>
+</tr>
+<tr>
+<td><code>08478f494deb_I_{n}_</code></td>
+<td>Peças (itens) do conjunto <code>n</code>.</td>
+</tr>
+<tr>
+<td><code>08478f494deb_I_{n}_PF{F|O}_</code></td>
+<td>Parafusos ligados ao conjunto <code>n</code> (F= fábrica, O= obra).</td>
+</tr>
+<tr>
+<td><code>08478f494deb_I_{n}_PC{F|O}_</code></td>
+<td>Porcas ligadas ao conjunto <code>n</code>.</td>
+</tr>
+<tr>
+<td><code>08478f494deb_I_{n}_AR{F|O}_</code></td>
+<td>Arruelas ligadas ao conjunto <code>n</code>.</td>
+</tr>
+<tr>
+<td><code>08478f494deb_PF_{n}_</code> / <code>_PC_</code> / <code>_AR_</code></td>
+<td>Lista global de elementos de <strong>obra</strong>.</td>
+</tr>
+<tr>
+<td><code>08478f494deb_PF_FAB_{n}_</code> / <code>_PC_FAB_</code> / <code>_AR_FAB_</code></td>
+<td>Lista global de elementos de <strong>fábrica</strong>.</td>
+</tr>
+<tr>
+<td><code>08478f494deb_QA</code></td>
+<td>Quadro de aplicação (tag, quantidade, desenho, família).</td>
+</tr>
+</tbody></table>
+<h3>5.3 Fluxo de escrita</h3>
+<figure class="diagram">
+  <img src="diagrams/d6.svg" alt="Diagrama 6" />
+</figure><h3>5.4 Campos gravados por componente (XDataRecord, todos <code>String</code>)</h3>
+<p><strong>Parafuso — lista global</strong> (<code>inserirParafusosDgt</code>):
+<code>NAME</code>, <code>Quantidade</code>, <code>NAME_SHORT</code>, <code>WEIGHT</code></p>
+<p><strong>Parafuso — lista ligada ao conjunto</strong> (<code>insereParafusoFabricaDgt</code>):
+<code>NAME</code>, <code>Quantidade</code>, <code>NAME_SHORT</code>, <code>WEIGHT</code>, <code>PROFILE</code>, <code>PecaChega.Posicao</code>, <code>PecaRecebe.Posicao</code>, <code>Montagem</code></p>
+<p><strong>Porca</strong> (<code>inserirPorcasDgt</code> / <code>inserePorcaFabricaDgt</code>):
+<code>NUT.NAME</code>, <code>Quantidade</code>, <code>BOLT_STANDARD</code>, <code>NUT.WEIGHT</code>
+(a versão ligada ao conjunto usa a ordem <code>NUT.NAME</code>, <code>BOLT_STANDARD</code>, <code>Quantidade</code>, <code>NUT.WEIGHT</code>)</p>
+<p><strong>Arruela</strong> (<code>inserirArruelasDgt</code> / <code>insereArruelaFabricaDgt</code>):
+<code>WASHER.NAME</code>, <code>Quantidade</code>, <code>BOLT_STANDARD</code>, <code>WASHER.WEIGHT</code>
+(a versão ligada usa <code>WASHER.NAME</code>, <code>BOLT_STANDARD</code>, <code>Quantidade</code>, <code>WASHER.WEIGHT</code>)</p>
+<hr>
+<h2>6. Gravação final do ficheiro <code>.dgt</code></h2>
+<pre><code class="language-csharp">// AdapterDesenho.salvarDados(...)
+var caminhoSalvar = nomeArquivoProcessado.Replace(nome, $&quot;Enviar\\{nome}&quot;);
+dxf.Save(caminhoSalvar, true);                 // salva o DXF enriquecido
+
+var caminhoSalvarR3D = caminhoSalvar.Replace(&quot;.dxf&quot;, &quot;.dgt&quot;);
+if (File.Exists(caminhoSalvarR3D)) File.Delete(caminhoSalvarR3D);
+File.Move(caminhoSalvar, caminhoSalvarR3D);    // .dxf → .dgt
+File.Delete(caminhoSalvar);
+File.Delete(nomeArquivoProcessado);            // remove o DXF original da pasta de plot
+</code></pre>
+<pre><code>pasta de plot (XS_DRAWING_PLOT_FILE_DIRECTORY)
+   └─ desenho.dxf   ──▶  Enviar/desenho.dxf  ──▶  Enviar/desenho.dgt
+</code></pre>
+<hr>
+<h2>7. Diagrama-resumo do fluxo de dados</h2>
+<figure class="diagram">
+  <img src="diagrams/d7.svg" alt="Diagrama 7" />
+</figure><hr>
+<h2>8. Observações e pontos de atenção (caveats)</h2>
+<ol>
+<li><p><strong>Identificação pelo desenho, dados do modelo.</strong> O <code>TSD.Bolt</code> do desenho só fornece o <code>ModelIdentifier</code>; toda a informação real (NAME, WEIGHT, porcas, arruelas, peças) vem do <code>TSM.BoltArray</code> do modelo. Por isso, o parafuso precisa existir no modelo para ser extraído.</p>
+</li>
+<li><p><strong><code>BoltPositions.Count</code> define a quantidade.</strong> A &quot;quantidade&quot; de parafusos/porcas/arruelas é o número de posições do grupo (<code>BoltArray.BoltPositions.Count</code>), não um contador de ocorrências no desenho.</p>
+</li>
+<li><p><strong>Colapso de porcas/arruelas múltiplas.</strong> <code>FixacaoDgt</code> guarda <strong>uma única</strong> <code>PorcaDgt</code> e <strong>uma única</strong> <code>ArruelaDgt</code>. Se o <code>BoltArray</code> tiver <code>Nut1</code> e <code>Nut2</code> (ou <code>Washer1</code>/<code>Washer2</code>/<code>Washer3</code>), o segundo <code>processarPorca</code>/<code>processarArruela</code> sobrescreve o objeto anterior. Os contadores <code>_numeroPorcas</code>/<code>_numeroArruelas</code> são calculados mas <strong>não</strong> são expostos nem gravados no XData final.</p>
+</li>
+<li><p><strong>Dois significados de &quot;montagem&quot;.</strong> <code>FixacaoDgt.Montagem</code> vem de <code>BoltType</code> (WORKSHOP/SITE) e é o que classifica as listas; <code>ParafusoDgt.Montagem</code> vem de <code>SITE_WORKSHOP</code> (template) e é o que efetivamente vai para o XData do parafuso. Não confundir.</p>
+</li>
+<li><p><strong>Classificação por <code>BoltType</code>.</strong> No caminho de detalhe (<code>addFixacoes</code>) a comparação é <code>== &quot;BOLT_TYPE_WORKSHOP&quot;</code> e <code>== &quot;BOLT_TYPE_SITE&quot;</code>; qualquer outro valor simplesmente não é ligado (fica sem destino). No caminho de montagem (<code>addParafuso</code>), tudo o que não é WORKSHOP cai em <code>_fixacaoObra</code>.</p>
+</li>
+<li><p><strong>Filtro de peça no detalhe.</strong> Em <code>addFixacoes</code>, se <code>lm.ContemPeca(fixacao.Parafuso.PecaChega.Posicao)</code> for falso, a fixação é descartada. Isso garante que só se listam parafusos de peças efetivamente presentes na LM do desenho de detalhe.</p>
+</li>
+<li><p><strong><code>Equals</code> por referência.</strong> <code>FixacaoDgt</code> não sobrescreve <code>Equals</code>; <code>Contains</code>/<code>FirstOrDefault(...Equals...)</code> em <code>Ligar</code>/<code>ligar</code> usam igualdade de referência. Portanto, fixações &quot;iguais&quot; (mesmo parafuso) em <code>BoltArray</code>s diferentes <strong>não</strong> são agregadas — a deduplicação só ocorre a nível do <code>Identifier</code> (GUID) do desenho.</p>
+</li>
+<li><p><strong>Código legado ainda presente.</strong> <code>ElementosFixacao.cs</code>, <code>Parafuso.cs</code>, <code>Porca.cs</code>, <code>Arruela.cs</code>, <code>DescricaoParafuso.cs</code> etc. formam um caminho mais antigo (com descrições formatadas como &quot;PARAF SEXT …&quot;, &quot;PORCA SEXT …&quot;, &quot;ARRUELA LISA …&quot; e regras de material por <code>BOLT_STANDARD</code>). Esse caminho <strong>não</strong> é chamado pelo fluxo DGT atual (<code>Program.cs</code> → <code>AdapterDesenho</code> → <code>AbsProcessador</code>), mas permanece no projeto.</p>
+</li>
+<li><p><strong>Tipo de desenho decide o processador.</strong> <code>AbsProcessador.ObterTipo</code> usa reflexão para obter o <code>Identifier</code> do desenho, cria um <code>Beam</code> temporário com esse ID e lê <code>TCNM_TIPO_DESENHO</code>. <code>GADrawing</code> → montagem; <code>MultiDrawing</code> com <code>TCNM_TIPO_DESENHO == &quot;MONTAGEM&quot;</code> → montagem; demais <code>MultiDrawing</code> → detalhe.</p>
+</li>
+<li><p><strong>Flags de controle via template.</strong> <code>TCNM_CRIAR_LM</code> e <code>TCNM_LISTAR_PARAF</code> controlam se a lista de materiais e a lista de elementos de obra são gravadas no XData (valores comparados a &quot;NÃO&quot;).</p>
+</li>
+</ol>
+<hr>
+<h2>9. Resumo em uma frase</h2>
+<blockquote>
+<p>O programa percorre as vistas de cada desenho selecionado, localiza os objetos gráficos <code>TSD.Bolt</code>, resolve cada um para o <code>TSM.BoltArray</code> do modelo via <code>ModelIdentifier</code>, lê os atributos de relatório (parafuso/porca/arruela + peças ligadas), classifica a fixação como fábrica ou obra, e grava tudo como <strong>XData</strong> anexado às linhas do bloco de formato do DXF — que por fim é salvo e renomeado para <code>.dgt</code>.</p>
+</blockquote>
+
+</body>
+</html>

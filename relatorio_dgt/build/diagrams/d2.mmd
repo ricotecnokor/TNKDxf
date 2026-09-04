@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant P as Program
+    participant AD as AdapterDesenho
+    participant AP as AbsProcessador
+    participant PR as Processador (Detalhe/Montagem)
+    participant EF as ElementosFixacaoDgt
+    participant FX as FixacaoDgt/ParafusoDgt/PorcaDgt/ArruelaDgt
+    participant XD as XDadosFormato
+
+    P->>AD: ColetarArquivos(versaoTsep)
+    AD->>AP: ObterTipo(model, drawing)
+    AP-->>AD: processador (Montagem|Detalhe)
+    AD->>PR: Processar(versaoTsep, dxf)
+    PR->>EF: Coletar(drawing, prefixos, coletorLM)
+    EF->>EF: obterBoltArraysUnicosDesenho() → HashSet<Identifier>
+    loop para cada Identifier único
+        EF->>EF: model.SelectModelObject(id)
+        alt é BoltArray
+            EF->>FX: new FixacaoDgt(boltArray)
+            FX->>FX: new ParafusoDgt / PorcaDgt / ArruelaDgt
+            EF->>EF: classifica WORKSHOP vs SITE
+        end
+    end
+    PR->>XD: InserirInformacoes()
+    XD->>XD: inserirDadosLM() + inserir*Dgt() (XData)
+    AD->>AD: salvarDados() → .dgt

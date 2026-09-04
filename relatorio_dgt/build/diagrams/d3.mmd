@@ -1,0 +1,42 @@
+classDiagram
+    class FixacaoDgt {
+        -int _quantidadeLigacoes
+        -string _montagem          // BoltType.ToString()
+        -int _numeroParafusos      // BoltPositions.Count
+        -int _numeroPorcas
+        -int _numeroArruelas
+        +ParafusoDgt Parafuso
+        +PorcaDgt Porca
+        +ArruelaDgt Arruela
+        +string Montagem
+        +IncrementarQuantidadeLigacoes()
+    }
+    class ParafusoDgt {
+        -string _name, _nameShort, _profile
+        -double _weight
+        -int _quantidade           // BoltPositions.Count
+        -string _montagem          // SITE_WORKSHOP
+        -Peca _pecaChega, _pecaRecebe
+    }
+    class PorcaDgt {
+        -string _nutName           // NUT.NAME
+        -string _boltStandard      // BOLT_STANDARD
+        -int _quantidade
+        -double _nutWeight         // NUT.WEIGHT
+    }
+    class ArruelaDgt {
+        -string _whasherName       // WASHER.NAME
+        -string _boltStandard
+        -int _quantidade
+        -double _washerWeight      // WASHER.WEIGHT
+    }
+    class Peca {
+        +string Posicao            // PART_POS
+        +string MarcaMontagem      // ASSEMBLY_POS
+    }
+
+    FixacaoDgt *-- ParafusoDgt
+    FixacaoDgt *-- PorcaDgt
+    FixacaoDgt *-- ArruelaDgt
+    ParafusoDgt *-- Peca : PecaChega (PartToBeBolted)
+    ParafusoDgt *-- Peca : PecaRecebe (PartToBoltTo)

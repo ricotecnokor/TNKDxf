@@ -8,22 +8,25 @@ namespace ConsoleTNKDxf
     {
         static void Main(string[] args)
         {
-            const string VERSAO_TSEP = "1.11.1";
+            ExportacaoDxf.Exportar();
+
+            const string VERSAO_TSEP = "1.18.1";
 
             Console.ForegroundColor = ConsoleColor.Red;
 
             //RespostaModelo resposta = BuscarModeloUso();
             TSM.Model modelTemp = new TSM.Model();
+            bool conectado = modelTemp.GetConnectionStatus();
+            Console.WriteLine($"ConnectionStatus: {conectado}");
 
-
-            if(!modelTemp.GetConnectionStatus())
+            if (!conectado)
             {
                 Console.WriteLine("Não foi possível conectar ao modelo.");
                 return;
             }
 
             string nomeModel = modelTemp.GetInfo().ModelName;
-
+            Console.WriteLine($"Modelo conectado: {nomeModel}");
 
             TSD.DrawingHandler dh = new TSD.DrawingHandler();
 
@@ -35,15 +38,19 @@ namespace ConsoleTNKDxf
                 return;
             }
 
-            ExportacaoDxf.Exportar();
+            //ExportacaoDxf.Exportar();
 
             IAdapterDesenho adapterDesenho = new AdapterDesenho(modelTemp);
+
+
+
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine($"Coletando arquivos na versão {VERSAO_TSEP} ...");
             Console.ForegroundColor = ConsoleColor.Green;
 
             var resposta = adapterDesenho.ColetarArquivos(VERSAO_TSEP);
 
+            
             if (!resposta.Sucesso)
             {
                 Console.ForegroundColor = ConsoleColor.Red;

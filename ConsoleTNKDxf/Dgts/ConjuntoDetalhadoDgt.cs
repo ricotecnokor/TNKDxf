@@ -1,37 +1,24 @@
-﻿using System;
+﻿using ConsoleTNKDxf.Abstracoes;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using Tekla.Structures.Drawing;
-using Tekla.Structures.Model;
 using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf.Dgts
 {
-    public class ConjuntoDgt
+    public class ConjuntoDetalhadoDgt : ConjuntoAbstrato
     {
         private List<PecaDgt> _itens = new List<PecaDgt>();
-        private double _height;
-        private double _weigth;
-        private string _assemblyPos;
-        private string _mainPartName;
-        private int _quantidade;
+        
 
         public List<PecaDgt> Itens => _itens;
 
-        public string AssemblyPos => _assemblyPos;
-        public string MainPartName => _mainPartName;
-        public int Quantidade => _quantidade;
-        public double Height => _height;
-        public double Weigth => _weigth;
+
 
         private readonly PecaDgt _pecaDgtMaiPart;
 
 
-        public ConjuntoDgt(TSM.Part part, PecaDgt pecaDgtMaiPart)
+        public ConjuntoDetalhadoDgt(TSM.Part part, PecaDgt pecaDgtMaiPart)
         {
             var assy = part.GetAssembly();
             _pecaDgtMaiPart = pecaDgtMaiPart;
@@ -53,9 +40,7 @@ namespace ConsoleTNKDxf.Dgts
             assy.GetIntegerReportProperties(integerReportProperties, ref integerProperties);
             int number = integerProperties.ContainsKey("NUMBER") ? int.Parse(integerProperties["NUMBER"].ToString()) : 1;
             int modelTotal = integerProperties.ContainsKey("ASSEMBLY.MODEL_TOTAL") ? int.Parse(integerProperties["ASSEMBLY.MODEL_TOTAL"].ToString()) : 1;
-            //_quantidade = number * modelTotal;
-
-
+   
 
             int qtdModel = 0;
             part.GetReportProperty("ASSEMBLY.MODEL_TOTAL", ref qtdModel);
@@ -63,9 +48,6 @@ namespace ConsoleTNKDxf.Dgts
             
 
             _quantidade = number * qtdModel;
-
-
-
 
             PecaDgt peca = new PecaDgt(part);
             
@@ -92,28 +74,32 @@ namespace ConsoleTNKDxf.Dgts
         //    tempBeam.GetReportProperty("REVISION.LAST_APPROVED_BY", ref _revisionLastApprovedBy);
         //    tempBeam.GetReportProperty("REVISION.LAST_DATE_APPROVED", ref _revisionLastDateApproved);
         //}
-            
-        
 
-        public void AddItem(TSM.Part part, string assemblyPos)
+
+
+        public void AddItem(TSM.Part part, TSM.Assembly assembly)
         {
             string posicaoPeca = part.ObterPropriedade("PART_POS").ToString();
 
-            if (_itens.Any(c => c.PartPos == posicaoPeca))
+            //if (_itens.Any(c => c.PartPos == posicaoPeca))
+            //{
+            //    var existingItem = _itens.First(c => c.PartPos == posicaoPeca);
+            //    existingItem.IncrementarQuantidade();
+
+            //    //if (existingItem.PartPos == _pecaDgtMaiPart.PartPos)
+            //    //{
+            //    //    _quantidade++;
+            //    //}
+
+            //    return;
+            //}
+
+            if (!_itens.Any(c => c.PartPos == posicaoPeca))
             {
-                var existingItem = _itens.First(c => c.PartPos == posicaoPeca);
-                existingItem.IncrementarQuantidade();
-
-                //if (existingItem.PartPos == _pecaDgtMaiPart.PartPos)
-                //{
-                //    _quantidade++;
-                //}
-
-                return;
+                PecaDgt item = new PecaDgt(part);
+                _itens.Add(item);
             }
-
-            PecaDgt item = new PecaDgt(part);
-            _itens.Add(item);
+               
         }
 
         public void AddItemExistente(string posicaoPeca)
@@ -125,13 +111,13 @@ namespace ConsoleTNKDxf.Dgts
             }
         }
 
-        public void MultiplicaQtdConjuntoPorPeca()
+        public void MultiplicaQtdConjuntoPorPeca(int quantidadeConjuntos)
         {
             //var itemAvulso = _itens.FirstOrDefault();
             //itemAvulso.MultiplicaQtdConjuntoPorPeca(_quantidade);
             foreach (var item in _itens)
             {
-                item.MultiplicaQtdConjuntoPorPeca(_quantidade);
+                item.MultiplicaQtdConjuntoPorPeca(quantidadeConjuntos);
             }
         }
     }

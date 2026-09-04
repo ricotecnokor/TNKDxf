@@ -16,7 +16,7 @@ namespace TNKDxf
     public class MainViewModel : ViewModelBase
     {
         private string _resultado = "Carregando...";
-        private string _projeto;
+        private string _projeto = string.Empty;
         private object _conteudoSelecionado;
         public bool _processado = false;
         AvaliadorDesenhos _avaliadorDesenhos;

@@ -1,0 +1,12 @@
+flowchart TD
+    A["Program.Main"] --> B["ExportacaoDxf.Exportar()<br/>(Tekla Dwg.exe → .dxf na pasta de plot)"]
+    A --> C["AdapterDesenho.ColetarArquivos()"]
+    C --> D["Percorre desenhos selecionados<br/>(DrawingHandler → DrawingSelector)"]
+    D --> E["AbsProcessador.ObterTipo(model, drawing)"]
+    E -->|"GADrawing OU TCNM_TIPO_DESENHO = MONTAGEM"| F["ProcessarMontagem"]
+    E -->|"MultiDrawing (demais)"| G["ProcessadorDetalhamento"]
+    F --> H["ElementosFixacaoDgt.Coletar(drawing, prefixos, lm)"]
+    G --> H
+    H --> I["XDadosFormato.InserirInformacoes(...)"]
+    I --> J["Anexa XData às linhas do bloco FORMATO_DET_A1"]
+    J --> K["salvarDados(): save DXF + rename .dxf → .dgt"]

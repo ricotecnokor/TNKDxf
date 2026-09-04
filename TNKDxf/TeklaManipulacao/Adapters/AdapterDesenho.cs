@@ -35,7 +35,6 @@ namespace TNKDxf.TeklaManipulacao.Adapters
                     if (desenhos.Current is TSD.MultiDrawing multi)
                     {
 
-                        bool encontrouConteudoRelevante = false;
                         var sheet = multi.GetSheet();
                         var views = sheet.GetAllViews();
 

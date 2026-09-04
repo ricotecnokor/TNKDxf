@@ -1,22 +1,24 @@
-﻿using System;
+﻿using ConsoleTNKDxf.Abstracoes;
+using System;
 using System.Reflection;
-using Tekla.Structures.Drawing;
-using Tekla.Structures.DrawingInternal;
 using Tekla.Structures.Model;
 using TSD = Tekla.Structures.Drawing;
 using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf.Dgts
 {
-    public class DesenhoDgt
+    public abstract class DesenhoDgtAbs<T> where T : ConjuntoAbstrato
     {
-        private ListaMateriaisDtg _listaMateriais;
-        private QuadroAplicacaoDgt _quadroAplicacao;
-        private ElementosFixacaoDgt _elementosFixacao;
-        private RevisaoDgt _revisao;
-        private CamposFormatoDgt _camposFormato;
-        private string _listarElementosObra;
-        private string _criarLM;
+        protected LmAbs<T> _coletorLM;
+
+        //protected QuadroAplicacaoDgt _quadroAplicacao;
+        protected ElementosFixacaoDgt _elementosFixacao;
+        protected RevisaoDgt _revisao;
+        protected CamposDesenhoINP _camposFormato;
+        protected string _listarElementosObra;
+        protected string _criarLM;
+
+
         public string Title => _camposFormato.Title;
         public string Title1 => _camposFormato.Title1;
         public string Title2 => _camposFormato.Title2;
@@ -33,27 +35,34 @@ namespace ConsoleTNKDxf.Dgts
         public string ListarElementosObra => _listarElementosObra;
         public string CriarLM => _criarLM;
 
-        public ListaMateriaisDtg ListaMateriais => _listaMateriais;
-        public ElementosFixacaoDgt ElementosFixacao => _elementosFixacao;
-        public QuadroAplicacaoDgt QuadroAplicacao => _quadroAplicacao;
-        public RevisaoDgt Revisao => _revisao;
+        //public LmAbs<T> ColetorMateriais => _coletorLM;
 
-        
 
-        public DesenhoDgt(TSD.MultiDrawing multiDrawing, TSM.Model model)
-        {
-            _camposFormato = new CamposFormatoDgt(multiDrawing);
+        //public ElementosFixacaoDgt ElementosFixacao => _elementosFixacao;
+        //public QuadroAplicacaoDgt QuadroAplicacao => _quadroAplicacao;
+        //public RevisaoDgt Revisao => _revisao;
 
-            string prefixoConjunto = int.Parse(_camposFormato.Title1.Split('-')[3]).ToString();
+        //public DesenhoDgtAbs(TSD.Drawing multiDrawing, TSM.Model model, CamposFormatoDgt camposFormatoDgt, LmAbs<T> coletorLm)
+        //{
+        //    _camposFormato = camposFormatoDgt;
 
-            _listaMateriais = new ListaMateriaisDtg(model, multiDrawing, prefixoConjunto);
-            _quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
-            _elementosFixacao = new ElementosFixacaoDgt(model, multiDrawing, prefixoConjunto);
-            _revisao = new RevisaoDgt(multiDrawing);
-            setListarElementosObra(multiDrawing);
-        }
+        //    //_coletorLM = coletorLm;
 
-        private void setListarElementosObra(TSD.MultiDrawing multiDrawing)
+
+
+
+        //    //_coletorLM.Coletar(multiDrawing);
+
+        //    //_quadroAplicacao = new QuadroAplicacaoDgt(multiDrawing);
+           
+
+
+
+        //    //_revisao = new RevisaoDgt(multiDrawing);
+
+        //}
+
+        protected void setListarElementosObra(TSD.Drawing multiDrawing)
         {
             //
             // Acessa o Identifier interno do Drawing via Reflection
@@ -70,6 +79,8 @@ namespace ConsoleTNKDxf.Dgts
             //string listarElementosObra = string.Empty;
             tempBeam.GetReportProperty("TCNM_LISTAR_PARAF", ref _listarElementosObra);
             tempBeam.GetReportProperty("TCNM_CRIAR_LM", ref _criarLM);
+
+
 
             bool isDiagrama = false;
             string currentTemplateFile = string.Empty;

@@ -1,0 +1,12 @@
+flowchart TD
+    X["InserirInformacoes()"] --> C["inserirCamposFormatoDgt()<br/>XData base (título/versão/tipo)"]
+    X -->|"criarLM != NÃO"| L["inserirDadosLM()"]
+    L --> CJ["inserirConjuntosDgt()"]
+    CJ --> CJ1["para cada conjunto: XData M_{n}"]
+    CJ --> CJ2{"é ConjuntoDetalhadoDgt?"}
+    CJ2 -->|"sim"| CJ3["insereListaPecasDgt (itens I_{n}_)"]
+    CJ3 --> CJ4["insereListaFixacao(FixacaoFabrica, 'F')"]
+    CJ3 --> CJ5["insereListaFixacao(FixacaoObra, 'O')"]
+    L --> OB{"listarElementosObra != NÃO<br/>e FixacaoObra.Count > 0?"}
+    OB -->|"sim"| OE["inserirElementosObraDgt()<br/>PF_ / PC_ / AR_"]
+    L --> FB["inserirElementosFabricaDgt()<br/>PF_FAB_ / PC_FAB_ / AR_FAB_"]

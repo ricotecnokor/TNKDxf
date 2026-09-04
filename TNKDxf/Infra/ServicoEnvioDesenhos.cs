@@ -61,7 +61,7 @@ namespace TNKDxf.Infra
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 respostas = new CommandResult
                 {

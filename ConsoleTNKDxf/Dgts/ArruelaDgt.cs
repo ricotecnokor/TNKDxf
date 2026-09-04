@@ -14,7 +14,7 @@ namespace ConsoleTNKDxf.Dgts
         public string WasherName => _whasherName;
         public string BoltStandard => _boltStandard;
         public string Quantidade => _quantidade.ToString();
-        public string WasherWeight => Math.Round(_washerWeight, 2).ToString();
+        public string WasherWeight => _washerWeight.ToString();
 
         public ArruelaDgt(TSM.BoltArray boltArray)
         {
@@ -24,7 +24,7 @@ namespace ConsoleTNKDxf.Dgts
             boltArray.GetStringReportProperties(stringReportProperties, ref stringProperties);
             _whasherName = stringProperties.ContainsKey("WASHER.NAME") ? stringProperties["WASHER.NAME"]?.ToString() : string.Empty;
             _boltStandard = stringProperties.ContainsKey("BOLT_STANDARD") ? stringProperties["BOLT_STANDARD"]?.ToString() : string.Empty;
-            _quantidade = 1;
+            _quantidade = boltArray.BoltPositions.Count;
 
             ArrayList doubleReportProperties = new ArrayList { "WASHER.WEIGHT" };
             Hashtable doubleProperties = new Hashtable();
