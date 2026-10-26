@@ -10,7 +10,7 @@ namespace ConsoleTNKDxf
         {
             ExportacaoDxf.Exportar();
 
-            const string VERSAO_TSEP = "1.18.1";
+            const string VERSAO_TSEP = "1.19.1";
 
             Console.ForegroundColor = ConsoleColor.Red;
 
