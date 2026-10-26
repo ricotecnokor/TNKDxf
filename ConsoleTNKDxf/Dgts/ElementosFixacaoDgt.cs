@@ -1,4 +1,4 @@
-﻿using ConsoleTNKDxf.Abstracoes;
+using ConsoleTNKDxf.Abstracoes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,14 +45,13 @@ namespace ConsoleTNKDxf.Dgts
         public void Coletar(Drawing multiDrawing, List<string> prefixosConjunto, LmDetalhesDtg lm)
         {
             _lm = lm;
-            
 
-
-            HashSet<Identifier> boltArraysUnicosNoDesenho = obterBoltArraysUnicosDesenho(multiDrawing);
+            HashSet<Identifier> boltArraysUnicosNoDesenho = (lm != null && lm.ParafusosUnicosNoDesenho != null && lm.ParafusosUnicosNoDesenho.Count > 0)
+                ? lm.ParafusosUnicosNoDesenho
+                : obterBoltArraysUnicosDesenho(multiDrawing);
 
             foreach (Identifier modelId in boltArraysUnicosNoDesenho)
             {
-
                 var modelObj = _model.SelectModelObject(modelId);
 
                 if (modelObj is TSM.BoltArray modelBoltArray)
@@ -68,7 +67,6 @@ namespace ConsoleTNKDxf.Dgts
 
             foreach (Identifier modelId in parafsUnicosNoDesenho)
             {
-
                 var modelObj = _model.SelectModelObject(modelId);
 
                 if (modelObj is TSM.BoltArray modelBoltArray)
@@ -108,10 +106,9 @@ namespace ConsoleTNKDxf.Dgts
         {
             bool temPecaAparafusar = false;
 
-
             var fixacao = new FixacaoDgt(boltArray);
 
-            if(!_lm.ContemPeca(fixacao.Parafuso.PecaChega.Posicao))//_pecasValidacao.ContainsKey(fixacao.Parafuso.PecaChega.Posicao))
+            if (fixacao.Parafuso.PecaChega == null || !_lm.ContemPeca(fixacao.Parafuso.PecaChega.Posicao))
             {
                 return;
             }

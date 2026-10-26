@@ -1,4 +1,4 @@
-﻿using ConsoleTNKDxf.Abstracoes;
+using ConsoleTNKDxf.Abstracoes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,63 +35,108 @@ namespace ConsoleTNKDxf.Dgts
         //    _prefixoConjunto = prefixoConjunto;
         //}
 
+        public HashSet<Identifier> ParafusosUnicosNoDesenho { get; private set; } = new HashSet<Identifier>();
+
         public override void Coletar(Drawing multiDrawing)
         {
-            HashSet<Identifier> pecasUnicasNoDesenho = obterPecasUnicasDesenho(multiDrawing);
+            obterObjetosDesenho(multiDrawing);
+        }
 
-            foreach (Identifier partId in pecasUnicasNoDesenho)
+        private void obterObjetosDesenho(Drawing multiDrawing)
+        {
+            HashSet<Identifier> pecasUnicasNoDesenho = new HashSet<Identifier>();
+            ParafusosUnicosNoDesenho = new HashSet<Identifier>();
+
+            var sheet = multiDrawing?.GetSheet();
+            if (sheet == null) return;
+
+            var allViews = sheet.GetAllViews();
+            var listaViews = new List<TSD.View>();
+            var viewEnum = allViews.GetEnumerator();
+            while (viewEnum.MoveNext())
             {
-                var modelObj = _model.SelectModelObject(partId);
-
-                if (modelObj is TSM.Part modelPart)
+                if (viewEnum.Current is TSD.View v)
                 {
-                    addPeca(modelPart);
+                    listaViews.Add(v);
                 }
             }
 
+            // Ordena vistas: principais primeiro (ModelView, FrontView, etc.), cortes/detalhes depois
+            var vistasOrdenadas = listaViews
+                .OrderBy(v => ehCorteOuDetalhe(v) ? 1 : 0)
+                .ToList();
 
-            var teste = _conjuntos;
+            bool todasVistasPrincipaisProcessadas = false;
 
-            //foreach (var conjuntoAvulso in _conjuntos)
-            //{
-            //    if (conjuntoAvulso.AssemblyPos == "00724AK")
-            //    {
-
-
-            //        bool teste = true;
-
-
-            //    }
-
-            //    conjuntoAvulso.MultiplicaQtdConjuntoPorPeca(conjuntoAvulso.Quantidade);
-            //}
-
-        }
-
-        private HashSet<Identifier> obterPecasUnicasDesenho(Drawing multiDrawing)
-        {
-            HashSet<Identifier> pecasUnicasNoDesenho = new HashSet<Identifier>();
-
-            var views = multiDrawing.GetSheet().GetAllViews().GetEnumerator();
-            while (views.MoveNext())
+            foreach (var view in vistasOrdenadas)
             {
-
-                var view = views.Current as TSD.View;
-                if (view == null) continue;
-
-                // 2. Pegar todas as partes gráficas nesta vista
-                DrawingObjectEnumerator drawingParts = view.GetObjects(new[] { typeof(TSD.Part) });
-                while (drawingParts.MoveNext())
+                bool ehCorte = ehCorteOuDetalhe(view);
+                if (ehCorte && !todasVistasPrincipaisProcessadas)
                 {
-                    TSD.Part drwPart = drawingParts.Current as TSD.Part;
-                    if (drwPart != null)
+                    todasVistasPrincipaisProcessadas = true;
+                }
+
+                // Se já passamos pelas vistas principais e todos os conjuntos encontrados estão 100% completos:
+                if (todasVistasPrincipaisProcessadas && conjuntosEstaoCompletos(ParafusosUnicosNoDesenho))
+                {
+                    // Cortes e detalhes redundantes podem ser ignorados com segurança sem perda de peças ou parafusos
+                    break;
+                }
+
+                DrawingObjectEnumerator drwObjs = view.GetObjects(new[] { typeof(TSD.Part), typeof(TSD.Bolt) });
+                while (drwObjs.MoveNext())
+                {
+                    var cur = drwObjs.Current;
+                    if (cur is TSD.Part drwPart)
                     {
-                        pecasUnicasNoDesenho.Add(drwPart.ModelIdentifier);
+                        if (pecasUnicasNoDesenho.Add(drwPart.ModelIdentifier))
+                        {
+                            var modelObj = _model.SelectModelObject(drwPart.ModelIdentifier);
+                            if (modelObj is TSM.Part modelPart)
+                            {
+                                addPeca(modelPart);
+                            }
+                        }
+                    }
+                    else if (cur is TSD.Bolt drwBolt)
+                    {
+                        ParafusosUnicosNoDesenho.Add(drwBolt.ModelIdentifier);
                     }
                 }
             }
+        }
 
-            return pecasUnicasNoDesenho;
+        private bool ehCorteOuDetalhe(TSD.View view)
+        {
+            try
+            {
+                string tipo = view.ViewType.ToString();
+                return tipo == "SectionView" || tipo == "DetailView";
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private bool conjuntosEstaoCompletos(HashSet<Identifier> parafusosColetados)
+        {
+            if (_conjuntos.Count == 0) return false;
+            foreach (var conjunto in _conjuntos)
+            {
+                if (conjunto.TotalPartesNoAssembly > 0 && conjunto.TotalPartesColetadas < conjunto.TotalPartesNoAssembly)
+                {
+                    return false;
+                }
+                if (conjunto.TotalParafusosNoAssembly > 0 && parafusosColetados != null)
+                {
+                    if (!conjunto.BoltIdsNoAssembly.IsSubsetOf(parafusosColetados))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
        
@@ -154,9 +199,7 @@ namespace ConsoleTNKDxf.Dgts
                 return;
             }
 
-            //assy.GetSecondaries
-
-            var novoConjunto = new ConjuntoDetalhadoDgt(part, new PecaDgt(assy.GetMainPart() as TSM.Part));
+            var novoConjunto = new ConjuntoDetalhadoDgt(part);
             _conjuntos.Add(novoConjunto);
         }
 
@@ -167,10 +210,8 @@ namespace ConsoleTNKDxf.Dgts
 
         internal void Ligar(FixacaoDgt fixacao, string tipoFixacao)
         {
-
-           var marcaConjunto = fixacao.Parafuso.PecaChega.MarcaMontagem;
-
-            if (!_conjuntos.Any(c => c.AssemblyPos == marcaConjunto))
+            var marcaConjunto = fixacao.Parafuso.PecaChega?.MarcaMontagem;
+            if (string.IsNullOrEmpty(marcaConjunto) || !_conjuntos.Any(c => c.AssemblyPos == marcaConjunto))
                 return;
 
             ConjuntoDetalhadoDgt conjunto = (ConjuntoDetalhadoDgt)_conjuntos.FirstOrDefault(c => c.AssemblyPos == marcaConjunto);

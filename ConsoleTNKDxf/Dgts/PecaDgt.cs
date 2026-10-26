@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Globalization;
 using Tekla.Structures;
@@ -53,7 +53,25 @@ namespace ConsoleTNKDxf.Dgts
 
         public PecaDgt(TSM.Part pecaChild)
         {
-           
+            carregarPropriedades(pecaChild);
+            _quantidade = contarPartesNoAssembly(pecaChild.GetAssembly(), _partPos);
+        }
+
+        public PecaDgt(TSM.Part pecaChild, int quantidade)
+        {
+            carregarPropriedades(pecaChild);
+            if (quantidade >= 0)
+            {
+                _quantidade = quantidade;
+            }
+            else
+            {
+                _quantidade = contarPartesNoAssembly(pecaChild.GetAssembly(), _partPos);
+            }
+        }
+
+        private void carregarPropriedades(TSM.Part pecaChild)
+        {
             _identifier = pecaChild.Identifier;
 
             Hashtable doubleProperties = new Hashtable();
@@ -84,8 +102,6 @@ namespace ConsoleTNKDxf.Dgts
             pecaChild.GetIntegerReportProperties(integerReportProperties, ref integerProperties);
             _number = integerProperties.ContainsKey("NUMBER") ? int.Parse(integerProperties["NUMBER"].ToString()) : 1;
             _modelTotalQtd = integerProperties.ContainsKey("MODEL_TOTAL") ? int.Parse(integerProperties["MODEL_TOTAL"].ToString()) : 1;
-
-            _quantidade = contarPartesNoAssembly(pecaChild.GetAssembly(), _partPos); 
         }
 
         public int contarPartesNoAssembly(TSM.Assembly assy, string posicaoAlvo)
