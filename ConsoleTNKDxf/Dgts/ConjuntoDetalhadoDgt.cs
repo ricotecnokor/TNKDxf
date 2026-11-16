@@ -1,4 +1,4 @@
-﻿using ConsoleTNKDxf.Abstracoes;
+using ConsoleTNKDxf.Abstracoes;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +16,15 @@ namespace ConsoleTNKDxf.Dgts
 
 
         private readonly PecaDgt _pecaDgtMaiPart;
+        private Dictionary<string, int> _contagemPartesAssembly;
+        private HashSet<Tekla.Structures.Identifier> _boltIdsAssembly = new HashSet<Tekla.Structures.Identifier>();
 
+        public int TotalPartesNoAssembly => _contagemPartesAssembly != null ? _contagemPartesAssembly.Values.Sum() : 0;
+        public int TotalPartesColetadas => _itens.Sum(p => p.Quantidade);
+        public int TotalParafusosNoAssembly => _boltIdsAssembly.Count;
+        public HashSet<Tekla.Structures.Identifier> BoltIdsNoAssembly => _boltIdsAssembly;
 
-        public ConjuntoDetalhadoDgt(TSM.Part part, PecaDgt pecaDgtMaiPart)
+        public ConjuntoDetalhadoDgt(TSM.Part part, PecaDgt pecaDgtMaiPart = null)
         {
             var assy = part.GetAssembly();
             _pecaDgtMaiPart = pecaDgtMaiPart;
@@ -40,66 +46,97 @@ namespace ConsoleTNKDxf.Dgts
             assy.GetIntegerReportProperties(integerReportProperties, ref integerProperties);
             int number = integerProperties.ContainsKey("NUMBER") ? int.Parse(integerProperties["NUMBER"].ToString()) : 1;
             int modelTotal = integerProperties.ContainsKey("ASSEMBLY.MODEL_TOTAL") ? int.Parse(integerProperties["ASSEMBLY.MODEL_TOTAL"].ToString()) : 1;
-   
 
             int qtdModel = 0;
             part.GetReportProperty("ASSEMBLY.MODEL_TOTAL", ref qtdModel);
 
-            
-
             _quantidade = number * qtdModel;
 
-            PecaDgt peca = new PecaDgt(part);
+            inicializarContagemAssembly(assy);
+
+            string partPos = part.ObterPropriedade("PART_POS")?.ToString() ?? string.Empty;
+            int qtdPeca = obterContagemPeca(partPos, assy);
+            PecaDgt peca = new PecaDgt(part, qtdPeca);
             
             _itens.Add(peca);
         }
 
-        //private void pegarDadosRelatorio()
-        //{
-        //    PropertyInfo propInfo = drawing.GetType().GetProperty("Identifier",
-        //                                BindingFlags.Instance | BindingFlags.NonPublic);
-        //    object value = propInfo.GetValue(drawing, null);
-        //    Tekla.Structures.Identifier identifier = (Tekla.Structures.Identifier)value;
+        private void inicializarContagemAssembly(TSM.Assembly assy)
+        {
+            if (_contagemPartesAssembly != null || assy == null) return;
+            _contagemPartesAssembly = new Dictionary<string, int>();
 
-        //    // Cria um objeto ModelObject temporário com o mesmo Identifier
-        //    Beam tempBeam = new Beam();
-        //    tempBeam.Identifier = identifier;
+            var principal = assy.GetMainPart() as TSM.Part;
+            if (principal != null)
+            {
+                string posPrincipal = principal.ObterPropriedade("PART_POS")?.ToString();
+                if (!string.IsNullOrEmpty(posPrincipal))
+                {
+                    _contagemPartesAssembly[posPrincipal] = 1;
+                }
 
-        //    tempBeam.GetReportProperty("REVISION.LAST_MARK", ref _revisionLastMark);
-        //    tempBeam.GetReportProperty("REVISION.LAST_DESCRIPTION", ref _revisionLastDescription);
-        //    tempBeam.GetReportProperty("REVISION.LAST_CREATED_BY", ref _revisionLastCreatedBy);
-        //    tempBeam.GetReportProperty("REVISION.LAST_DATE_CREATE", ref _revisionLastDateCreated);
-        //    tempBeam.GetReportProperty("REVISION.LAST_CHECKED_BY", ref _revisionLastCheckedBy);
-        //    tempBeam.GetReportProperty("REVISION.LAST_DATE_CHECKED", ref _revisionLastDateChecked);
-        //    tempBeam.GetReportProperty("REVISION.LAST_APPROVED_BY", ref _revisionLastApprovedBy);
-        //    tempBeam.GetReportProperty("REVISION.LAST_DATE_APPROVED", ref _revisionLastDateApproved);
-        //}
+                var mBolts = principal.GetBolts();
+                while (mBolts.MoveNext())
+                {
+                    if (mBolts.Current is TSM.BoltArray b)
+                    {
+                        _boltIdsAssembly.Add(b.Identifier);
+                    }
+                }
+            }
 
+            var filhos = assy.GetSecondaries().GetEnumerator();
+            while (filhos.MoveNext())
+            {
+                var filho = filhos.Current as TSM.Part;
+                if (filho != null)
+                {
+                    string posFilho = filho.ObterPropriedade("PART_POS")?.ToString();
+                    if (!string.IsNullOrEmpty(posFilho))
+                    {
+                        if (_contagemPartesAssembly.ContainsKey(posFilho))
+                            _contagemPartesAssembly[posFilho]++;
+                        else
+                            _contagemPartesAssembly[posFilho] = 1;
+                    }
 
+                    var sBolts = filho.GetBolts();
+                    while (sBolts.MoveNext())
+                    {
+                        if (sBolts.Current is TSM.BoltArray b)
+                        {
+                            _boltIdsAssembly.Add(b.Identifier);
+                        }
+                    }
+                }
+            }
+        }
+
+        private int obterContagemPeca(string posicaoPeca, TSM.Assembly assy)
+        {
+            if (_contagemPartesAssembly == null)
+            {
+                inicializarContagemAssembly(assy);
+            }
+
+            if (_contagemPartesAssembly != null && _contagemPartesAssembly.TryGetValue(posicaoPeca, out int qtd))
+            {
+                return qtd;
+            }
+
+            return 1;
+        }
 
         public void AddItem(TSM.Part part, TSM.Assembly assembly)
         {
             string posicaoPeca = part.ObterPropriedade("PART_POS").ToString();
 
-            //if (_itens.Any(c => c.PartPos == posicaoPeca))
-            //{
-            //    var existingItem = _itens.First(c => c.PartPos == posicaoPeca);
-            //    existingItem.IncrementarQuantidade();
-
-            //    //if (existingItem.PartPos == _pecaDgtMaiPart.PartPos)
-            //    //{
-            //    //    _quantidade++;
-            //    //}
-
-            //    return;
-            //}
-
             if (!_itens.Any(c => c.PartPos == posicaoPeca))
             {
-                PecaDgt item = new PecaDgt(part);
+                int qtd = obterContagemPeca(posicaoPeca, assembly);
+                PecaDgt item = new PecaDgt(part, qtd);
                 _itens.Add(item);
             }
-               
         }
 
         public void AddItemExistente(string posicaoPeca)

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using TSM = Tekla.Structures.Model;
 
 namespace ConsoleTNKDxf.Dgts
@@ -47,11 +47,8 @@ namespace ConsoleTNKDxf.Dgts
             //    //_parafusosFabrica.Add(parafusoExistente);
             //}
 
-            _pecaChega = new Peca(boltArray.PartToBeBolted);
-
-            
-
-            _pecaRecebe = new Peca(boltArray.PartToBoltTo);
+            _pecaChega = boltArray.PartToBeBolted != null ? new Peca(boltArray.PartToBeBolted, apenasIdentificacao: true) : new Peca();
+            _pecaRecebe = boltArray.PartToBoltTo != null ? new Peca(boltArray.PartToBoltTo, apenasIdentificacao: true) : new Peca();
 
             
 
