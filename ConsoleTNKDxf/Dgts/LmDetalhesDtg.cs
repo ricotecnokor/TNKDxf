@@ -51,36 +51,12 @@ namespace ConsoleTNKDxf.Dgts
             if (sheet == null) return;
 
             var allViews = sheet.GetAllViews();
-            var listaViews = new List<TSD.View>();
             var viewEnum = allViews.GetEnumerator();
             while (viewEnum.MoveNext())
             {
-                if (viewEnum.Current is TSD.View v)
+                if (!(viewEnum.Current is TSD.View view))
                 {
-                    listaViews.Add(v);
-                }
-            }
-
-            // Ordena vistas: principais primeiro (ModelView, FrontView, etc.), cortes/detalhes depois
-            var vistasOrdenadas = listaViews
-                .OrderBy(v => ehCorteOuDetalhe(v) ? 1 : 0)
-                .ToList();
-
-            bool todasVistasPrincipaisProcessadas = false;
-
-            foreach (var view in vistasOrdenadas)
-            {
-                bool ehCorte = ehCorteOuDetalhe(view);
-                if (ehCorte && !todasVistasPrincipaisProcessadas)
-                {
-                    todasVistasPrincipaisProcessadas = true;
-                }
-
-                // Se já passamos pelas vistas principais e todos os conjuntos encontrados estão 100% completos:
-                if (todasVistasPrincipaisProcessadas && conjuntosEstaoCompletos(ParafusosUnicosNoDesenho))
-                {
-                    // Cortes e detalhes redundantes podem ser ignorados com segurança sem perda de peças ou parafusos
-                    break;
+                    continue;
                 }
 
                 DrawingObjectEnumerator drwObjs = view.GetObjects(new[] { typeof(TSD.Part), typeof(TSD.Bolt) });
@@ -104,39 +80,6 @@ namespace ConsoleTNKDxf.Dgts
                     }
                 }
             }
-        }
-
-        private bool ehCorteOuDetalhe(TSD.View view)
-        {
-            try
-            {
-                string tipo = view.ViewType.ToString();
-                return tipo == "SectionView" || tipo == "DetailView";
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        private bool conjuntosEstaoCompletos(HashSet<Identifier> parafusosColetados)
-        {
-            if (_conjuntos.Count == 0) return false;
-            foreach (var conjunto in _conjuntos)
-            {
-                if (conjunto.TotalPartesNoAssembly > 0 && conjunto.TotalPartesColetadas < conjunto.TotalPartesNoAssembly)
-                {
-                    return false;
-                }
-                if (conjunto.TotalParafusosNoAssembly > 0 && parafusosColetados != null)
-                {
-                    if (!conjunto.BoltIdsNoAssembly.IsSubsetOf(parafusosColetados))
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
 
        
