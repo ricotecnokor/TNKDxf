@@ -1,4 +1,4 @@
-﻿using ConsoleTNKDxf.Abstracoes;
+using ConsoleTNKDxf.Abstracoes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,63 +35,51 @@ namespace ConsoleTNKDxf.Dgts
         //    _prefixoConjunto = prefixoConjunto;
         //}
 
+        public HashSet<Identifier> ParafusosUnicosNoDesenho { get; private set; } = new HashSet<Identifier>();
+
         public override void Coletar(Drawing multiDrawing)
         {
-            HashSet<Identifier> pecasUnicasNoDesenho = obterPecasUnicasDesenho(multiDrawing);
-
-            foreach (Identifier partId in pecasUnicasNoDesenho)
-            {
-                var modelObj = _model.SelectModelObject(partId);
-
-                if (modelObj is TSM.Part modelPart)
-                {
-                    addPeca(modelPart);
-                }
-            }
-
-
-            var teste = _conjuntos;
-
-            //foreach (var conjuntoAvulso in _conjuntos)
-            //{
-            //    if (conjuntoAvulso.AssemblyPos == "00724AK")
-            //    {
-
-
-            //        bool teste = true;
-
-
-            //    }
-
-            //    conjuntoAvulso.MultiplicaQtdConjuntoPorPeca(conjuntoAvulso.Quantidade);
-            //}
-
+            obterObjetosDesenho(multiDrawing);
         }
 
-        private HashSet<Identifier> obterPecasUnicasDesenho(Drawing multiDrawing)
+        private void obterObjetosDesenho(Drawing multiDrawing)
         {
             HashSet<Identifier> pecasUnicasNoDesenho = new HashSet<Identifier>();
+            ParafusosUnicosNoDesenho = new HashSet<Identifier>();
 
-            var views = multiDrawing.GetSheet().GetAllViews().GetEnumerator();
-            while (views.MoveNext())
+            var sheet = multiDrawing?.GetSheet();
+            if (sheet == null) return;
+
+            var allViews = sheet.GetAllViews();
+            var viewEnum = allViews.GetEnumerator();
+            while (viewEnum.MoveNext())
             {
-
-                var view = views.Current as TSD.View;
-                if (view == null) continue;
-
-                // 2. Pegar todas as partes gráficas nesta vista
-                DrawingObjectEnumerator drawingParts = view.GetObjects(new[] { typeof(TSD.Part) });
-                while (drawingParts.MoveNext())
+                if (!(viewEnum.Current is TSD.View view))
                 {
-                    TSD.Part drwPart = drawingParts.Current as TSD.Part;
-                    if (drwPart != null)
+                    continue;
+                }
+
+                DrawingObjectEnumerator drwObjs = view.GetObjects(new[] { typeof(TSD.Part), typeof(TSD.Bolt) });
+                while (drwObjs.MoveNext())
+                {
+                    var cur = drwObjs.Current;
+                    if (cur is TSD.Part drwPart)
                     {
-                        pecasUnicasNoDesenho.Add(drwPart.ModelIdentifier);
+                        if (pecasUnicasNoDesenho.Add(drwPart.ModelIdentifier))
+                        {
+                            var modelObj = _model.SelectModelObject(drwPart.ModelIdentifier);
+                            if (modelObj is TSM.Part modelPart)
+                            {
+                                addPeca(modelPart);
+                            }
+                        }
+                    }
+                    else if (cur is TSD.Bolt drwBolt)
+                    {
+                        ParafusosUnicosNoDesenho.Add(drwBolt.ModelIdentifier);
                     }
                 }
             }
-
-            return pecasUnicasNoDesenho;
         }
 
        
@@ -154,9 +142,7 @@ namespace ConsoleTNKDxf.Dgts
                 return;
             }
 
-            //assy.GetSecondaries
-
-            var novoConjunto = new ConjuntoDetalhadoDgt(part, new PecaDgt(assy.GetMainPart() as TSM.Part));
+            var novoConjunto = new ConjuntoDetalhadoDgt(part);
             _conjuntos.Add(novoConjunto);
         }
 
@@ -167,10 +153,8 @@ namespace ConsoleTNKDxf.Dgts
 
         internal void Ligar(FixacaoDgt fixacao, string tipoFixacao)
         {
-
-           var marcaConjunto = fixacao.Parafuso.PecaChega.MarcaMontagem;
-
-            if (!_conjuntos.Any(c => c.AssemblyPos == marcaConjunto))
+            var marcaConjunto = fixacao.Parafuso.PecaChega?.MarcaMontagem;
+            if (string.IsNullOrEmpty(marcaConjunto) || !_conjuntos.Any(c => c.AssemblyPos == marcaConjunto))
                 return;
 
             ConjuntoDetalhadoDgt conjunto = (ConjuntoDetalhadoDgt)_conjuntos.FirstOrDefault(c => c.AssemblyPos == marcaConjunto);

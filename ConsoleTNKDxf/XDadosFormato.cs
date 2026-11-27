@@ -162,6 +162,8 @@ namespace ConsoleTNKDxf
             int numeroLinha = 0;
             foreach (FixacaoDgt elementoFixacao in elementosFixacao)
             {
+                if (elementoFixacao?.Parafuso == null) continue;
+
                 var appNameItem = $"{prefixo}{++numeroLinha}";
                 ApplicationRegistry appReg;
                 if (!_dxf.ApplicationRegistries.Contains(appNameItem))
@@ -189,6 +191,8 @@ namespace ConsoleTNKDxf
         {
             foreach (FixacaoDgt elementoFixacao in elementosFixacao)
             {
+                if (elementoFixacao?.Porca == null) continue;
+
                 var appNameItem = $"{prefixo}{++numeroLinha}";
                 ApplicationRegistry appReg;
                 if (!_dxf.ApplicationRegistries.Contains(appNameItem))
@@ -216,6 +220,8 @@ namespace ConsoleTNKDxf
 
             foreach (FixacaoDgt elementoFixacao in elementosFixacao)
             {
+                if (elementoFixacao?.Arruela == null) continue;
+
                 var appNameItem = $"{prefixo}{++numeroLinha}";
                 ApplicationRegistry appReg;
                 if (!_dxf.ApplicationRegistries.Contains(appNameItem))
